@@ -58,7 +58,8 @@
   const dayObj = () => { const c = cycleObj(D().cycle); return c ? c.days[Math.min(D().day, c.days.length) - 1] : null; };
   const logKey = (c = D().cycle, d = D().day) => `c${c}d${d}`;
   const exIndex = (c = D().cycle, d = D().day) => (c - 1) * 21 + d - 1;
-  const exDay = (c, d) => EX.days[exIndex(c, d)] || EX.days[0] || null;
+  // Plugins (move21) may supply the day's exercise plan via H.exDay; otherwise the built-in 63-day plan is used.
+  const exDay = (c, d) => { for (const f of H.exDay || []) { try { const r = f(c, d); if (r) return r; } catch (e) { console.error(e); } } return EX.days[exIndex(c, d)] || EX.days[0] || null; };
   const moveLog = () => (D().move[logKey()] = D().move[logKey()] || { walk: 0, breaths: 0, routine: false });
 
   // Move to the next program day once the calendar day has changed after finishing today's checklist.
@@ -106,7 +107,7 @@
       }
     }
     const p = s.profile || {};
-    const servings = p.servings || 3, spend = p.spend || 60000;
+    const servings = p.servings ?? 3, spend = p.spend || 60000;
     const cleanDays = done.filter(l => l.slip !== 'lot').length;
     return { total: done.length + (s.pastDone || 0), streak, cubes: Math.round(cleanDays * servings * 5), toman: cleanDays * spend, beaten: s.sos.beaten };
   }
@@ -373,11 +374,11 @@
 
   /* onboarding quiz */
   const QUIZ = [
-    { k: 'servings', q: 'روزی چند بار چیز شیرین می‌خوری؟ (شیرینی، شکلات، نوشابه، چای با قند، بیسکویت…)', o: [[1, 'یکی دو بار'], [3, 'سه چهار بار'], [6, 'پنج بار یا بیشتر'], [9, 'تقریباً یک‌سره، حساب از دستم در رفته']] },
+    { k: 'servings', q: 'روزی چند بار چیز شیرین می‌خوری؟ (شیرینی، شکلات، نوشابه، چای با قند، بیسکویت…)', o: [[0, 'اصلاً، تقریباً هیچ‌وقت'], [1, 'یکی دو بار'], [3, 'سه چهار بار'], [6, 'پنج بار یا بیشتر'], [9, 'تقریباً یک‌سره، حساب از دستم در رفته']] },
     { k: 'control', q: 'وقتی شروع به خوردن شیرینی می‌کنی، چقدر می‌تونی دست نگه داری؟', o: [[1, 'معمولاً راحت'], [2, 'گاهی سخته'], [3, 'اغلب بیشتر از چیزی که می‌خواستم می‌خورم'], [4, 'تقریباً هیچ‌وقت نمی‌تونم']] },
     { k: 'trigger', multi: true, q: 'بیشتر کِی سراغ شیرینی می‌ری؟ (هر چندتا که درسته)', o: [['stress', 'وقتی استرس دارم یا ناراحتم'], ['bored', 'وقتی حوصله‌ام سر رفته'], ['meal', 'بعد از غذا'], ['tea', 'کنار چای'], ['tired', 'وقتی خسته‌ام یا کم خوابیدم'], ['social', 'مهمونی و دورهمی'], ['period', 'روزهای قبل از پریود']] },
     { k: 'cravingTime', q: 'هوس شیرینی بیشتر چه ساعتی سراغت میاد؟', o: [['morning', 'صبح و نزدیک ظهر'], ['afternoon', 'عصر'], ['evening', 'سر شب'], ['night', 'آخر شب']] },
-    { k: 'spend', q: 'حدوداً روزی چقدر خرج خوراکی شیرین و نوشیدنی شیرین می‌کنی؟', o: [[20000, 'کمتر از ۳۰ هزار تومان'], [60000, '۳۰ تا ۱۰۰ هزار تومان'], [150000, 'بیشتر از ۱۰۰ هزار تومان']] },
+    { k: 'spend', q: 'حدوداً روزی چقدر خرج خوراکی شیرین و نوشیدنی شیرین می‌کنی؟', o: [[50000, 'کمتر از ۱۰۰ هزار تومان'], [200000, '۱۰۰ تا ۳۰۰ هزار تومان'], [450000, 'بیشتر از ۴۰۰ هزار تومان']] },
     { k: 'goal', multi: true, q: 'مهم‌ترین دلیلت برای ترک قند چیه؟', o: [['weight', 'کاهش وزن'], ['skin', 'پوست و مو'], ['pcos', 'تخمدان پلی‌کیستیک یا تعادل هورمونی'], ['insulin', 'مقاومت به انسولین یا پیش‌دیابت'], ['energy', 'انرژی و خلق‌وخوی بهتر'], ['teeth', 'دندان'], ['control', 'می‌خوام کنترلم رو پس بگیرم']] },
   ];
   let ob = { step: 0, a: {} };
@@ -389,7 +390,7 @@
       const q = QUIZ[ob.step];
       body = `<h2>${esc(q.q)}</h2><div class="opts">${q.o.map(([v, t], i) => `<label class="opt"><input type="${q.multi ? 'checkbox' : 'radio'}" name="q" value="${v}" id="o${i}" ${[].concat(ob.a[q.k] ?? []).map(String).includes(String(v)) ? 'checked' : ''}><span>${t}</span></label>`).join('')}</div>`;
     } else if (ob.step === QUIZ.length) {
-      const sc = (ob.a.servings || 3) + (ob.a.control || 2) * 2;
+      const sc = (ob.a.servings ?? 3) + (ob.a.control || 2) * 2;
       const level = sc >= 12 ? 'gentle' : sc >= 7 ? 'steady' : 'full';
       ob.a.suggested = level;
       body = `<h2>سطح شروعت رو انتخاب کن</h2><p class="muted">بر اساس جواب‌هات، سطح <b>${LEVELS[level].t}</b> رو پیشنهاد می‌کنیم. هر وقت خواستی می‌تونی عوضش کنی.</p>
@@ -498,24 +499,24 @@
     if (s.cycleDone) return cycleDoneView(cycleObj(s.cycle));
     const prev = s.log[logKey()] || {};
     const hour = new Date().getHours();
-    return `<section class="wrap auth stack" style="gap:16px;max-width:620px">
-      <div class="row"><div style="width:90px">${ART.spots.moon}</div><div class="stack" style="gap:2px;flex:1;min-width:0"><span class="eyebrow">روز ${fa(s.day)} از ۲۱</span><h2>چک‌لیست آخر شب</h2>${hour < 18 && !prev.done ? '<span class="small muted">بهترین زمان برای پر کردنش آخر شبه، ولی هر وقت خواستی می‌تونی ثبتش کنی.</span>' : ''}</div></div>
+    return `<section class="wrap auth stack night-page" style="gap:16px;max-width:620px">
+      <div class="row nt-head"><div class="nt-moon" style="width:90px">${ART.spots.moon}</div><div class="stack nt-titles" style="gap:2px;flex:1;min-width:0"><span class="eyebrow">روز ${fa(s.day)} از ۲۱</span><h2>چک‌لیست آخر شب</h2>${hour < 18 && !prev.done ? '<span class="small muted">بهترین زمان برای پر کردنش آخر شبه، ولی هر وقت خواستی می‌تونی ثبتش کنی.</span>' : ''}</div></div>
       <form id="nf" class="stack">
-        <div class="card stack" style="gap:10px"><b>امروز چه کارهایی کردی؟</b>
+        <div class="card stack nt-sec nt-tasks" style="gap:10px"><b>امروز چه کارهایی کردی؟</b>
           ${d.tasks.map((t, i) => `<label class="check" for="k${i}"><input type="checkbox" id="k${i}" ${prev.tasks?.[i] ? 'checked' : ''}><span>${esc(t)}</span></label>`).join('')}
           <div class="progress"><i id="bar" style="width:0"></i></div>
         </div>
         ${(() => { const ex = exDay(s.cycle, s.day); if (!ex) return ''; const lg = s.move[logKey()] || {}; const items = [[`${fa(ex.walk)} دقیقه پیاده‌روی کردم`, lg.walk >= ex.walk], [`${fa(ex.breath)} نفس شکمی انجام دادم`, lg.breaths >= ex.breath], [`جلسه‌ی «${esc(ex.routine.title)}» رو انجام دادم`, !!lg.routine]];
-          return `<div class="card stack" style="gap:10px"><div class="row" style="justify-content:space-between"><b>ورزش امروز</b><a class="small" href="#move">رفتن به بخش ورزش</a></div>${items.map(([t, on], i) => `<label class="check" for="x${i}"><input type="checkbox" id="x${i}" ${on || prev.move?.[i] ? 'checked' : ''}><span>${t}</span></label>`).join('')}</div>`; })()}
-        <div class="card stack" style="gap:10px"><b>امروز قند افزوده خوردی؟</b>
-          <div class="scale">${[['no', '🌿 نه'], ['bit', '🍬 یه کم'], ['lot', '🍰 زیاد']].map(([v, t]) => `<label><input type="radio" name="slip" value="${v}" ${(prev.slip || 'no') === v ? 'checked' : ''}><span style="font-size:1rem;padding:8px 14px">${t}</span></label>`).join('')}</div>
+          return `<div class="card stack nt-sec nt-move" style="gap:10px"><div class="row" style="justify-content:space-between"><b>ورزش امروز</b><a class="small" href="#move">رفتن به بخش ورزش</a></div>${items.map(([t, on], i) => `<label class="check" for="x${i}"><input type="checkbox" id="x${i}" ${on || prev.move?.[i] ? 'checked' : ''}><span>${t}</span></label>`).join('')}</div>`; })()}
+        <div class="card stack nt-sec nt-slip" style="gap:10px"><b id="nt-slip-q">امروز قند افزوده خوردی؟</b>
+          <div class="scale" role="radiogroup" aria-labelledby="nt-slip-q">${[['no', '🌿 نه'], ['bit', '🍬 یه کم'], ['lot', '🍰 زیاد']].map(([v, t]) => `<label><input type="radio" name="slip" value="${v}" ${(prev.slip || 'no') === v ? 'checked' : ''}><span style="font-size:1rem;padding:8px 14px">${t}</span></label>`).join('')}</div>
         </div>
-        <div class="card stack" style="gap:10px"><b>شدیدترین هوس امروز چقدر بود؟</b>
-          <div class="scale">${['😌', '🙂', '😐', '😣', '😫'].map((e, i) => `<label title="${fa(i)}"><input type="radio" name="crave" value="${i}" ${(prev.craving ?? 1) === i ? 'checked' : ''}><span>${e}</span></label>`).join('')}</div>
+        <div class="card stack nt-sec nt-crave" style="gap:10px"><b id="nt-crave-q">شدیدترین هوس امروز چقدر بود؟</b>
+          <div class="scale" role="radiogroup" aria-labelledby="nt-crave-q">${['😌', '🙂', '😐', '😣', '😫'].map((e, i) => `<label title="${fa(i)}"><input type="radio" name="crave" value="${i}" aria-label="${['اصلاً', 'کم', 'متوسط', 'زیاد', 'خیلی زیاد'][i]}" ${(prev.craving ?? 1) === i ? 'checked' : ''}><span>${e}</span></label>`).join('')}</div>
         </div>
-        <div class="card stack" style="gap:8px"><label for="ref"><b>سؤال امشب:</b> ${esc(d.reflect)}</label><textarea id="ref" class="input" rows="3" placeholder="چند خط برای خودت بنویس…">${esc(prev.reflect || '')}</textarea></div>
+        <div class="card stack nt-sec nt-ref" style="gap:8px"><label for="ref"><b>سؤال امشب:</b> ${esc(d.reflect)}</label><textarea id="ref" class="input" rows="3" placeholder="چند خط برای خودت بنویس…">${esc(prev.reflect || '')}</textarea></div>
         ${hook('nightExtra', prev)}
-        <button class="btn primary big" type="submit">${prev.done ? 'به‌روزرسانی چک‌لیست' : 'ثبت و تموم کردن روز ' + fa(s.day)}</button>
+        <button class="btn primary big nt-submit" type="submit">${prev.done ? 'به‌روزرسانی چک‌لیست' : 'ثبت و تموم کردن روز ' + fa(s.day)}</button>
       </form></section>`;
   };
   mounts.night = () => {
@@ -587,17 +588,18 @@
   const amount = mv => mv.reps ? `${fa(mv.reps)} بار` : `${fa(mv.secs)} ثانیه`;
   let moveFilter = 'همه';
   views.move = () => {
-    const s = D(), ex = exDay(s.cycle, s.day), lg = moveLog();
+    const s = D(), ex = exDay(s.cycle, s.day), lg = moveLog(), prog = hook('moveProgram');
     if (!ex) return `<section class="wrap"><div class="card">برنامه‌ی ورزش بارگذاری نشد.</div></section>`;
     const mins = ex.routine.moves.reduce((a, mv) => a + (mv.secs || mv.reps * 4) + 10, 0) / 60;
     const types = ['همه', ...new Set(Object.values(EX.moves).map(m => m.type))];
     const lib = Object.entries(EX.moves).filter(([, m]) => moveFilter === 'همه' || m.type === moveFilter);
     const doneN = (lg.walk >= ex.walk) + (lg.breaths >= ex.breath) + !!lg.routine;
     return `<section class="wrap stack" style="gap:16px">
-      <div class="section-head" style="margin:0"><span class="eyebrow">ورزش امروز، روز ${fa(s.day)} از ۲۱</span><h2>بدنت هم توی این مسیر همراهته</h2>${EX.intro ? `<p class="muted">${esc(EX.intro)}</p>` : ''}</div>
+      <div class="section-head" style="margin:0"><span class="eyebrow">${prog ? 'ورزش، قدم‌به‌قدم' : `ورزش امروز، روز ${fa(s.day)} از ۲۱`}</span><h2>بدنت هم توی این مسیر همراهته</h2>${EX.intro ? (prog ? `<details class="m21-intro"><summary class="small muted">چرا ورزش توی ترک قند کمک می‌کنه؟</summary><p class="muted small">${esc(EX.intro)}</p></details>` : `<p class="muted">${esc(EX.intro)}</p>`) : ''}</div>
+      ${prog}
       ${hook('moveTop')}
       <div class="card pop row" style="justify-content:space-between"><div class="stack" style="gap:2px"><b>${fa(doneN)} از ۳ کار ورزشی امروز انجام شده</b><span class="small muted">${esc(ex.note || '')}</span></div><div class="progress" style="flex:1;min-width:160px;max-width:320px"><i style="width:${doneN / 3 * 100}%"></i></div></div>
-      <div class="move-grid">
+      <div class="move-grid${ex.m21 ? ' m21-g2' : ''}">
         <div class="card stack ${lg.walk >= ex.walk ? 'done-card' : ''}"><div class="row" style="justify-content:space-between"><b>🚶‍♀️ پیاده‌روی</b><span class="chip ${lg.walk >= ex.walk ? 'mint' : ''}">${fa(lg.walk)} از ${fa(ex.walk)} دقیقه</span></div>
           ${fig('walk-march', 'sm')}
           <p class="small muted">بیرون، روی تردمیل یا حتی درجا توی خونه. ۱۰ دقیقه بعد از ناهار یا شام، قند خونت رو آروم‌تر نگه می‌داره.</p>
@@ -607,9 +609,9 @@
           ${fig('breath-belly', 'sm')}
           <p class="small muted">${esc(EX.breathing?.how?.[0] || 'یک دست روی سینه و یک دست روی شکم. از بینی دم بگیر طوری که فقط شکمت بالا بیاد.')}</p>
           <button class="btn primary" id="bgo">شروع تمرین تنفس</button></div>
-        <div class="card stack ${lg.routine ? 'done-card' : ''}"><div class="row" style="justify-content:space-between"><b>🧘 ${esc(ex.routine.title)}</b><span class="chip lav">${esc(ex.routine.style)}، حدود ${fa(Math.max(1, Math.round(mins)))} دقیقه</span></div>
+        ${ex.m21 ? '' : `<div class="card stack ${lg.routine ? 'done-card' : ''}"><div class="row" style="justify-content:space-between"><b>🧘 ${esc(ex.routine.title)}</b><span class="chip lav">${esc(ex.routine.style)}، حدود ${fa(Math.max(1, Math.round(mins)))} دقیقه</span></div>
           <div class="routine-list">${ex.routine.moves.map(mv => { const M = EX.moves[mv.id] || {}; return `<button class="mini" data-mv="${esc(mv.id)}">${fig(mv.id)}<span class="small"><b>${esc(M.name || mv.id)}</b><br><span class="muted">${amount(mv)}</span></span></button>`; }).join('')}</div>
-          <button class="btn ${lg.routine ? 'ghost' : 'berry'}" id="rgo">${lg.routine ? '✓ انجام شد، دوباره؟' : 'شروع جلسه'}</button></div>
+          <button class="btn ${lg.routine ? 'ghost' : 'berry'}" id="rgo">${lg.routine ? '✓ انجام شد، دوباره؟' : 'شروع جلسه'}</button></div>`}
       </div>
       <div class="card stack"><div class="row" style="justify-content:space-between"><h3>کتابخانه‌ی حرکت‌ها</h3><div class="filters">${types.map(t => `<button data-mf="${esc(t)}" class="${t === moveFilter ? 'on' : ''}">${esc(t)}</button>`).join('')}</div></div>
         <div class="lib-grid">${lib.map(([id, M]) => `<button class="card mini-card" data-mv="${esc(id)}">${fig(id)}<b>${esc(M.name)}</b><span class="small muted">${esc(M.type)}، سطح ${fa(M.level)}</span></button>`).join('')}</div></div>
@@ -632,7 +634,7 @@
       walkIv = setInterval(() => { const el = $('#wt'); if (!el) return clearInterval(walkIv); const sec = Math.floor((Date.now() - b._t) / 1000); el.textContent = fa(`${pad(Math.floor(sec / 60))}:${pad(sec % 60)}`); }, 1000);
     };
     $('#bgo').onclick = () => openBreath(ex.breath);
-    $('#rgo').onclick = () => openSession(ex);
+    if ($('#rgo')) $('#rgo').onclick = () => openSession(ex);
   };
   function openMove(id) {
     const M = EX.moves[id]; if (!M) return;

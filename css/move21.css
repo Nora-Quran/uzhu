@@ -1,0 +1,103 @@
+/* move21: 21-day exercise program with three levels (js/move21.js). Uses the tokens from style.css. */
+.m21-intro summary { cursor: pointer; }
+.m21-intro p { margin-top: 6px; }
+.move-grid.m21-g2 { grid-template-columns: repeat(2, 1fr); }
+@media (max-width: 860px) { .move-grid.m21-g2 { grid-template-columns: 1fr; } }
+
+/* start card + level cards */
+.m21-start-top { flex-wrap: nowrap; align-items: center; }
+.m21-start-fig { width: 130px; flex: none; }
+.m21-levels { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.m21-lv { display: flex; flex-direction: column; gap: 6px; text-align: start; cursor: pointer; padding: 16px; line-height: 1.6; font: inherit; color: inherit; transition: border-color .15s, transform .1s; }
+.m21-lv:hover { border-color: var(--lav); }
+.m21-lv:active { transform: translateY(1px); }
+.m21-lv.cur { border-color: var(--mint); background: color-mix(in srgb, var(--mint-soft) 40%, var(--surface)); }
+.m21-lv b { font-size: 1.1rem; }
+.m21-lv-i { font-size: 1.8rem; line-height: 1; }
+.m21-lv-go { margin-top: auto; align-self: flex-start; padding: 6px 16px; font-size: .9rem; box-shadow: 0 3px 0 var(--ink); }
+.m21-lv .chip { align-self: flex-start; }
+
+/* header */
+.m21-head { display: grid; grid-template-columns: 1fr minmax(120px, 260px) auto; gap: 14px; align-items: center; }
+.m21-prog { width: 100%; }
+
+/* 21-day path */
+.m21-path { display: grid; gap: 10px; padding: 16px; }
+.m21-week { display: grid; grid-template-columns: 64px 1fr; gap: 8px; align-items: center; }
+.m21-wk { font-weight: 700; }
+.m21-row { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; position: relative; }
+.m21-row::before { content: ""; position: absolute; inset-inline: 6%; top: 50%; height: 4px; margin-top: -2px; border-radius: 4px; background: var(--line); z-index: 0; }
+.m21-node { position: relative; z-index: 1; aspect-ratio: 1; max-width: 72px; width: 100%; justify-self: center; border-radius: 50%; border: 3px solid var(--line); background: var(--surface); color: var(--ink); display: grid; place-items: center; align-content: center; gap: 0; cursor: pointer; padding: 0; font: inherit; line-height: 1.1; transition: transform .1s; }
+.m21-node:active { transform: scale(.96); }
+.m21-n { font-family: var(--font-display); font-size: 1.15rem; }
+.m21-ti { font-size: .78rem; }
+.m21-node.done { background: var(--mint); border-color: var(--mint); color: #fff; }
+.m21-node.done .m21-n { font-family: var(--font-body); font-weight: 900; }
+.m21-node.open { border-color: var(--ink); box-shadow: 0 3px 0 var(--ink); }
+.m21-node.now { background: var(--sun); color: #2f2340; animation: m21-pulse 2.4s ease-in-out infinite; }
+.m21-node.locked, .m21-node.tomorrow { background: var(--surface-2); color: var(--ink-soft); border-style: dashed; }
+.m21-node.locked .m21-n, .m21-node.tomorrow .m21-n { font-size: .95rem; }
+.m21-node.tomorrow { border-color: var(--lav); border-style: solid; }
+.m21-node.sel { outline: 3px solid var(--berry); outline-offset: 3px; }
+.m21-tom { position: absolute; top: calc(100% + 4px); inset-inline: -24px; font-size: .64rem; font-weight: 800; color: var(--lav); white-space: nowrap; text-align: center; line-height: 1.2; }
+.m21-week:has(.m21-tom) { padding-bottom: 14px; }
+@keyframes m21-pulse { 0%, 100% { box-shadow: 0 3px 0 var(--ink); } 50% { box-shadow: 0 3px 0 var(--ink), 0 0 0 6px color-mix(in srgb, var(--sun) 35%, transparent); } }
+@media (prefers-reduced-motion: reduce) { .m21-node.now { animation: none; } }
+
+/* day card */
+.m21-secs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; align-items: start; }
+.m21-sec { display: grid; gap: 8px; min-width: 0; }
+.m21-sec-h { display: flex; flex-direction: column; gap: 0; line-height: 1.5; }
+.m21-list .mini { grid-template-columns: 64px 1fr; }
+.m21-safe summary { cursor: pointer; }
+.m21-safe ul { margin: 10px 0 0; padding-inline-start: 1.2em; display: grid; gap: 6px; }
+
+/* level modal + quiz */
+.m21-modal .m21-levels { grid-template-columns: repeat(3, 1fr); }
+.m21-quiz summary { cursor: pointer; }
+.m21-q { border: 0; margin: 0; padding: 0; display: grid; gap: 6px; min-width: 0; }
+.m21-q legend { padding: 0; margin-bottom: 6px; }
+.m21-opts { display: flex; flex-wrap: wrap; gap: 6px; }
+.m21-opt { cursor: pointer; }
+.m21-opt input { position: absolute; opacity: 0; pointer-events: none; }
+.m21-opt span { display: inline-block; border: 2px solid var(--line); border-radius: 999px; padding: 4px 14px; font-weight: 700; font-size: .9rem; background: var(--surface); }
+.m21-opt input:checked + span { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.m21-opt input:focus-visible + span { outline: 3px solid var(--lav); outline-offset: 2px; }
+.m21-res { background: var(--lav-soft); border-color: transparent; }
+
+/* player */
+.m21-player .m21-phase { align-self: center; }
+.m21-pfig { min-height: 120px; }
+.m21-player .fig.big { max-width: 280px; }
+.m21-ctrl { flex-wrap: nowrap; justify-content: center; gap: 8px; }
+.m21-ctrl .btn { padding: 10px 14px; }
+.m21-ctrl .btn.big { padding: 12px 22px; min-width: 9.5em; }
+.m21-rest { display: grid; place-items: center; gap: 4px; min-height: 180px; background: var(--blob); border-radius: 14px; max-width: 320px; margin: 0 auto; width: 100%; }
+.m21-rest span:first-child { font-size: 3rem; }
+.m21-swap { color: var(--berry); font-weight: 800; min-height: 1.2em; }
+.m21-how { text-align: start; border-top: 1px dashed var(--line); padding-top: 8px; }
+.m21-how summary { cursor: pointer; text-align: center; }
+.m21-how .steps { margin: 8px 0; }
+
+@media (max-width: 860px) {
+  .m21-secs { grid-template-columns: 1fr; }
+  .m21-levels, .m21-modal .m21-levels { grid-template-columns: 1fr; }
+  .m21-head { grid-template-columns: 1fr auto; }
+  .m21-head .m21-prog { grid-column: 1 / -1; grid-row: 2; }
+}
+@media (max-width: 520px) {
+  .m21-start-fig { width: 92px; }
+  .m21-path { padding: 12px 10px; }
+  .m21-week { grid-template-columns: 1fr; gap: 4px; }
+  .m21-row { gap: 5px; }
+  .m21-n { font-size: 1rem; }
+  .m21-ti { font-size: .68rem; }
+  .m21-node { border-width: 2px; }
+  .m21-tom { font-size: .58rem; inset-inline: -14px; white-space: normal; }
+  .m21-list { grid-template-columns: 1fr 1fr; gap: 6px; }
+  .m21-list .mini { grid-template-columns: 1fr; text-align: center; padding: 6px 4px; }
+  .m21-list .mini .fig { max-width: 96px; margin: 0 auto; width: 100%; }
+  .m21-player .fig.big { max-width: 210px; }
+  .m21-player .timer { font-size: 2.1rem; }
+  .m21-ctrl .btn.big { min-width: 0; padding: 10px 16px; font-size: 1rem; }
+}

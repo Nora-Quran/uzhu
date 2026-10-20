@@ -1,0 +1,67 @@
+/* Pastel watercolor-paper page background. js/theme.js sets body[data-pal] (from the section, or the user's pick in
+   Settings) and body[data-topic]. Each palette has a light set (--p0 page, --p1/--p2 pigment blooms) and a deep muted
+   dark set (--d0/--d1/--d2). Cards keep their opaque surface color, so text contrast is unchanged. */
+:root {
+  --wc-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='g' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .42 0 0 0 0 .3 0 0 0 0 .24 0 0 0 .38 -.14'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23g)'/%3E%3C/svg%3E");
+  --wc-fiber: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='600'%3E%3Cfilter id='f' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.012 .02' numOctaves='3' seed='5' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 .98 .9 0 0 0 -.3'/%3E%3C/filter%3E%3Crect width='600' height='600' filter='url(%23f)'/%3E%3C/svg%3E");
+  --wcr-paper: #fdf6ec;
+}
+
+body[data-pal="cream"]    { --p0: #fcf7ef; --p1: #f5e6cf; --p2: #f3e1db; --d0: #1b1720; --d1: #2f2830; --d2: #2b2433; }
+body[data-pal="peach"]    { --p0: #fdf4ec; --p1: #fcdcc8; --p2: #fbe9c4; --d0: #1d1619; --d1: #3c2a2c; --d2: #3a2b26; }
+body[data-pal="butter"]   { --p0: #fef8ea; --p1: #fbe6ae; --p2: #fcd8c2; --d0: #1c1814; --d1: #3a2d24; --d2: #3a2a2c; }
+body[data-pal="sky"]      { --p0: #f3f8fc; --p1: #d3e7f7; --p2: #e4def5; --d0: #141822; --d1: #1f3044; --d2: #2a2742; }
+body[data-pal="sage"]     { --p0: #f4f8f0; --p1: #d6e8cc; --p2: #ecf0cf; --d0: #141a17; --d1: #243a2c; --d2: #26302c; }
+body[data-pal="lavender"] { --p0: #f6f3fb; --p1: #ded5f3; --p2: #d6e1f5; --d0: #16131f; --d1: #2e2748; --d2: #1f2a44; }
+body[data-pal="rose"]     { --p0: #fcf4f2; --p1: #f6d6d8; --p2: #f8e6d2; --d0: #1d1519; --d1: #3d2730; --d2: #382c26; }
+body[data-pal="mint"]     { --p0: #f1faf6; --p1: #cdeee0; --p2: #e2f2d2; --d0: #121b19; --d1: #1f3d34; --d2: #2a3826; }
+body[data-pal="lilac"]    { --p0: #f8f3fb; --p1: #e9d6f2; --p2: #f4d9e6; --d0: #1a1420; --d1: #37284a; --d2: #3b2735; }
+body[data-pal="pink"]     { --p0: #fdf3f5; --p1: #f9d2dc; --p2: #fbe2d4; --d0: #1e1419; --d1: #452634; --d2: #3c2a27; }
+
+body[data-pal] {
+  --bg: var(--p0); --b1: var(--p1); --b2: var(--p2);
+  --blob: color-mix(in srgb, var(--b1) 45%, var(--surface));
+  background-color: var(--bg);
+  background-image:
+    var(--wc-grain),
+    var(--wc-fiber),
+    radial-gradient(ellipse 46% 38% at 88% 6%, var(--b1), transparent 70%),
+    radial-gradient(ellipse 38% 30% at 10% 30%, var(--b2), transparent 72%),
+    radial-gradient(ellipse 52% 36% at 70% 72%, color-mix(in srgb, var(--b2) 75%, transparent), transparent 70%),
+    radial-gradient(ellipse 40% 34% at 6% 96%, color-mix(in srgb, var(--b1) 85%, transparent), transparent 70%);
+  background-size: 240px 240px, 600px 600px, 100% 100%, 100% 100%, 100% 100%, 100% 100%;
+  background-attachment: fixed;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) body[data-pal] { --bg: var(--d0); --b1: var(--d1); --b2: var(--d2); }
+  :root:not([data-theme="light"]) { --wc-fiber: linear-gradient(transparent, transparent); --wc-wash1: #3a2a2e; --wc-wash2: #363022; --wc-wash3: #2e2840; --wc-spot: #2e2839; }
+}
+:root[data-theme="dark"] body[data-pal] { --bg: var(--d0); --b1: var(--d1); --b2: var(--d2); }
+:root[data-theme="dark"] { --wc-fiber: linear-gradient(transparent, transparent); --wc-wash1: #3a2a2e; --wc-wash2: #363022; --wc-wash3: #2e2840; --wc-spot: #2e2839; }
+
+/* Cards sit on the paper like little sheets: opaque surface, a soft warm shadow. */
+body[data-pal] .card:not(.pop) { box-shadow: 0 1px 0 color-mix(in srgb, var(--line) 70%, transparent), 0 10px 28px -18px rgba(90, 60, 50, .35); }
+
+/* Recipe paintings fill the card top edge to edge (the paper is inside the painting). */
+.card.recipe { padding: 0; }
+.recipe .art { padding: 0; background: none; }
+.recipe .art svg { width: 100%; height: auto; aspect-ratio: 6 / 5; }
+.wc-dish { border-radius: 18px; overflow: hidden; }
+.recipe .art .wc-dish { border-radius: 0; }
+/* In dark mode the dish stays a light little painting, just a touch dimmer. */
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .wc-dish { filter: brightness(.9) saturate(.95); } }
+:root[data-theme="dark"] .wc-dish { filter: brightness(.9) saturate(.95); }
+
+/* Settings: background color picker */
+.th-sw { display: flex; flex-wrap: wrap; gap: 8px 6px; }
+.th-opt { display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 62px; max-width: 96px; text-align: center; padding: 6px 4px; border: 0; background: none; cursor: pointer; border-radius: 14px; color: var(--ink-soft); font-size: .82rem; font-weight: 700; line-height: 1.4; }
+.th-dot { width: 44px; height: 44px; border-radius: 50%; border: 2px solid var(--line); box-shadow: inset 0 -5px 9px rgba(120, 72, 70, .14), inset 0 4px 6px rgba(255, 255, 255, .5); position: relative; transition: transform .15s; }
+.th-opt:hover .th-dot { transform: scale(1.06); }
+.th-opt[aria-checked="true"] { color: var(--ink); }
+.th-opt[aria-checked="true"] .th-dot { border: 3px solid var(--ink); }
+.th-opt[aria-checked="true"] .th-dot::after { content: "✓"; position: absolute; inset: 0; display: grid; place-items: center; color: #5b4343; font-weight: 900; font-size: 1.1rem; }
+
+/* Exercise figures sit on a little sheet of the same watercolor paper. */
+.fig { background-color: var(--blob); background-image: var(--wc-grain); background-size: 240px 240px; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .fig { background-image: none; } }
+:root[data-theme="dark"] .fig { background-image: none; }

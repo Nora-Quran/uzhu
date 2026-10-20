@@ -40,7 +40,7 @@
     if (on('nextstep')) {
       const [icon, title, sub, href, btn] = nextStep();
       out += `<div class="card p2-next"><span class="p2-ni">${icon}</span><div class="stack" style="gap:2px;min-width:0"><span class="eyebrow">قدم بعدی تو</span><b>${esc(title)}</b><span class="small muted">${esc(sub)}</span></div><a class="btn primary" href="${href}">${esc(btn)}</a></div>`;
-      if (!P().tour) out += `<div class="card p2-tour stack"><div class="row" style="justify-content:space-between"><b>👋 راهنمای سریع اوژو</b><button class="btn ghost" id="p2tour">فهمیدم</button></div>
+      if (!P().tour) out += `<div class="card p2-tour stack"><div class="row" style="justify-content:space-between"><b>👋 راهنمای سریع یوژو</b><button class="btn ghost" id="p2tour">فهمیدم</button></div>
         <ol><li><b>صبح:</b> متن امروز رو بخون و مأموریت روز رو ببین.</li><li><b>طول روز:</b> یادآورها میان؛ هر وقت هوس شیرینی کردی دکمه‌ی صورتی <b>«هوس دارم»</b> رو بزن.</li><li><b>آخر شب:</b> چک‌لیست شب رو تیک بزن تا روز بعد باز بشه.</li><li><b>ابزارها:</b> ورزش، خواب، دستورها و ده‌ها ابزار دیگه از منوی پایین در دسترسه.</li></ol></div>`;
     }
     out += installCard();
@@ -63,18 +63,18 @@
     if (!on('install') || standalone()) return '';
     const st = ls.get('uzhu:install', {}); if (st.done || (st.later && Date.now() - st.later < 14 * 864e5)) return '';
     if (!deferred && !ios()) return '';
-    return `<div class="card p2-install"><span class="p2-ni">📲</span><div class="stack" style="gap:2px;min-width:0"><b>اوژو رو مثل یک اپ روی گوشیت نصب کن</b><span class="small muted">باز شدن با یک لمس، کار بدون اینترنت${ios() ? ' و روی آیفون، تنها راه گرفتن اعلان‌ها' : ' و اعلان‌های مطمئن‌تر'}.</span></div><div class="row" style="flex-wrap:nowrap"><button class="btn primary" id="p2inst">نصب</button><button class="btn ghost" id="p2later" aria-label="بعداً">بعداً</button></div></div>`;
+    return `<div class="card p2-install"><span class="p2-ni">📲</span><div class="stack" style="gap:2px;min-width:0"><b>یوژو رو مثل یک اپ روی گوشیت نصب کن</b><span class="small muted">باز شدن با یک لمس، کار بدون اینترنت${ios() ? ' و روی آیفون، تنها راه گرفتن اعلان‌ها' : ' و اعلان‌های مطمئن‌تر'}.</span></div><div class="row" style="flex-wrap:nowrap"><button class="btn primary" id="p2inst">نصب</button><button class="btn ghost" id="p2later" aria-label="بعداً">بعداً</button></div></div>`;
   }
   function bindInstall() {
     const b = $('#p2inst'); if (!b) return;
     b.onclick = async () => {
       if (deferred) { deferred.prompt(); const r = await deferred.userChoice.catch(() => ({})); deferred = null; if (r.outcome === 'accepted') ls.set('uzhu:install', { done: true }); A.render(); return; }
-      A.modal(`<div class="stack"><h2>نصب اوژو روی آیفون</h2><ol class="p2-steps"><li>این صفحه رو در <b>Safari</b> باز کن.</li><li>دکمه‌ی <b>اشتراک‌گذاری</b> (مربع با فلش رو به بالا) پایین صفحه رو بزن.</li><li>گزینه‌ی <b>Add to Home Screen</b> رو انتخاب کن و <b>Add</b> رو بزن.</li><li>از این به بعد اوژو رو از آیکونش روی صفحه‌ی اصلی باز کن و توی تنظیمات اجازه‌ی اعلان بده.</li></ol></div>`);
+      A.modal(`<div class="stack"><h2>نصب یوژو روی آیفون</h2><ol class="p2-steps"><li>این صفحه رو در <b>Safari</b> باز کن.</li><li>دکمه‌ی <b>اشتراک‌گذاری</b> (مربع با فلش رو به بالا) پایین صفحه رو بزن.</li><li>گزینه‌ی <b>Add to Home Screen</b> رو انتخاب کن و <b>Add</b> رو بزن.</li><li>از این به بعد یوژو رو از آیکونش روی صفحه‌ی اصلی باز کن و توی تنظیمات اجازه‌ی اعلان بده.</li></ol></div>`);
     };
     $('#p2later').onclick = () => { ls.set('uzhu:install', { later: Date.now() }); $('.p2-install')?.remove(); };
   }
   add('homeHero', () => (on('install') && !standalone() && (deferred || ios())) ? `<button class="btn ghost" id="p2inst-h">📲 نصب اپ</button>` : '');
-  add('mount', r => { if (r !== 'home') return; const b = $('#p2inst-h'); if (b) b.onclick = () => { if (deferred) deferred.prompt(); else A.modal('<div class="stack"><h2>نصب اوژو روی آیفون</h2><p>در Safari دکمه‌ی اشتراک‌گذاری رو بزن و «Add to Home Screen» رو انتخاب کن.</p></div>'); }; });
+  add('mount', r => { if (r !== 'home') return; const b = $('#p2inst-h'); if (b) b.onclick = () => { if (deferred) deferred.prompt(); else A.modal('<div class="stack"><h2>نصب یوژو روی آیفون</h2><p>در Safari دکمه‌ی اشتراک‌گذاری رو بزن و «Add to Home Screen» رو انتخاب کن.</p></div>'); }; });
 
   /* ================= 3. sugar diary with a daily budget ================= */
   // Free sugar per usual serving, in grams (estimates from typical Iranian products and USDA/label values).
@@ -84,7 +84,7 @@
     ['شکلات شیری', '۱ تخته‌ی کوچک', 13, 'شیرینی'], ['کیک یزدی یا کیک بسته‌ای', '۱ عدد', 15, 'شیرینی'], ['بیسکویت شیرین', '۳ عدد', 7, 'شیرینی'], ['شیرینی خامه‌ای', '۱ عدد', 15, 'شیرینی'], ['شیرینی خشک یا نخودچی', '۳ عدد', 6, 'شیرینی'],
     ['گز یا سوهان', '۲ تکه', 14, 'شیرینی'], ['باقلوا', '۱ تکه', 12, 'شیرینی'], ['زولبیا و بامیه', '۲ تکه', 20, 'شیرینی'], ['بستنی', '۱ اسکوپ', 14, 'شیرینی'], ['آب‌نبات یا پاستیل', '۱ مشت کوچک', 15, 'شیرینی'],
     ['شله‌زرد یا فرنی شیرین', '۱ کاسه‌ی کوچک', 22, 'دسر'], ['حلوا', '۲ قاشق غذاخوری', 15, 'دسر'], ['ماست میوه‌ای', '۱ عدد', 12, 'دسر'], ['مربا', '۱ قاشق غذاخوری', 10, 'صبحانه'], ['عسل یا شیره', '۱ قاشق غذاخوری', 16, 'صبحانه'],
-    ['کورن‌فلکس شیرین', '۱ کاسه', 12, 'صبحانه'], ['نان شیرمال یا کشمشی', '۱ عدد', 10, 'صبحانه'], ['سس کچاپ', '۱ قاشق غذاخوری', 4, 'غذا'], ['دستور بی‌قند اوژو', '۱ وعده', 0, 'صبحانه'], ['میوه‌ی کامل', '۱ عدد', 0, 'صبحانه'],
+    ['کورن‌فلکس شیرین', '۱ کاسه', 12, 'صبحانه'], ['نان شیرمال یا کشمشی', '۱ عدد', 10, 'صبحانه'], ['سس کچاپ', '۱ قاشق غذاخوری', 4, 'غذا'], ['دستور بی‌قند یوژو', '۱ وعده', 0, 'صبحانه'], ['میوه‌ی کامل', '۱ عدد', 0, 'صبحانه'],
   ];
   const BUDGET = 25, LIMIT = 50; // WHO: free sugars under 10% of energy (~50 g), ideally under 5% (~25 g).
   const sumDay = k => (P().sugar[k] || []).reduce((a, [i, n]) => a + (FOODS[i] ? FOODS[i][2] * n : 0), 0);
@@ -180,7 +180,7 @@
           $('#p2no', el).onclick = close;
           $('#p2ok', el).onclick = async () => { Object.keys(A.D()).forEach(k => delete A.D()[k]); Object.assign(A.D(), j.data); await A.save(); close(); A.toast('اطلاعاتت بازگردانی شد 🌱', null, 'happy'); A.go('today'); };
         });
-      } catch (e) { A.toast('این فایل پشتیبان اوژو نیست یا خراب شده.'); }
+      } catch (e) { A.toast('این فایل پشتیبان یوژو نیست یا خراب شده.'); }
       im.value = '';
     };
   });
@@ -301,8 +301,8 @@
     const row = (k, v) => v == null || v === '' ? '' : `<tr><th>${k}</th><td>${v}</td></tr>`;
     return `<section class="wrap stack p2-report" style="gap:16px;max-width:820px">
       <div class="row no-print" style="justify-content:space-between"><a class="small sl-back" href="#more">→ ابزارها</a><button class="btn primary" id="prt">🖨 چاپ یا ذخیره به PDF</button></div>
-      <div class="card stack" style="gap:12px"><div class="row" style="justify-content:space-between"><h2>گزارش پیشرفت اوژو</h2><span class="small muted">${esc(A.jalali())}</span></div>
-        <p class="small muted">این گزارش از اطلاعاتی ساخته شده که ${esc(A.user.name)} خودش در اوژو (برنامه‌ی کاهش قند افزوده) ثبت کرده. عددها خوداظهاری‌ان و تخمینی.</p>
+      <div class="card stack" style="gap:12px"><div class="row" style="justify-content:space-between"><h2>گزارش پیشرفت یوژو</h2><span class="small muted">${esc(A.jalali())}</span></div>
+        <p class="small muted">این گزارش از اطلاعاتی ساخته شده که ${esc(A.user.name)} خودش در یوژو (برنامه‌ی کاهش قند افزوده) ثبت کرده. عددها خوداظهاری‌ان و تخمینی.</p>
         <table class="p2-rt-table">
           ${row('شروع برنامه', (p.signedAt || s.startedAt) ? esc(A.jalali(new Date((p.signedAt || s.startedAt) + 'T12:00'))) : null)}
           ${row('هدف‌ها', esc((p.goal || []).map(g => goals[g] || g).join('، ')))}
@@ -317,7 +317,7 @@
           ${first ? FIELDS.map(([k, t, u]) => { const f = b.find(x => x[k] != null), l = b.slice().reverse().find(x => x[k] != null); return f ? row(t, f === l ? `${fa(f[k])} ${u}` : `${fa(f[k])} ← ${fa(l[k])} ${u}`) : ''; }).join('') : ''}
         </table>
         ${p.why ? `<p><b>دلیل شخصی:</b> ${esc(p.why)}</p>` : ''}
-        <p class="small muted">اوژو ابزار تغییر عادته و جای تشخیص و درمان پزشکی رو نمی‌گیره.</p></div></section>`;
+        <p class="small muted">یوژو ابزار تغییر عادته و جای تشخیص و درمان پزشکی رو نمی‌گیره.</p></div></section>`;
   };
   A.mounts.report = () => { $('#prt').onclick = () => window.print(); };
 

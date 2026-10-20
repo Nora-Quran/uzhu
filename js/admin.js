@@ -116,7 +116,7 @@
   A.views.admin = () => {
     if (!isAdmin) return `<section class="wrap auth stack"><div class="card">این بخش فقط برای مدیر سایته.</div></section>`;
     return `<section class="wrap stack admin" style="gap:16px">
-      <div class="section-head" style="margin:0"><span class="eyebrow">پنل مدیریت</span><h2>مدیریت اوژو</h2>${STORE.mode === 'local' ? '<p class="small muted">نسخه‌ی آزمایشی: تغییرها و گزارش‌ها فقط مربوط به همین مرورگره. در نسخه‌ی آنلاین، همه‌ی کاربرها رو می‌بینی.</p>' : ''}</div>
+      <div class="section-head" style="margin:0"><span class="eyebrow">پنل مدیریت</span><h2>مدیریت یوژو</h2>${STORE.mode === 'local' ? '<p class="small muted">نسخه‌ی آزمایشی: تغییرها و گزارش‌ها فقط مربوط به همین مرورگره. در نسخه‌ی آنلاین، همه‌ی کاربرها رو می‌بینی.</p>' : ''}</div>
       <div class="filters admin-tabs">${TABS.map(([k, t]) => `<button data-tab="${k}" class="${tab === k ? 'on' : ''}">${t}</button>`).join('')}</div>
       <div id="admin-body">${({ reports: reportsView, users: usersView, content: contentView, settings: settingsView, broadcast: broadcastView })[tab]()}</div>
     </section>`;

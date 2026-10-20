@@ -138,7 +138,7 @@
   A.SWAPS = SWAPS;
   const swapList = () => {
     const base = SWAPS.map(([cat, from, to, note]) => ({ cat, from, to, note }));
-    const extra = (Array.isArray(S().swaps) ? S().swaps : []).filter(x => x && x.from && x.to).map(x => ({ cat: x.cat || 'پیشنهاد اوژو', from: String(x.from), to: String(x.to), note: String(x.note || '') }));
+    const extra = (Array.isArray(S().swaps) ? S().swaps : []).filter(x => x && x.from && x.to).map(x => ({ cat: x.cat || 'پیشنهاد یوژو', from: String(x.from), to: String(x.to), note: String(x.note || '') }));
     return base.concat(extra).map(x => ({ ...x, id: hash(x.from + '>' + x.to) }));
   };
 
@@ -404,7 +404,7 @@
   }
   const grade = sc => sc >= 85 ? 'فوق‌العاده' : sc >= 70 ? 'خیلی خوب' : sc >= 50 ? 'خوب، رو به جلو' : sc >= 30 ? 'شروع خوب' : 'تازه راه افتادی';
   const fmtD = dk => { try { return new Intl.DateTimeFormat('fa-IR-u-ca-persian', { day: 'numeric', month: 'long' }).format(new Date(dk + 'T12:00')); } catch (e) { return fa(dk); } };
-  const scoreText = w => `کارنامه‌ی هفتگی اوژوی من (${fmtD(w.from)} تا ${fmtD(w.to)})\nنمره: ${fa(w.score)} از ۱۰۰، ${grade(w.score)}\n✓ ${w.strengths[0]}\n✓ ${w.strengths[1]}\nبرای هفته‌ی بعد: ${w.tip}\n#اوژو #ترک_قند`;
+  const scoreText = w => `کارنامه‌ی هفتگی یوژوی من (${fmtD(w.from)} تا ${fmtD(w.to)})\nنمره: ${fa(w.score)} از ۱۰۰، ${grade(w.score)}\n✓ ${w.strengths[0]}\n✓ ${w.strengths[1]}\nبرای هفته‌ی بعد: ${w.tip}\n#یوژو #ترک_قند`;
   function scoreRing(sc) {
     const r = 52, C = 2 * Math.PI * r, col = sc >= 70 ? 'var(--mint)' : sc >= 40 ? 'var(--sun)' : 'var(--berry)';
     return `<div class="ring fb-ring"><svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="${r}" fill="none" stroke="var(--surface-2)" stroke-width="12"/><circle cx="60" cy="60" r="${r}" fill="none" stroke="${col}" stroke-width="12" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="${C * (1 - sc / 100)}"/></svg><div class="lbl"><div><b>${fa(sc)}</b><div class="small muted">از ۱۰۰</div></div></div></div>`;
@@ -446,7 +446,7 @@
         $('#fb-scopy', m).onclick = async () => A.toast((await copyText(scoreText(w))) ? 'متن کپی شد.' : 'کپی نشد.', 'bell');
         $('#fb-sshare', m).onclick = async () => {
           try { const blob = await (await fetch(url)).blob(); const file = new File([blob], 'uzhu-score.png', { type: 'image/png' }); if (navigator.canShare && navigator.canShare({ files: [file] })) { await navigator.share({ files: [file], text: scoreText(w) }); return; } } catch (e) { if (e && e.name === 'AbortError') return; }
-          shareText('کارنامه‌ی اوژو', scoreText(w));
+          shareText('کارنامه‌ی یوژو', scoreText(w));
         };
       });
     };
@@ -477,7 +477,7 @@
     x.fillStyle = '#fff1c9'; rr(130, y, 820, 210, 28); x.fill(); x.strokeStyle = '#ffc94d'; x.lineWidth = 4; x.setLineDash([14, 10]); x.stroke(); x.setLineDash([]);
     x.fillStyle = '#2f2340'; x.font = '800 30px Vazirmatn, Tahoma, sans-serif'; x.fillText('هفته‌ی بعد:', 910, y + 55);
     x.font = '600 27px Vazirmatn, Tahoma, sans-serif'; wrap(w.tip.split('.')[0] + '.', 910, y + 100, 740, 42);
-    x.textAlign = 'center'; x.fillStyle = '#2fa877'; x.font = '44px Lalezar, Vazirmatn, Tahoma, sans-serif'; x.fillText('اوژو، ترک قند، قدم‌به‌قدم', 540, 1215);
+    x.textAlign = 'center'; x.fillStyle = '#2fa877'; x.font = '44px Lalezar, Vazirmatn, Tahoma, sans-serif'; x.fillText('یوژو، ترک قند، قدم‌به‌قدم', 540, 1215);
     return c.toDataURL('image/png');
   }
 
@@ -636,7 +636,7 @@
     sh.extra.forEach(n => add(n, 'اقلام من'));
     return AISLES.map(a => ({ a, list: Object.values(items).filter(i => i.aisle === a).sort((x, y) => x.name.localeCompare(y.name, 'fa')) })).filter(g => g.list.length);
   }
-  const shopText = () => { const sh = shop(); return '🛒 لیست خرید بی‌قند این هفته (اوژو)\n' + buildShop().map(g => `\n${AISLE_I[g.a]} ${g.a}\n` + g.list.map(i => `${sh.checked[i.name] ? '✅' : '⬜'} ${i.name}`).join('\n')).join('\n'); };
+  const shopText = () => { const sh = shop(); return '🛒 لیست خرید بی‌قند این هفته (یوژو)\n' + buildShop().map(g => `\n${AISLE_I[g.a]} ${g.a}\n` + g.list.map(i => `${sh.checked[i.name] ? '✅' : '⬜'} ${i.name}`).join('\n')).join('\n'); };
   function shopListHtml() {
     const sh = shop(), groups = buildShop();
     if (!groups.length) return `<div class="card" style="text-align:center"><p class="muted">از بالا چند دستور انتخاب کن تا لیست خریدت خودکار ساخته بشه.</p></div>`;
@@ -665,7 +665,7 @@
     $$('[data-shr]').forEach(i => i.onchange = () => { const sh = shop(); sh.recipes = i.checked ? [...new Set([...sh.recipes, i.dataset.shr])] : sh.recipes.filter(x => x !== i.dataset.shr); i.closest('.fb-pick').classList.toggle('on', i.checked); quietSave(); redraw(); });
     $('#fb-shadd').onsubmit = e => { e.preventDefault(); const v = $('#fb-shin').value.trim(); if (!v) return; const sh = shop(); if (!sh.extra.includes(v)) sh.extra.push(v); $('#fb-shin').value = ''; quietSave(); redraw(); };
     $('#fb-shcopy').onclick = async () => A.toast((await copyText(shopText())) ? 'لیست خرید کپی شد. توی واتس‌اپ یا تلگرام بچسبونش.' : 'کپی نشد.', 'bell');
-    $('#fb-shshare').onclick = () => shareText('لیست خرید اوژو', shopText());
+    $('#fb-shshare').onclick = () => shareText('لیست خرید یوژو', shopText());
     $('#fb-shreset').onclick = async () => { const sh = shop(); sh.recipes = []; sh.checked = {}; sh.extra = []; await A.save(); A.render(); };
   });
   hookAdd('recipesTop', () => { if (!ready() || !on('shopping')) return ''; const n = shop().recipes.length; return `<a class="card row fb-inline-link" href="#shop"><span class="tool-i" aria-hidden="true">🛒</span><span style="min-width:0;flex:1"><b>لیست خرید هفتگی</b><br><span class="small muted">${n ? `${fa(n)} دستور انتخاب شده؛ لیستت آماده‌ست` : 'دستورهای این هفته رو انتخاب کن تا لیست خریدت خودکار ساخته بشه'}</span></span><span aria-hidden="true">←</span></a>`; });

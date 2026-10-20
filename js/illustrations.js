@@ -1,4 +1,4 @@
-/* Uzhu illustrations: the mascot "اوژو" (a cheerful pistachio sprout) and scene art, as inline SVG. */
+/* Uzhu illustrations: the mascot "یوژو" (a cheerful pistachio sprout) and scene art, as inline SVG. */
 (function () {
   const INK = '#3b2a3a';
 
@@ -26,7 +26,7 @@
       : opts.arms === 'wave'
         ? `<path d="M58 130 q-22 6 -26 26" fill="none" stroke="${INK}" stroke-width="7" stroke-linecap="round"/><path d="M142 118 q26 -18 22 -48" fill="none" stroke="${INK}" stroke-width="7" stroke-linecap="round"/><circle cx="164" cy="68" r="9" fill="#7fd1a8" stroke="${INK}" stroke-width="4"/>`
         : `<path d="M58 130 q-22 6 -26 26" fill="none" stroke="${INK}" stroke-width="7" stroke-linecap="round"/><path d="M142 130 q22 6 26 26" fill="none" stroke="${INK}" stroke-width="7" stroke-linecap="round"/>`;
-    return `<svg viewBox="0 0 200 210" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="اوژو">
+    return `<svg viewBox="0 0 200 210" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="یوژو">
       <ellipse cx="100" cy="198" rx="54" ry="8" fill="${INK}" opacity=".12"/>
       ${arms}
       <path d="M100 52 c-10 -22 -34 -30 -50 -24 c8 18 28 28 50 24z" fill="#5cc28f" stroke="${INK}" stroke-width="4.5" stroke-linejoin="round"/>
@@ -45,7 +45,7 @@
 
   // Hero scene: mascot waving goodbye to a grumpy sugar cube, with fruit friends.
   function hero() {
-    return `<svg viewBox="0 0 520 380" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="اوژو با یک حبه‌قند بداخلاق خداحافظی می‌کند">
+    return `<svg viewBox="0 0 520 380" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="یوژو با یک حبه‌قند بداخلاق خداحافظی می‌کند">
       <circle cx="270" cy="200" r="160" fill="var(--blob, #e7f6ee)"/>
       <path d="M60 330 q210 -40 420 0" fill="none" stroke="${INK}" stroke-width="4" stroke-linecap="round" opacity=".25"/>
       <g transform="translate(60 150) rotate(-8)">

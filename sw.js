@@ -1,5 +1,5 @@
 /* Uzhu service worker: offline cache + notification clicks + optional Web Push. */
-const CACHE = 'uzhu-v7';
+const CACHE = 'uzhu-v8';
 const FILES = ['./', 'index.html', 'css/style.css', 'js/config.js', 'js/illustrations.js', 'js/program.js', 'js/recipes.js', 'js/articles.js', 'js/poses.js', 'js/exercise.js', 'js/store.js', 'js/vendor/supabase.js', 'js/features-a.js', 'js/features-b.js', 'js/content-data.js', 'js/content-plus.js', 'js/sleep-data.js', 'js/sleep-sound.js', 'js/sleep.js', 'js/plus2.js', 'js/admin.js', 'js/app.js', 'css/features-a.css', 'css/features-b.css', 'css/admin.css', 'css/content-plus.css', 'css/sleep.css', 'css/plus2.css', 'img/icon.svg', 'manifest.webmanifest'];
 self.addEventListener('install', e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES)).then(() => self.skipWaiting())); });
 self.addEventListener('activate', e => { e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== CACHE).map(k => caches.delete(k)))).then(() => self.clients.claim())); });
@@ -17,7 +17,7 @@ self.addEventListener('fetch', e => {
 });
 self.addEventListener('push', e => {
   let d = {}; try { d = e.data.json(); } catch (_) { d = { body: e.data && e.data.text() }; }
-  e.waitUntil(self.registration.showNotification(d.title || 'اوژو 🌱', { body: d.body || '', icon: 'img/icon.svg', lang: 'fa', dir: 'rtl', data: { url: d.url || './#today' } }));
+  e.waitUntil(self.registration.showNotification(d.title || 'یوژو 🌱', { body: d.body || '', icon: 'img/icon.svg', lang: 'fa', dir: 'rtl', data: { url: d.url || './#today' } }));
 });
 self.addEventListener('notificationclick', e => {
   e.notification.close();

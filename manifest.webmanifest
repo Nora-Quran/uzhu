@@ -1,0 +1,11 @@
+{
+  "name": "اوژو، ترک قند قدم به قدم",
+  "short_name": "اوژو",
+  "lang": "fa",
+  "dir": "rtl",
+  "start_url": "./#today",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#2fa877",
+  "icons": [{ "src": "img/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }]
+}

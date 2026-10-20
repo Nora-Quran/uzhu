@@ -1,0 +1,65 @@
+/* plugin C: content improvements */
+.cp-sbtn { font-size: 1.05rem; }
+.cp-q { font-size: 1.1rem; padding: 14px 16px; }
+.cp-hit { display: flex; gap: 12px; align-items: center; text-align: right; padding: 12px 14px; font: inherit; color: inherit; cursor: pointer; width: 100%; }
+.cp-hit:hover { border-color: var(--mint); }
+.cp-hi { font-size: 1.5rem; flex: none; width: 36px; text-align: center; }
+.cp-faq details summary { cursor: pointer; list-style: none; display: flex; justify-content: space-between; gap: 12px; }
+.cp-faq details summary::after { content: "+"; font-weight: 900; color: var(--mint); font-size: 1.3rem; line-height: 1; }
+.cp-faq details[open] summary::after { content: "–"; }
+.cp-faq details p { margin-top: 10px; color: var(--ink-soft); line-height: 1.9; }
+.cp-gloss { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; }
+.cp-term { text-decoration: underline dotted var(--lav); text-underline-offset: 4px; cursor: help; position: relative; }
+.cp-term:hover::after, .cp-term:focus::after { content: attr(data-def); position: absolute; z-index: 5; inset-inline-start: 0; transform: translateX(var(--tx, 0px)); top: 1.8em; width: min(280px, 70vw); background: var(--ink); color: var(--bg); padding: 10px 12px; border-radius: 12px; font-size: .85rem; line-height: 1.7; font-weight: 400; box-shadow: 0 8px 24px rgba(0,0,0,.18); }
+.cp-art-meta { gap: 6px; }
+.cp-keys { background: var(--mint-soft); border-radius: 16px; padding: 12px 16px; }
+.cp-keys ul { margin: 6px 0 0; padding-inline-start: 20px; line-height: 1.9; }
+.cp-rel { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; }
+.cp-rel button { text-align: right; font: inherit; color: inherit; cursor: pointer; display: flex; flex-direction: column; gap: 4px; }
+.cp-learn-links { gap: 8px; }
+.cp-learn-links a { text-decoration: none; }
+.cp-tags { gap: 6px; }
+.cp-tags button { border: 0; cursor: pointer; font: inherit; font-size: .82rem; font-weight: 700; }
+.recipe { position: relative; }
+.recipe[hidden] { display: none !important; }
+.cp-heart { position: absolute; top: 10px; inset-inline-start: 10px; z-index: 2; width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; background: var(--surface); border: 2px solid var(--line); font-size: 1.1rem; cursor: pointer; }
+.cp-heart.on { border-color: var(--berry); }
+.cp-nut-mini { color: var(--ink-soft); }
+.cp-rbar { gap: 8px; align-items: center; }
+.cp-scale { display: inline-flex; gap: 4px; align-items: center; flex-wrap: wrap; }
+.cp-scale button { border: 0; cursor: pointer; font: inherit; font-size: .82rem; font-weight: 700; }
+.cp-nut { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; background: var(--surface-2); border-radius: 16px; padding: 12px; text-align: center; }
+.cp-nut div { display: flex; flex-direction: column; }
+.cp-nut .num { font-size: 1.35rem; }
+.cp-nut span { font-size: .78rem; color: var(--ink-soft); }
+.cp-nut p { grid-column: 1 / -1; margin: 0; }
+.cp-cook { position: fixed; inset: 0; z-index: 90; background: var(--bg); overflow-y: auto; }
+.cp-cook-in { max-width: 720px; margin: 0 auto; padding: 20px 16px 40px; display: flex; flex-direction: column; gap: 18px; min-height: 100%; }
+.cp-cook-body { flex: 1; display: flex; flex-direction: column; gap: 14px; justify-content: center; text-align: center; }
+.cp-cook-step { font-size: clamp(1.3rem, 4.6vw, 2rem); line-height: 1.8; font-weight: 700; }
+.cp-cook-ing { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; text-align: right; }
+.cp-cook-t { font-family: Lalezar, Vazirmatn, sans-serif; font-size: 3rem; color: var(--berry); min-height: 1em; }
+.cp-goal { border-inline-start: 6px solid var(--sun); }
+.cp-goal button { border: 0; cursor: pointer; font: inherit; font-size: .82rem; font-weight: 700; text-align: right; }
+.cp-take { background: var(--sun-soft); border-radius: 14px; padding: 10px 14px; }
+.cp-take p { margin: 4px 0 0; }
+.cp-plan { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
+.cp-today { outline: 3px solid var(--sun); }
+.cp-meal { display: grid; grid-template-columns: 96px 1fr; gap: 8px; align-items: start; }
+.cp-meal span { font-weight: 800; font-size: .88rem; }
+.cp-meal p { margin: 0; line-height: 1.8; }
+.cp-rl { border: 0; background: none; padding: 0; font: inherit; color: var(--mint); font-weight: 800; text-decoration: underline; cursor: pointer; }
+.cp-foot { gap: 14px; justify-content: center; margin-bottom: 10px; }
+.cp-foot a { color: inherit; font-weight: 700; }
+@media (max-width: 560px) { .cp-nut { grid-template-columns: repeat(2, 1fr); } .cp-meal { grid-template-columns: 1fr; gap: 2px; } }
+@media (max-width: 430px) { .nav { gap: 0; } .nav a { padding: 6px 8px; font-size: .88rem; } }
+
+/* Timer toasts must show above cook mode; confetti above both. */
+.cp-cook ~ .toasts, body:has(.cp-cook) .toasts { z-index: 92; }
+body:has(.cp-cook) .confetti { z-index: 93; }
+.cp-quick { display: none; }
+@media (max-width: 620px) {
+  .topbar:has(.nav.app) .cp-quick { display: flex; gap: 2px; margin-inline-start: auto; }
+  .cp-quick a { text-decoration: none; font-size: 1.15rem; width: 42px; height: 42px; display: grid; place-items: center; border-radius: 999px; }
+  .cp-quick a.on, .cp-quick a:hover { background: var(--surface-2); }
+}

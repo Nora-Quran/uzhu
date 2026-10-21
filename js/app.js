@@ -277,14 +277,17 @@
   function chrome(r) {
     const inApp = user && D().profile;
     const links = inApp
-      ? [['today', 'امروز', '☀️'], ['move', 'ورزش', '🧘'], ['night', 'چک‌لیست شب', '🌙'], ['journey', 'مسیر من', '🌱'], ['more', 'ابزارها', '🧰'], ['recipes', 'دستورها', '🍰'], ['learn', 'علم قند', '📖']]
-      : [['home', 'خانه', '🏠'], ['recipes', 'دستورها', '🍰'], ['learn', 'علم قند', '📖']];
+      ? [['today', 'امروز', '☀️'], ['move', 'ورزش', '🧘'], ['night', 'چک‌لیست شب', '🌙'], ['journey', 'مسیر من', '🌱'], ['more', 'ابزارها', '🧰'], ['recipes', 'رسپی‌ها', '🍰'], ['learn', 'علم قند', '📖']]
+      : [['home', 'خانه', '🏠'], ['recipes', 'رسپی‌ها', '🍰'], ['learn', 'علم قند', '📖']];
     $('#nav').className = 'nav' + (inApp ? ' app' : '');
     $('#nav').innerHTML = links.map(([k, t]) => `<a href="#${k}" class="${r === k ? 'on' : ''}">${t}</a>`).join('') +
       (inApp ? `<a href="#settings" class="${r === 'settings' ? 'on' : ''}" aria-label="تنظیمات">⚙️</a>` : user ? '' : `<a href="#login" class="${r === 'login' ? 'on' : ''}">ورود</a>`);
     const tb = $('#tabbar');
     tb.className = 'tabbar' + (inApp ? ' on' : '');
-    tb.innerHTML = inApp ? links.slice(0, 5).map(([k, t, i]) => `<a href="#${k}" class="${r === k ? 'on' : ''}"><span class="i">${i}</span>${t}</a>`).join('') : '';
+    // Phone tab bar: short labels; sleep only when that section is on.
+    const tabs = [['today', 'امروز', '☀️'], ['night', 'چک‌لیست', '🌙'], ['move', 'ورزش', '🧘'], ['recipes', 'رسپی', '🍰'], views.sleep && A_SITE_ON('sleep') && ['sleep', 'خواب', '😴'], ['journey', 'مسیر من', '🌱'], ['more', 'ابزارها', '🧰']].filter(Boolean);
+    tb.style.setProperty('--tabs', tabs.length);
+    tb.innerHTML = inApp ? tabs.map(([k, t, i]) => `<a href="#${k}" class="${r === k || (k === 'sleep' && /^sleep/.test(r)) ? 'on' : ''}"${r === k ? ' aria-current="page"' : ''}><span class="i">${i}</span>${t}</a>`).join('') : '';
     $('#sos').hidden = !inApp;
   }
 
@@ -300,10 +303,10 @@
         <span class="eyebrow">برنامه‌ی روان‌شناختی ترک قند، قدم به قدم</span>
         <h1>با یوژو، <span class="hl">شیرینی</span> رو آروم‌آروم از زندگیت خداحافظی کن</h1>
         <p class="lead">هر روز یک متن کوتاه برای خوندن، یک مأموریت کوچک، یادآورهای مهربون و یک چک‌لیست شبانه. دوره‌های ۲۱ روزه که پشت هم میان، تا عادت سالم جای ریزه‌خواری و هوس شیرینی رو بگیره.</p>
-        <div class="row"><a class="btn primary big" href="#${user ? 'today' : 'signup'}">${user ? 'برو به برنامه‌ی امروز' : 'رایگان شروع کن'}</a><a class="btn ghost" href="#recipes">دیدن دستورهای بی‌قند</a>${hook('homeHero')}</div>
+        <div class="row"><a class="btn primary big" href="#${user ? 'today' : 'signup'}">${user ? 'برو به برنامه‌ی امروز' : 'رایگان شروع کن'}</a><a class="btn ghost" href="#recipes">دیدن رسپی‌های بی‌قند</a>${hook('homeHero')}</div>
         <div class="trust"><div><b>${fa(PROGRAM.cycles.length * 21 || 63)} روز</b>برنامه‌ی روزبه‌روز</div><div><b>${fa(RECIPES.length || 18)}+</b>کیک و دسر بی‌قند</div><div><b>${fa(4)} بار</b>یادآور در روز</div></div>
       </div>
-      <div class="hero-art">${ART.hero()}</div>
+      <div class="hero-art"><figure class="sb-polaroid">${ART.hero()}<figcaption class="sb-hand sb-only">قدم به قدم، با هم</figcaption></figure></div>
     </section>
     <section class="section wrap">
       <div class="section-head"><span class="eyebrow">چی تو یوژو هست</span><h2>هر چیزی که برای ترک یک عادت سخت لازم داری</h2></div>
@@ -330,7 +333,7 @@
       </div>
     </section>
     ${arts ? `<section class="section wrap"><div class="section-head"><span class="eyebrow">علم قند</span><h2>قند با بدنت چه می‌کنه؟</h2></div><div class="article-list">${arts}</div></section>` : ''}
-    <section class="section wrap"><div class="band"><div class="spot">${ART.mascot('happy', { arms: 'up' })}</div><div class="stack"><h2>امروز روز اوله. فقط یک قدم کوچک.</h2><p class="muted">لازم نیست از فردا همه‌چیز رو کنار بذاری. یوژو آروم و قدم به قدم پیش می‌ره و اگر یک روز لغزیدی، از همون‌جا ادامه می‌دی.</p><div><a class="btn berry big" href="#${user ? 'today' : 'signup'}">شروع دوره‌ی اول</a></div></div></div></section>`;
+    <section class="section wrap"><div class="band"><div class="spot">${ART.mascot('happy', { arms: 'up' })}</div><div class="stack"><p class="sb-hand sb-only sb-sidenote">تو از پسش برمیای!</p><h2>امروز روز اوله. فقط یک قدم کوچک.</h2><p class="muted">لازم نیست از فردا همه‌چیز رو کنار بذاری. یوژو آروم و قدم به قدم پیش می‌ره و اگر یک روز لغزیدی، از همون‌جا ادامه می‌دی.</p><div><a class="btn berry big" href="#${user ? 'today' : 'signup'}">شروع دوره‌ی اول</a></div></div></div></section>`;
   };
   const feature = (spot, t, d) => `<div class="card feature"><div class="spot">${ART.spots[spot]}</div><h3>${t}</h3><p class="muted">${d}</p></div>`;
   mounts.home = () => bindArticles();
@@ -455,7 +458,7 @@
     return `<section class="wrap stack" style="gap:16px">
       ${hook('todayTop')}
       <div class="card pop greet"><div>${ART.mascot(doneToday ? 'happy' : hour >= 21 ? 'sleepy' : 'happy', doneToday ? { arms: 'up' } : {})}</div>
-        <div class="stack" style="gap:4px;min-width:0"><span class="small muted">${esc(jalali())}</span><h2>${hello}، ${esc(user.name)}!</h2><p class="muted">دوره‌ی ${fa(s.cycle)}: ${esc(c.title)}، ${esc(week)}</p></div></div>
+        <div class="stack" style="gap:4px;min-width:0"><span class="small muted sb-date">${esc(jalali())}</span><h2>${hello}، ${esc(user.name)}!</h2><p class="muted">دوره‌ی ${fa(s.cycle)}: ${esc(c.title)}، ${esc(week)}</p></div></div>
       <div class="today-grid">
         <div class="stack">
           <article class="card reading stack">
@@ -466,14 +469,14 @@
           </article>
           <div class="mission stack" style="gap:6px"><b>🎯 مأموریت امروز</b><p>${esc(d.mission)}</p></div>
           ${hook('todayMain')}
-          <div class="card stack" style="gap:6px;background:var(--lav-soft);border-color:transparent"><b>🔬 نکته‌ی علمی</b><p>${esc(d.tip)}</p></div>
-          ${s.profile.ifthen ? `<div class="card stack" style="gap:4px"><b>برنامه‌ی «اگر… آنگاه…» تو</b><p class="muted">اگر هوس شیرینی کردم، آنگاه ${esc(s.profile.ifthen)}</p></div>` : ''}
+          <div class="card stack tip-card" style="gap:6px"><b>🔬 نکته‌ی علمی</b><p>${esc(d.tip)}</p></div>
+          ${s.profile.ifthen ? `<div class="card stack ifthen-card" style="gap:4px"><b>برنامه‌ی «اگر… آنگاه…» تو</b><p class="muted">اگر هوس شیرینی کردم، آنگاه ${esc(s.profile.ifthen)}</p></div>` : ''}
         </div>
         <aside class="stack">
           ${hook('todayAside')}
-          <div class="card row" style="justify-content:space-around">${ring(s.day - (doneToday ? 0 : 1), 21, c.color)}<div style="width:90px">${plant(s.day - (doneToday ? 0 : 1))}</div></div>
+          <div class="card row growth-card" data-cap="نهال من" style="justify-content:space-around">${ring(s.day - (doneToday ? 0 : 1), 21, c.color)}<div style="width:90px">${plant(s.day - (doneToday ? 0 : 1))}</div></div>
           <div class="card stat-row"><div><b class="num">${fa(st.streak)}</b><span class="small muted">روز پیاپی</span></div><div><b class="num">${fa(st.beaten)}</b><span class="small muted">هوسِ شکست‌خورده</span></div><div><b class="num">${fa(st.total)}</b><span class="small muted">روز کامل</span></div></div>
-          <div class="card stack" style="gap:6px"><b>تا الان بهت نخورده</b><p><span class="display" style="font-size:1.6rem">${fa(st.cubes)}</span> حبه‌قند <span class="muted small">(تخمینی)</span></p><p><span class="display" style="font-size:1.6rem">${money(st.toman)}</span> تومان پس‌انداز</p></div>
+          <div class="card stack saved-card" style="gap:6px"><b>تا الان بهت نخورده</b><p><span class="display" style="font-size:1.6rem">${fa(st.cubes)}</span> حبه‌قند <span class="muted small">(تخمینی)</span></p><p><span class="display" style="font-size:1.6rem">${money(st.toman)}</span> تومان پس‌انداز</p></div>
           ${(() => { const ex = exDay(s.cycle, s.day); if (!ex) return ''; const lg = s.move[logKey()] || {}; const n = (lg.walk >= ex.walk) + (lg.breaths >= ex.breath) + !!lg.routine;
             return `<a class="card row move-link" href="#move" style="flex-wrap:nowrap;text-decoration:none;color:inherit"><div style="width:84px;flex:none" data-pose="${esc(ex.routine.moves[0].id)}"></div><div class="stack" style="gap:2px;min-width:0"><b>ورزش امروز، ${fa(n)} از ۳</b><span class="small muted">${fa(ex.walk)} دقیقه پیاده‌روی، ${fa(ex.breath)} نفس شکمی و ${esc(ex.routine.title)}</span></div></a>`; })()}
           <a class="btn ${doneToday ? 'ghost' : 'sun'} big" href="#night">${doneToday ? '✓ چک‌لیست امشب ثبت شد' : '🌙 چک‌لیست آخر شب'}</a>
@@ -711,7 +714,7 @@
   /* tools hub: every extra tool registered by features.js / admin.js */
   views.more = () => `<section class="wrap stack" style="gap:16px">
     <div class="section-head" style="margin:0"><span class="eyebrow">ابزارها</span><h2>هر چیزی که برای این مسیر لازم داری</h2></div>
-    <div class="tools-grid">${[...tools, { route: 'recipes', icon: '🍰', title: 'دستورهای بی‌قند', desc: 'کیک، دسر و میان‌وعده بدون قند افزوده' }, { route: 'learn', icon: '📖', title: 'علم قند', desc: 'مقاله‌های علمی و راهنمای قندهای پنهان' }, { route: 'settings', icon: '⚙️', title: 'تنظیمات', desc: 'یادآورها، سطح برنامه، ظاهر' }].filter(t => !t.show || t.show()).map(t => `<a class="card tool" href="#${t.route}"><span class="tool-i">${t.icon}</span><b>${esc(t.title)}</b><span class="small muted">${esc(t.desc)}</span></a>`).join('')}</div></section>`;
+    <div class="tools-grid">${[...tools, { route: 'recipes', icon: '🍰', title: 'رسپی‌های بی‌قند', desc: 'کیک، دسر و میان‌وعده بدون قند افزوده' }, { route: 'learn', icon: '📖', title: 'علم قند', desc: 'مقاله‌های علمی و راهنمای قندهای پنهان' }, { route: 'settings', icon: '⚙️', title: 'تنظیمات', desc: 'یادآورها، سطح برنامه، ظاهر' }].filter(t => !t.show || t.show()).map(t => `<a class="card tool" href="#${t.route}"><span class="tool-i">${t.icon}</span><b>${esc(t.title)}</b><span class="small muted">${esc(t.desc)}</span></a>`).join('')}</div></section>`;
 
   /* recipes */
   let recipeCat = 'همه';
@@ -719,10 +722,10 @@
     const cats = ['همه', ...new Set(RECIPES.map(r => r.category))];
     const list = RECIPES.filter(r => recipeCat === 'همه' || r.category === recipeCat);
     return `<section class="wrap stack" style="gap:18px">
-      <div class="section-head" style="margin:0"><span class="eyebrow">خوراکی‌های بی‌قند</span><h2>کیک، دسر و میان‌وعده، بدون قند افزوده</h2><p class="muted">شیرینی این دستورها از میوه، خرما (به اندازه)، دارچین، وانیل و کاکائو میاد. همه‌ی مواد در ایران پیدا می‌شن.</p></div>
+      <div class="section-head" style="margin:0"><span class="eyebrow">خوراکی‌های بی‌قند</span><h2>کیک، دسر و میان‌وعده، بدون قند افزوده</h2><p class="muted">شیرینی این رسپی‌ها از میوه، خرما (به اندازه)، دارچین، وانیل و کاکائو میاد. همه‌ی مواد در ایران پیدا می‌شن.</p></div>
       ${hook('recipesTop')}
       <div class="filters" role="tablist">${cats.map(c => `<button data-c="${esc(c)}" class="${c === recipeCat ? 'on' : ''}">${esc(c)}</button>`).join('')}</div>
-      ${list.length ? `<div class="recipe-grid">${list.map(r => `<button class="card recipe" data-r="${esc(r.id)}"><div class="art">${r.svg}</div><div class="body"><span class="chip mint" style="align-self:flex-start">${esc(r.category)}</span><h3>${esc(r.title)}</h3><span class="small muted">⏱ ${esc(r.time)}، ${esc(r.difficulty)}</span></div></button>`).join('')}</div>` : '<div class="card">دستورها به‌زودی اضافه می‌شن.</div>'}
+      ${list.length ? `<div class="recipe-grid">${list.map(r => `<button class="card recipe" data-r="${esc(r.id)}"><div class="art">${r.svg}</div><div class="body"><span class="chip mint" style="align-self:flex-start">${esc(r.category)}</span><h3>${esc(r.title)}</h3><span class="small muted">⏱ ${esc(r.time)}، ${esc(r.difficulty)}</span></div></button>`).join('')}</div>` : '<div class="card">رسپی‌ها به‌زودی اضافه می‌شن.</div>'}
     </section>`;
   };
   mounts.recipes = () => {

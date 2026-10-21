@@ -85,7 +85,7 @@
     ['صبحانه', 'نون و مربا', 'نون و پنیر و گردو با خیار', 'صبحانه‌ی پروتئینی یعنی ولع کمتر تا ظهر.'],
     ['صبحانه', 'نون و کره و عسل', 'نون سبوس‌دار با کره‌ی بادام‌زمینی بی‌شکر و برش موز', 'شیرینی از موز میاد.'],
     ['صبحانه', 'حلوا ارده‌ی شیرین', 'ارده‌ی خالص با کمی دارچین', 'طعم کنجد همونه، قندش نه.'],
-    ['صبحانه', 'کورن‌فلکس شکری', 'جو دوسر پرک با سیب رنده و دارچین', 'دستور «اوتمیل دارچینی» رو ببین.'],
+    ['صبحانه', 'کورن‌فلکس شکری', 'جو دوسر پرک با سیب رنده و دارچین', 'رسپی «اوتمیل دارچینی» رو ببین.'],
     ['صبحانه', 'نون شیرمال', 'نون سنگک یا بربری سبوس‌دار', 'اگه دلت شیرمال خواست، یه تیکه کوچیک کنار پنیر.'],
     ['صبحانه', 'کیک یزدی صبحانه', 'پنکیک موز و تخم‌مرغ', 'سه قلم مواد، ده دقیقه وقت.'],
     ['صبحانه', 'ماست میوه‌ای', 'ماست ساده با توت‌فرنگی تازه', 'ماست میوه‌ای ۳ تا ۴ حبه قند افزوده داره.'],
@@ -104,7 +104,7 @@
     ['میان‌وعده', 'تخمه‌ی شور با نوشابه', 'تخمه‌ی کدو با یک لیوان آب', 'برای شب فیلم.'],
     ['دسر', 'بستنی', 'بستنی موزی دو رنگ', 'موز یخ‌زده + کاکائو؛ بافتش واقعاً بستنیه.'],
     ['دسر', 'ژله‌ی پودری', 'ژله‌ی آب‌میوه‌ی طبیعی', 'با ژلاتین ساده و آب انار یا پرتقال.'],
-    ['دسر', 'فرنی شیرین', 'فرنی با خرما، گلاب و هل', 'دستورش توی بخش دستورها هست.'],
+    ['دسر', 'فرنی شیرین', 'فرنی با خرما، گلاب و هل', 'رسپی‌اش توی بخش رسپی‌ها هست.'],
     ['دسر', 'شیربرنج پرشکر', 'شیربرنج با دارچین و کمی خرمای له‌شده', 'دارچین رو بیشتر کن، شکر رو نه.'],
     ['دسر', 'کیک خامه‌ای', 'کیک هویج و گردو با روکش ماست', 'روکش ماست یونانی جای خامه‌ی شیرین.'],
     ['دسر', 'شله‌زرد پرشکر', 'شله‌زرد با نصف شکر و زعفران بیشتر، در کاسه‌ی کوچیک', 'عطر زعفران کمبود شیرینی رو جبران می‌کنه.'],
@@ -639,7 +639,7 @@
   const shopText = () => { const sh = shop(); return '🛒 لیست خرید بی‌قند این هفته (یوژو)\n' + buildShop().map(g => `\n${AISLE_I[g.a]} ${g.a}\n` + g.list.map(i => `${sh.checked[i.name] ? '✅' : '⬜'} ${i.name}`).join('\n')).join('\n'); };
   function shopListHtml() {
     const sh = shop(), groups = buildShop();
-    if (!groups.length) return `<div class="card" style="text-align:center"><p class="muted">از بالا چند دستور انتخاب کن تا لیست خریدت خودکار ساخته بشه.</p></div>`;
+    if (!groups.length) return `<div class="card" style="text-align:center"><p class="muted">از بالا چند رسپی انتخاب کن تا لیست خریدت خودکار ساخته بشه.</p></div>`;
     const total = groups.reduce((a, g) => a + g.list.length, 0), done = groups.reduce((a, g) => a + g.list.filter(i => sh.checked[i.name]).length, 0);
     return `<div class="card stack" style="gap:6px"><div class="row" style="justify-content:space-between"><b>${fa(done)} از ${fa(total)} قلم خریده شد</b><button class="fb-link small" id="fb-shclr" type="button">پاک کردن تیک‌ها</button></div><div class="progress"><i style="width:${total ? done / total * 100 : 0}%"></i></div></div>
       ${groups.map(g => `<div class="card stack" style="gap:8px"><b>${AISLE_I[g.a]} ${g.a}</b>${g.list.map(i => `<label class="check fb-shop-item"><input type="checkbox" data-shi="${esc(i.name)}" ${sh.checked[i.name] ? 'checked' : ''}><span style="min-width:0;flex:1">${esc(i.name)}${i.from.length ? `<br><span class="small muted">${i.from.map(esc).join('، ')}</span>` : ''}</span>${g.a === 'اقلام من' ? `<button type="button" class="fb-link small" data-shx="${esc(i.name)}" aria-label="حذف ${esc(i.name)}">✕</button>` : ''}</label>`).join('')}</div>`).join('')}`;
@@ -647,8 +647,8 @@
   page('shop', 'shopping', 'لیست خرید هفتگی', () => {
     const sh = shop();
     return `<section class="wrap stack" style="gap:16px;max-width:820px">
-      ${head('لیست خرید هفتگی', 'خونه‌ی بی‌شیرینی از سبد خرید شروع می‌شه', 'دستورهای این هفته‌ات رو انتخاب کن؛ مواد لازم ادغام می‌شن و بر اساس قفسه‌ی فروشگاه دسته‌بندی می‌شن.')}
-      <div class="card stack" style="gap:10px"><b>دستورهای این هفته</b><div class="fb-recipe-pick">${A.RECIPES.map(r => `<label class="fb-pick ${sh.recipes.includes(r.id) ? 'on' : ''}"><input type="checkbox" data-shr="${esc(r.id)}" ${sh.recipes.includes(r.id) ? 'checked' : ''}><span>${esc(r.title)}</span></label>`).join('')}</div></div>
+      ${head('لیست خرید هفتگی', 'خونه‌ی بی‌شیرینی از سبد خرید شروع می‌شه', 'رسپی‌های این هفته‌ات رو انتخاب کن؛ مواد لازم ادغام می‌شن و بر اساس قفسه‌ی فروشگاه دسته‌بندی می‌شن.')}
+      <div class="card stack" style="gap:10px"><b>رسپی‌های این هفته</b><div class="fb-recipe-pick">${A.RECIPES.map(r => `<label class="fb-pick ${sh.recipes.includes(r.id) ? 'on' : ''}"><input type="checkbox" data-shr="${esc(r.id)}" ${sh.recipes.includes(r.id) ? 'checked' : ''}><span>${esc(r.title)}</span></label>`).join('')}</div></div>
       <form class="row" id="fb-shadd" style="flex-wrap:nowrap"><input class="input" id="fb-shin" placeholder="یه قلم دیگه، مثلاً «پنیر»" maxlength="40" aria-label="قلم دلخواه"><button class="btn" type="submit">افزودن</button></form>
       <div class="stack" id="fb-shl" style="gap:12px">${shopListHtml()}</div>
       <div class="row"><button class="btn primary" id="fb-shcopy">📋 کپی لیست</button><button class="btn ghost" id="fb-shshare">↗ فرستادن</button><button class="btn ghost" id="fb-shreset">خالی کردن لیست</button></div>
@@ -668,7 +668,7 @@
     $('#fb-shshare').onclick = () => shareText('لیست خرید یوژو', shopText());
     $('#fb-shreset').onclick = async () => { const sh = shop(); sh.recipes = []; sh.checked = {}; sh.extra = []; await A.save(); A.render(); };
   });
-  hookAdd('recipesTop', () => { if (!ready() || !on('shopping')) return ''; const n = shop().recipes.length; return `<a class="card row fb-inline-link" href="#shop"><span class="tool-i" aria-hidden="true">🛒</span><span style="min-width:0;flex:1"><b>لیست خرید هفتگی</b><br><span class="small muted">${n ? `${fa(n)} دستور انتخاب شده؛ لیستت آماده‌ست` : 'دستورهای این هفته رو انتخاب کن تا لیست خریدت خودکار ساخته بشه'}</span></span><span aria-hidden="true">←</span></a>`; });
+  hookAdd('recipesTop', () => { if (!ready() || !on('shopping')) return ''; const n = shop().recipes.length; return `<a class="card row fb-inline-link" href="#shop"><span class="tool-i" aria-hidden="true">🛒</span><span style="min-width:0;flex:1"><b>لیست خرید هفتگی</b><br><span class="small muted">${n ? `${fa(n)} رسپی انتخاب شده؛ لیستت آماده‌ست` : 'رسپی‌های این هفته رو انتخاب کن تا لیست خریدت خودکار ساخته بشه'}</span></span><span aria-hidden="true">←</span></a>`; });
 
   /* ==========================================================================================
      23. PLATE PHOTO DIARY  (images in IndexedDB, metadata in A.D().fb_plates)
@@ -1001,7 +1001,7 @@
     const O = OCC[e.kind] || OCC.custom;
     const recs = O.r.map(id => A.RECIPES.find(r => r.id === id)).filter(Boolean);
     return `<div class="stack" style="gap:10px"><p class="small">${O.prep}</p>
-      <div class="stack" style="gap:6px"><b class="small">🍰 دستورهای جایگزین</b><div class="row" style="gap:6px">${recs.map(r => `<button type="button" class="chip mint fb-chip" data-rec="${esc(r.id)}">${esc(r.title)}</button>`).join('')}</div></div>
+      <div class="stack" style="gap:6px"><b class="small">🍰 رسپی‌های جایگزین</b><div class="row" style="gap:6px">${recs.map(r => `<button type="button" class="chip mint fb-chip" data-rec="${esc(r.id)}">${esc(r.title)}</button>`).join('')}</div></div>
       ${full ? `<div class="stack" style="gap:6px"><b class="small">💬 جمله‌های آماده برای تعارف</b>${O.taarof.map(t => `<div class="fb-quote small">${t}</div>`).join('')}</div>` : `<div class="fb-quote small">${O.taarof[0]}</div>`}
       <div class="mission small"><b>اگر… آنگاه…</b> ${O.plan}</div></div>`;
   }
@@ -1139,7 +1139,7 @@
     ['assess', '📊', 'ارزیابی دوره‌ای', 'هوس، انرژی، خواب و… در روز ۰، ۲۱، ۴۲ و ۶۳', 'assess'],
     ['swaps', '🔁', 'جایگزین‌یاب', 'برای هر خوراکی شیرین، یک جایگزین ایرانی', 'swaps'],
     ['label', '🧮', 'ماشین‌حساب برچسب', 'چند حبه‌قند؟ با چراغ راهنمای قند', 'labelcalc'],
-    ['shop', '🛒', 'لیست خرید هفتگی', 'از دستورها، دسته‌بندی‌شده بر اساس قفسه', 'shopping'],
+    ['shop', '🛒', 'لیست خرید هفتگی', 'از رسپی‌ها، دسته‌بندی‌شده بر اساس قفسه', 'shopping'],
     ['plate', '📷', 'دفترچه‌ی بشقاب', 'عکس وعده با برچسب سبز، زرد و قرمز', 'plate'],
     ['builder', '🛠️', 'تمرین‌ساز', 'جلسه‌ی یوگا و پیلاتس به اندازه‌ی وقتت', 'builder'],
     ['lazy', '🛋️', 'جلسه‌ی تنبل', '۵ دقیقه روی تخت، صندلی یا کنار دیوار', 'lazy'],

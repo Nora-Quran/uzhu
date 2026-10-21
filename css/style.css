@@ -216,7 +216,7 @@ ul.ing { padding-inline-start: 1.2em; margin: 0; }
 @media (max-width: 620px) {
   .features, .cycles, .steps-line { grid-template-columns: 1fr; }
   .nav.app { display: none; }
-  .tabbar.on { display: grid; grid-template-columns: repeat(5, 1fr); position: fixed; inset: auto 0 0 0; z-index: 25; background: var(--surface); border-top: 2px solid var(--line); padding: 6px max(8px, env(safe-area-inset-right, 0px)) calc(6px + env(safe-area-inset-bottom, 0px)) max(8px, env(safe-area-inset-left, 0px)); }
+  .tabbar.on { display: grid; grid-template-columns: repeat(var(--tabs, 5), 1fr); position: fixed; inset: auto 0 0 0; z-index: 25; background: var(--surface); border-top: 2px solid var(--line); padding: 6px max(8px, env(safe-area-inset-right, 0px)) calc(6px + env(safe-area-inset-bottom, 0px)) max(8px, env(safe-area-inset-left, 0px)); }
   .tabbar a { text-decoration: none; color: var(--ink-soft); display: flex; flex-direction: column; align-items: center; font-size: .72rem; font-weight: 700; line-height: 1.4; padding: 4px 0; border-radius: 12px; }
   .tabbar a .i { font-size: 1.3rem; }
   .tabbar a.on { color: var(--ink); background: var(--surface-2); }
@@ -257,3 +257,5 @@ ul.ing { padding-inline-start: 1.2em; margin: 0; }
 .rem-list summary::after { content: "▾"; margin-inline-start: auto; color: var(--ink-soft); }
 .rem-list[open] summary { margin-bottom: 8px; }
 .rem-list .row + .row { margin-top: 6px; }
+
+@media (max-width: 620px) { .tabbar.on { padding-inline: max(4px, env(safe-area-inset-right, 0px)); gap: 2px; } .tabbar a { font-size: .66rem; white-space: nowrap; letter-spacing: -.01em; } .tabbar a .i { font-size: 1.2rem; } }

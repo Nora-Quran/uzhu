@@ -1,48 +1,6 @@
-/* Night checklist "paper planner" themes (js/night-theme.js). Everything is scoped to .nt-view, which the plugin adds
-   to the night page's .view, with data-nt="<theme>". Each theme sets a palette + table pattern; light paper by
-   default, a warm dim paper in dark mode. */
-.nt-view {
-  --nt-paper: #fffaf0; --nt-paper2: #f6ecda; --nt-ink: #4a3a32; --nt-ink2: #75625a; --nt-rule: rgba(150, 112, 88, .3);
-  --nt-shadow: rgba(92, 60, 38, .22); --nt-tapeo: .82;
-  --nt-bgc: var(--nt-base); --nt-patc: var(--nt-pat); --nt-notec1: var(--nt-note1); --nt-notec2: var(--nt-note2); --nt-notec3: var(--nt-note3);
-  --nt-labelc: #fffdf8; --nt-acc: var(--nt-accent); --nt-deepc: var(--nt-deep); --nt-btnc: var(--nt-deep); --nt-btnt: #fff;
-  --nt-hand: "Gulzar", "Lalezar", "Vazirmatn", serif;
-  --nt-noise: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .45 0 0 0 0 .33 0 0 0 0 .22 0 0 0 .11 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  background: var(--nt-bgimg), var(--nt-bgc);
-  margin-block: -24px -120px; padding-block: 8px 150px; overflow: hidden;
-  /* patterns used by the themes */
-  --nt-gingham: linear-gradient(90deg, var(--nt-patc) 50%, transparent 0) 0 0 / 32px 32px, linear-gradient(var(--nt-patc) 50%, transparent 0) 0 0 / 32px 32px;
-  --nt-dots: radial-gradient(circle, var(--nt-patc) 2.6px, transparent 3.2px) 0 0 / 28px 28px, radial-gradient(circle, var(--nt-patc) 1.6px, transparent 2.2px) 14px 14px / 28px 28px;
-  --nt-stripes: repeating-linear-gradient(90deg, var(--nt-patc) 0 18px, transparent 18px 36px);
-  --nt-diag: repeating-linear-gradient(45deg, var(--nt-patc) 0 12px, transparent 12px 26px);
-}
-.nt-view[data-nt="autumn"] { --nt-base: #efe1ca; --nt-pat: rgba(186, 140, 98, .2); --nt-bgimg: var(--nt-gingham); --nt-accent: #d9774f; --nt-accent2: #e0a23a; --nt-deep: #a3482a; --nt-note1: #f8dcc2; --nt-note2: #f5e6b8; --nt-note3: #e2e8cc; --nt-tape: #e79aa6; --nt-tape2: #f2c4ca; }
-.nt-view[data-nt="winter"] { --nt-base: #e2ecf4; --nt-pat: rgba(105, 150, 196, .22); --nt-bgimg: var(--nt-dots); --nt-accent: #5b93c4; --nt-accent2: #b39ddf; --nt-deep: #2f5f8a; --nt-note1: #dcebf7; --nt-note2: #ebe4fa; --nt-note3: #f7e4e8; --nt-tape: #8fc0e6; --nt-tape2: #cfe4f5; }
-.nt-view[data-nt="spring"] { --nt-base: #edf5e2; --nt-pat: rgba(231, 154, 166, .26); --nt-bgimg: radial-gradient(circle, var(--nt-patc) 3px, transparent 3.6px) 0 0 / 34px 34px, radial-gradient(circle, rgba(147, 187, 133, .3) 2px, transparent 2.6px) 17px 17px / 34px 34px; --nt-accent: #d9667f; --nt-accent2: #93bb85; --nt-deep: #a3405b; --nt-note1: #fde2ea; --nt-note2: #e5f1d8; --nt-note3: #fff2c6; --nt-tape: #93bb85; --nt-tape2: #cfe3c4; }
-.nt-view[data-nt="summer"] { --nt-base: #fcf0cc; --nt-pat: rgba(243, 172, 76, .2); --nt-bgimg: var(--nt-stripes); --nt-accent: #ee8a35; --nt-accent2: #8fc0e6; --nt-deep: #a3530f; --nt-note1: #fff1bf; --nt-note2: #ffdfcb; --nt-note3: #d6eee4; --nt-tape: #8fc0e6; --nt-tape2: #cfe6f6; }
-.nt-view[data-nt="nowruz"] { --nt-base: #e5f3e2; --nt-pat: rgba(95, 165, 95, .18); --nt-bgimg: var(--nt-gingham); --nt-accent: #3f9a5c; --nt-accent2: #e79aa6; --nt-deep: #2a6d41; --nt-note1: #dff1db; --nt-note2: #fde2ea; --nt-note3: #fff1c4; --nt-tape: #d9473f; --nt-tape2: #f2b7b2; }
-.nt-view[data-nt="yalda"] { --nt-base: #f2d9d5; --nt-pat: rgba(176, 44, 60, .14); --nt-bgimg: var(--nt-gingham); --nt-accent: #c8384a; --nt-accent2: #e2b043; --nt-deep: #8f1f30; --nt-note1: #f8d9d5; --nt-note2: #f5e4b8; --nt-note3: #e9d6e8; --nt-tape: #c8384a; --nt-tape2: #eba0a8; }
-.nt-view[data-nt="ramadan"] { --nt-base: #e3e2f2; --nt-pat: rgba(214, 166, 58, .4); --nt-bgimg: radial-gradient(circle, var(--nt-patc) 1.8px, transparent 2.4px) 0 0 / 30px 30px, radial-gradient(circle, rgba(90, 100, 170, .22) 1.2px, transparent 1.8px) 15px 15px / 30px 30px; --nt-accent: #4a62a8; --nt-accent2: #e2b043; --nt-deep: #2e3f6e; --nt-note1: #e3e7f7; --nt-note2: #faeec6; --nt-note3: #dbeee8; --nt-tape: #e2b043; --nt-tape2: #f5dc96; }
-.nt-view[data-nt="suri"] { --nt-base: #fbe4cf; --nt-pat: rgba(228, 104, 44, .14); --nt-bgimg: var(--nt-diag); --nt-accent: #e2672f; --nt-accent2: #f3c33f; --nt-deep: #9c3a12; --nt-note1: #fde0c6; --nt-note2: #fff0bd; --nt-note3: #f6d8d6; --nt-tape: #f3a03f; --nt-tape2: #f9d79a; }
-.nt-view[data-nt="sizdah"] { --nt-base: #e6f4e8; --nt-pat: rgba(110, 170, 200, .22); --nt-bgimg: var(--nt-dots); --nt-accent: #4fa36d; --nt-accent2: #8fc0e6; --nt-deep: #2a6d43; --nt-note1: #daf0de; --nt-note2: #dcedfa; --nt-note3: #fde4ea; --nt-tape: #8fc0e6; --nt-tape2: #d3e8f7; }
-
-/* cozy dim version: warm dark paper on a deep tinted table */
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) .nt-view {
-    --nt-paper: #2d2620; --nt-paper2: #362d26; --nt-ink: #f1e5d6; --nt-ink2: #cdbba9; --nt-rule: rgba(240, 214, 186, .16); --nt-shadow: rgba(0, 0, 0, .5); --nt-tapeo: .6;
-    --nt-bgc: color-mix(in srgb, var(--nt-accent) 9%, #17120f); --nt-patc: color-mix(in srgb, var(--nt-accent) 6%, transparent);
-    --nt-notec1: color-mix(in srgb, var(--nt-note1) 16%, #2f2822); --nt-notec2: color-mix(in srgb, var(--nt-note2) 16%, #2f2822); --nt-notec3: color-mix(in srgb, var(--nt-note3) 16%, #2f2822);
-    --nt-labelc: #3a3029; --nt-acc: color-mix(in srgb, var(--nt-accent) 72%, #fff); --nt-deepc: color-mix(in srgb, var(--nt-accent) 55%, #fff); --nt-btnc: color-mix(in srgb, var(--nt-accent) 70%, #fff); --nt-btnt: #1d1611;
-    --nt-noise: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 .9 0 0 0 0 .8 0 0 0 .06 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  }
-}
-:root[data-theme="dark"] .nt-view {
-  --nt-paper: #2d2620; --nt-paper2: #362d26; --nt-ink: #f1e5d6; --nt-ink2: #cdbba9; --nt-rule: rgba(240, 214, 186, .16); --nt-shadow: rgba(0, 0, 0, .5); --nt-tapeo: .6;
-  --nt-bgc: color-mix(in srgb, var(--nt-accent) 9%, #17120f); --nt-patc: color-mix(in srgb, var(--nt-accent) 6%, transparent);
-  --nt-notec1: color-mix(in srgb, var(--nt-note1) 16%, #2f2822); --nt-notec2: color-mix(in srgb, var(--nt-note2) 16%, #2f2822); --nt-notec3: color-mix(in srgb, var(--nt-note3) 16%, #2f2822);
-  --nt-labelc: #3a3029; --nt-acc: color-mix(in srgb, var(--nt-accent) 72%, #fff); --nt-deepc: color-mix(in srgb, var(--nt-accent) 55%, #fff); --nt-btnc: color-mix(in srgb, var(--nt-accent) 70%, #fff); --nt-btnt: #1d1611;
-  --nt-noise: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 .9 0 0 0 0 .8 0 0 0 .06 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-}
+/* Night checklist "paper planner" layout (js/night-theme.js). Scoped to .nt-view, which the plugin adds to the night
+   page's .view, with data-nt="<theme>". The theme palettes (--nt-*) live in css/theme.css, shared with the whole app. */
+.nt-view { background: var(--nt-bgimg), var(--nt-bgc); margin-block: -24px -120px; padding-block: 8px 150px; overflow: hidden; }
 
 /* ---------- the paper sheet ---------- */
 .nt-view .nt-paper {

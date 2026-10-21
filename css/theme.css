@@ -1,12 +1,282 @@
-/* Pastel watercolor-paper page background. js/theme.js sets body[data-pal] (from the section, or the user's pick in
-   Settings) and body[data-topic]. Each palette has a light set (--p0 page, --p1/--p2 pigment blooms) and a deep muted
-   dark set (--d0/--d1/--d2). Cards keep their opaque surface color, so text contrast is unchanged. */
+/* App theme (js/theme.js). Two looks:
+   1. body[data-season="<theme>"]: the seasonal/occasion "paper planner" look for the whole app: a patterned table,
+      every page's top-level .wrap becomes a torn cream paper sheet, cards are pasted notes, washi tape, dashed tip boxes,
+      handwritten notes (Gulzar) and watercolor drawings (.ss-x, added by js/theme.js). Palettes (--nt-*) are shared
+      with the night page (css/night-theme.css). App color tokens are remapped so every plugin follows the theme.
+   2. body[data-pal="<palette>"]: the plain pastel watercolor-paper background («ساده»).
+   Text contrast: ink #4a3a32 / #75625a on paper #fffaf0 and notes stays above 4.5:1; dark mode uses warm dim paper. */
+body[data-season], .nt-view {
+  --nt-paper: #fffaf0; --nt-paper2: #f6ecda; --nt-ink: #4a3a32; --nt-ink2: #75625a; --nt-rule: rgba(150, 112, 88, .3);
+  --nt-shadow: rgba(92, 60, 38, .22); --nt-tapeo: .82;
+  --nt-bgc: var(--nt-base); --nt-patc: var(--nt-pat); --nt-notec1: var(--nt-note1); --nt-notec2: var(--nt-note2); --nt-notec3: var(--nt-note3);
+  --nt-labelc: #fffdf8; --nt-acc: var(--nt-accent); --nt-deepc: var(--nt-deep); --nt-btnc: var(--nt-deep); --nt-btnt: #fff;
+  --nt-hand: "Gulzar", "Lalezar", "Vazirmatn", serif;
+  --nt-noise: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .45 0 0 0 0 .33 0 0 0 0 .22 0 0 0 .11 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  /* patterns used by the themes */
+  --nt-gingham: linear-gradient(90deg, var(--nt-patc) 50%, transparent 0) 0 0 / 32px 32px, linear-gradient(var(--nt-patc) 50%, transparent 0) 0 0 / 32px 32px;
+  --nt-dots: radial-gradient(circle, var(--nt-patc) 2.6px, transparent 3.2px) 0 0 / 28px 28px, radial-gradient(circle, var(--nt-patc) 1.6px, transparent 2.2px) 14px 14px / 28px 28px;
+  --nt-stripes: repeating-linear-gradient(90deg, var(--nt-patc) 0 18px, transparent 18px 36px);
+  --nt-diag: repeating-linear-gradient(45deg, var(--nt-patc) 0 12px, transparent 12px 26px);
+}
+body[data-season="autumn"], .nt-view[data-nt="autumn"] { --nt-deep2: #9b3f57; --nt-base: #efe1ca; --nt-pat: rgba(186, 140, 98, .2); --nt-bgimg: var(--nt-gingham); --nt-accent: #d9774f; --nt-accent2: #e0a23a; --nt-deep: #a3482a; --nt-note1: #f8dcc2; --nt-note2: #f5e6b8; --nt-note3: #e2e8cc; --nt-tape: #e79aa6; --nt-tape2: #f2c4ca; }
+body[data-season="winter"], .nt-view[data-nt="winter"] { --nt-deep2: #6a4f9c; --nt-base: #e2ecf4; --nt-pat: rgba(105, 150, 196, .22); --nt-bgimg: var(--nt-dots); --nt-accent: #5b93c4; --nt-accent2: #b39ddf; --nt-deep: #2f5f8a; --nt-note1: #dcebf7; --nt-note2: #ebe4fa; --nt-note3: #f7e4e8; --nt-tape: #8fc0e6; --nt-tape2: #cfe4f5; }
+body[data-season="spring"], .nt-view[data-nt="spring"] { --nt-deep2: #3b7344; --nt-base: #edf5e2; --nt-pat: rgba(231, 154, 166, .26); --nt-bgimg: radial-gradient(circle, var(--nt-patc) 3px, transparent 3.6px) 0 0 / 34px 34px, radial-gradient(circle, rgba(147, 187, 133, .3) 2px, transparent 2.6px) 17px 17px / 34px 34px; --nt-accent: #d9667f; --nt-accent2: #93bb85; --nt-deep: #a3405b; --nt-note1: #fde2ea; --nt-note2: #e5f1d8; --nt-note3: #fff2c6; --nt-tape: #93bb85; --nt-tape2: #cfe3c4; }
+body[data-season="summer"], .nt-view[data-nt="summer"] { --nt-deep2: #2c6890; --nt-base: #fcf0cc; --nt-pat: rgba(243, 172, 76, .2); --nt-bgimg: var(--nt-stripes); --nt-accent: #ee8a35; --nt-accent2: #8fc0e6; --nt-deep: #a3530f; --nt-note1: #fff1bf; --nt-note2: #ffdfcb; --nt-note3: #d6eee4; --nt-tape: #8fc0e6; --nt-tape2: #cfe6f6; }
+body[data-season="nowruz"], .nt-view[data-nt="nowruz"] { --nt-deep2: #b0353a; --nt-base: #e5f3e2; --nt-pat: rgba(95, 165, 95, .18); --nt-bgimg: var(--nt-gingham); --nt-accent: #3f9a5c; --nt-accent2: #e79aa6; --nt-deep: #2a6d41; --nt-note1: #dff1db; --nt-note2: #fde2ea; --nt-note3: #fff1c4; --nt-tape: #d9473f; --nt-tape2: #f2b7b2; }
+body[data-season="yalda"], .nt-view[data-nt="yalda"] { --nt-deep2: #2f6b45; --nt-base: #f2d9d5; --nt-pat: rgba(176, 44, 60, .14); --nt-bgimg: var(--nt-gingham); --nt-accent: #c8384a; --nt-accent2: #e2b043; --nt-deep: #8f1f30; --nt-note1: #f8d9d5; --nt-note2: #f5e4b8; --nt-note3: #e9d6e8; --nt-tape: #c8384a; --nt-tape2: #eba0a8; }
+body[data-season="ramadan"], .nt-view[data-nt="ramadan"] { --nt-deep2: #80590c; --nt-base: #e3e2f2; --nt-pat: rgba(214, 166, 58, .4); --nt-bgimg: radial-gradient(circle, var(--nt-patc) 1.8px, transparent 2.4px) 0 0 / 30px 30px, radial-gradient(circle, rgba(90, 100, 170, .22) 1.2px, transparent 1.8px) 15px 15px / 30px 30px; --nt-accent: #4a62a8; --nt-accent2: #e2b043; --nt-deep: #2e3f6e; --nt-note1: #e3e7f7; --nt-note2: #faeec6; --nt-note3: #dbeee8; --nt-tape: #e2b043; --nt-tape2: #f5dc96; }
+body[data-season="suri"], .nt-view[data-nt="suri"] { --nt-deep2: #a3405b; --nt-base: #fbe4cf; --nt-pat: rgba(228, 104, 44, .14); --nt-bgimg: var(--nt-diag); --nt-accent: #e2672f; --nt-accent2: #f3c33f; --nt-deep: #9c3a12; --nt-note1: #fde0c6; --nt-note2: #fff0bd; --nt-note3: #f6d8d6; --nt-tape: #f3a03f; --nt-tape2: #f9d79a; }
+body[data-season="sizdah"], .nt-view[data-nt="sizdah"] { --nt-deep2: #2c6890; --nt-base: #e6f4e8; --nt-pat: rgba(110, 170, 200, .22); --nt-bgimg: var(--nt-dots); --nt-accent: #4fa36d; --nt-accent2: #8fc0e6; --nt-deep: #2a6d43; --nt-note1: #daf0de; --nt-note2: #dcedfa; --nt-note3: #fde4ea; --nt-tape: #8fc0e6; --nt-tape2: #d3e8f7; }
+
+/* cozy dim version: warm dark paper on a deep tinted table */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) body[data-season], :root:not([data-theme="light"]) .nt-view {
+    --nt-paper: #2d2620; --nt-paper2: #362d26; --nt-ink: #f1e5d6; --nt-ink2: #cdbba9; --nt-rule: rgba(240, 214, 186, .16); --nt-shadow: rgba(0, 0, 0, .5); --nt-tapeo: .6;
+    --nt-bgc: color-mix(in srgb, var(--nt-accent) 9%, #17120f); --nt-patc: color-mix(in srgb, var(--nt-accent) 6%, transparent);
+    --nt-notec1: color-mix(in srgb, var(--nt-note1) 16%, #2f2822); --nt-notec2: color-mix(in srgb, var(--nt-note2) 16%, #2f2822); --nt-notec3: color-mix(in srgb, var(--nt-note3) 16%, #2f2822);
+    --nt-labelc: #3a3029; --nt-acc: color-mix(in srgb, var(--nt-accent) 72%, #fff); --nt-deepc: color-mix(in srgb, var(--nt-accent) 55%, #fff); --nt-btnc: color-mix(in srgb, var(--nt-accent) 70%, #fff); --nt-btnt: #1d1611;
+    --nt-noise: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 .9 0 0 0 0 .8 0 0 0 .06 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+}
+:root[data-theme="dark"] body[data-season], :root[data-theme="dark"] .nt-view {
+  --nt-paper: #2d2620; --nt-paper2: #362d26; --nt-ink: #f1e5d6; --nt-ink2: #cdbba9; --nt-rule: rgba(240, 214, 186, .16); --nt-shadow: rgba(0, 0, 0, .5); --nt-tapeo: .6;
+  --nt-bgc: color-mix(in srgb, var(--nt-accent) 9%, #17120f); --nt-patc: color-mix(in srgb, var(--nt-accent) 6%, transparent);
+  --nt-notec1: color-mix(in srgb, var(--nt-note1) 16%, #2f2822); --nt-notec2: color-mix(in srgb, var(--nt-note2) 16%, #2f2822); --nt-notec3: color-mix(in srgb, var(--nt-note3) 16%, #2f2822);
+  --nt-labelc: #3a3029; --nt-acc: color-mix(in srgb, var(--nt-accent) 72%, #fff); --nt-deepc: color-mix(in srgb, var(--nt-accent) 55%, #fff); --nt-btnc: color-mix(in srgb, var(--nt-accent) 70%, #fff); --nt-btnt: #1d1611;
+  --nt-noise: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 .9 0 0 0 0 .8 0 0 0 .06 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ======================= seasonal look: tokens and table ======================= */
+body[data-season] {
+  --ss-card: #fffdf8;
+  --ss-polar: #ffffff;
+  --ss-mark: color-mix(in srgb, var(--nt-accent2) 34%, transparent);
+  --ss-tape: repeating-linear-gradient(-45deg, var(--nt-tape) 0 5px, var(--nt-tape2) 5px 10px);
+  --ss-tape-b: repeating-linear-gradient(90deg, var(--nt-tape2) 0 6px, color-mix(in srgb, var(--nt-tape2) 55%, #fff) 6px 12px);
+  --ss-tear: polygon(0 12%, 6% 0, 12% 10%, 88% 4%, 94% 14%, 100% 2%, 100% 88%, 94% 100%, 88% 90%, 12% 96%, 6% 86%, 0 100%);
+  --ss-edge: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 14' preserveAspectRatio='none'%3E%3Cpath d='M0 14 L0 8 L6 6 L11 9 L18 4 L25 7 L31 3 L39 8 L45 5 L53 10 L60 5 L66 8 L73 3 L80 7 L88 4 L95 9 L101 5 L109 8 L116 3 L123 7 L130 4 L137 9 L143 6 L151 10 L157 4 L165 7 L172 3 L179 8 L186 5 L193 9 L200 6 L200 14Z'/%3E%3C/svg%3E");
+  --bg: var(--nt-bgc); --surface: var(--ss-card); --surface-2: var(--nt-paper2);
+  --ink: var(--nt-ink); --ink-soft: var(--nt-ink2); --line: var(--nt-rule);
+  --mint: var(--nt-deep); --mint-soft: var(--nt-notec3);
+  --berry: var(--nt-deep2); --berry-soft: var(--nt-notec1);
+  --sun: var(--nt-accent2); --sun-soft: var(--nt-notec2);
+  --lav: var(--nt-accent); --lav-soft: color-mix(in srgb, var(--nt-accent) 13%, var(--nt-paper));
+  --blob: var(--nt-paper2);
+  --shadow: 0 2px 0 color-mix(in srgb, var(--nt-ink) 14%, transparent), 0 10px 24px -14px var(--nt-shadow);
+  background: var(--nt-bgimg), var(--nt-bgc);
+}
+body[data-season] #app { overflow-x: clip; }
+body[data-season] .topbar { background: color-mix(in srgb, var(--nt-paper) 90%, transparent); border-bottom: 2px dashed color-mix(in srgb, var(--nt-ink) 16%, transparent); }
+body[data-season] .nav a.on, body[data-season] .nav a:hover { background: var(--nt-notec2); }
+body[data-season] .tabbar.on { background: var(--nt-paper); border-top: 2px dashed color-mix(in srgb, var(--nt-ink) 18%, transparent); }
+body[data-season] .tabbar a.on { background: var(--nt-notec2); }
+body[data-season] .footer { background: color-mix(in srgb, var(--nt-paper) 88%, transparent); border-top: 2px dashed color-mix(in srgb, var(--nt-ink) 16%, transparent); }
+body[data-season] .sos-fab { color: #fff; }
+body[data-season] :focus-visible { outline-color: var(--nt-acc); }
+
+/* ======================= paper sheets ======================= */
+body[data-season] #app > .view:not(.nt-view) > .wrap {
+  position: relative; width: calc(100% - 24px); max-width: 1080px; margin: 64px auto 44px; padding: 64px 32px 34px;
+  background: radial-gradient(ellipse at 0 0, color-mix(in srgb, var(--nt-accent) 8%, transparent), transparent 40%),
+              radial-gradient(ellipse at 100% 100%, var(--ss-mark), transparent 44%),
+              var(--nt-noise), var(--nt-paper);
+  border-radius: 2px; box-shadow: 0 14px 26px -16px var(--nt-shadow), 0 1px 3px var(--nt-shadow);
+}
+body[data-season] #app > .view:not(.nt-view) > .wrap.auth { max-width: 560px; }
+body[data-season] #app > .view:not(.nt-view) > .wrap + .wrap { margin-top: 30px; padding-top: 40px; }
+/* torn top, deckled bottom */
+body[data-season] #app > .view:not(.nt-view) > .wrap::before, body[data-season] #app > .view:not(.nt-view) > .wrap::after {
+  content: ""; position: absolute; left: 0; right: 0; height: 14px; background: var(--nt-paper); pointer-events: none;
+  -webkit-mask: var(--ss-edge) 0 0 / 220px 14px repeat-x; mask: var(--ss-edge) 0 0 / 220px 14px repeat-x;
+}
+body[data-season] #app > .view:not(.nt-view) > .wrap::before { top: -13px; }
+body[data-season] #app > .view:not(.nt-view) > .wrap::after { bottom: -13px; transform: scaleY(-1); -webkit-mask-position: 90px 0; mask-position: 90px 0; }
+body[data-season] #app > .view:not(.nt-view) > .wrap:nth-child(even)::before { -webkit-mask-position: 140px 0; mask-position: 140px 0; }
+
+/* ======================= cards, notes, tape ======================= */
+body[data-season] .card { border: 1.5px solid color-mix(in srgb, var(--nt-ink) 13%, transparent); border-radius: 5px 12px 7px 14px / 12px 6px 14px 7px; box-shadow: 0 1px 0 color-mix(in srgb, var(--nt-ink) 8%, transparent), 0 8px 18px -13px var(--nt-shadow); }
+body[data-season] .card.pop { border: 2px solid color-mix(in srgb, var(--nt-ink) 70%, transparent); box-shadow: 3px 4px 0 color-mix(in srgb, var(--nt-ink) 20%, transparent); }
+body[data-season] .modal .sheet { background: var(--nt-noise), var(--nt-paper); border-color: color-mix(in srgb, var(--nt-ink) 70%, transparent); border-radius: 6px 16px 8px 18px / 16px 8px 18px 8px; }
+body[data-season] .chip { border-radius: 10px 14px 9px 15px / 14px 9px 15px 10px; }
+body[data-season] .input { background: color-mix(in srgb, var(--ss-card) 80%, transparent); border-radius: 10px 14px 9px 15px / 14px 9px 15px 10px; }
+/* small tip boxes are dashed notes */
+body[data-season] .mission, body[data-season] .tip-card {
+  position: relative; background: var(--nt-notec2); border: 2px dashed color-mix(in srgb, var(--nt-accent) 55%, transparent); border-radius: 4px 10px 6px 12px / 10px 5px 12px 6px; box-shadow: none;
+}
+body[data-season] .tip-card { background: var(--nt-notec3); border-color: color-mix(in srgb, var(--nt-deep) 40%, transparent); }
+/* page titles and section titles get a strip of washi tape and a soft marker stroke */
+body[data-season] .section-head h2, body[data-season] #app > .view > .wrap > h1:first-of-type, body[data-season] #app > .view > .wrap > h2:first-of-type,
+body[data-season] #app > .view > .wrap > .row:first-of-type > h2, body[data-season] #app > .view > .wrap > div:first-of-type > h2:first-child {
+  position: relative; align-self: flex-start; padding-inline: 4px;
+  background: linear-gradient(transparent 62%, var(--ss-mark) 62% 90%, transparent 90%);
+}
+body[data-season] .section-head h2::before, body[data-season] #app > .view > .wrap > h1:first-of-type::before, body[data-season] #app > .view > .wrap > h2:first-of-type::before {
+  content: ""; position: absolute; top: -8px; inset-inline-end: -40px; width: 50px; height: 18px; transform: rotate(-28deg);
+  background: var(--ss-tape); opacity: var(--nt-tapeo); clip-path: var(--ss-tear); pointer-events: none;
+}
+body[data-season] .eyebrow { color: var(--nt-deep2); }
+/* handwriting */
+.sb-hand { font-family: var(--nt-hand, inherit); font-weight: 400; color: var(--nt-deepc, var(--ink)); line-height: 1.9; }
+body[data-season] .nt-svgt { font-family: var(--nt-hand); }
+
+/* ======================= watercolor decorations (aria-hidden SVGs from js/theme.js) ======================= */
+.ss-x .nt-art { display: block; width: 100%; height: auto; overflow: visible; pointer-events: none; }
+.ss-corner { position: absolute; z-index: 3; top: -66px; width: 150px; pointer-events: none; }
+.ss-tl { left: -88px; }
+.ss-tr { right: -88px; }
+.ss-scene { display: flex; align-items: flex-end; justify-content: space-between; gap: 6px; margin: 26px -18px -50px; position: relative; z-index: 3; pointer-events: none; }
+.ss-it { width: 120px; flex: none; }
+.ss-it.ss-mid { width: 96px; margin-bottom: 6px; }
+.ss-note { flex: 1 1 auto; display: flex; align-items: center; justify-content: center; gap: 6px; margin: 0 0 22px; font-size: 1.2rem; transform: rotate(-2deg); text-align: center; min-width: 0; }
+.ss-note .nt-art { width: 22px; height: 22px; flex: none; }
+.ss-scene > :nth-child(3) { order: -1; }
+@media (max-width: 1240px) { .ss-corner { width: 120px; top: -58px; } .ss-tl { left: -40px; } .ss-tr { right: -40px; } }
+@media (max-width: 860px) {
+  body[data-season] #app > .view:not(.nt-view) > .wrap { padding: 56px 20px 28px; }
+  .ss-corner { width: 96px; top: -46px; } .ss-tl { left: -14px; } .ss-tr { right: -14px; }
+}
+@media (max-width: 620px) {
+  body[data-season] main { padding-top: 14px; }
+  body[data-season] #app > .view:not(.nt-view) > .wrap { width: calc(100% - 16px); padding: 46px 14px 24px; margin-top: 46px; }
+  body[data-season] #app > .view:not(.nt-view) > .wrap + .wrap { padding-top: 34px; margin-top: 26px; }
+  .ss-corner { width: 82px; top: -38px; } .ss-tl { left: -8px; } .ss-tr { right: -8px; }
+  .ss-corner.ss-tr.ss-pair { display: none; }
+  .ss-scene { margin: 20px -8px -36px; }
+  .ss-it { width: 84px; } .ss-it.ss-mid { display: none; }
+  .ss-note { font-size: 1.05rem; margin-bottom: 14px; }
+}
+
+/* ======================= home: a scrapbook ======================= */
+body[data-season] .hero { gap: 40px; }
+body[data-season] .hero .eyebrow, body[data-season] .section-head .eyebrow, body[data-season] .reading .eyebrow {
+  align-self: flex-start; background: var(--nt-notec1); color: var(--nt-deep2); padding: 1px 14px 3px; border-radius: 12px 16px 11px 17px / 16px 11px 17px 12px;
+  box-shadow: 0 0 0 3px var(--ss-polar), 0 3px 6px -1px var(--nt-shadow); transform: rotate(-1.5deg); width: fit-content;
+}
+body[data-season] .section-head .eyebrow { background: var(--nt-notec3); transform: rotate(1.2deg); }
+body[data-season] .hero h1 .hl { color: var(--nt-deep2); background: linear-gradient(transparent 58%, var(--ss-mark) 58% 88%, transparent 88%); padding-inline: 4px; }
+body[data-season] .hero .lead { color: var(--ink-soft); }
+body[data-season] .trust { gap: 14px; }
+body[data-season] .trust > div { background: var(--nt-notec2); padding: 8px 16px 10px; border-radius: 4px 12px 6px 14px / 12px 5px 14px 6px; box-shadow: 0 3px 8px -3px var(--nt-shadow); transform: rotate(-1.4deg); color: var(--ink-soft); }
+body[data-season] .trust > div:nth-child(2) { background: var(--nt-notec1); transform: rotate(1.6deg); }
+body[data-season] .trust > div:nth-child(3) { background: var(--nt-notec3); transform: rotate(-.6deg); }
+/* polaroid */
+body[data-season] .sb-polaroid { position: relative; background: var(--ss-polar); padding: 14px 14px 58px; border-radius: 3px; transform: rotate(2.2deg); box-shadow: 0 2px 3px var(--nt-shadow), 0 18px 30px -18px var(--nt-shadow); }
+body[data-season] .sb-polaroid > svg { background: color-mix(in srgb, var(--nt-notec2) 60%, var(--nt-paper)); border-radius: 2px; }
+body[data-season] .sb-polaroid::before { content: ""; position: absolute; top: -12px; left: 50%; width: 110px; height: 26px; margin-left: -55px; transform: rotate(-3deg); background: var(--ss-tape-b); opacity: var(--nt-tapeo); clip-path: var(--ss-tear); }
+body[data-season] .sb-polaroid figcaption { position: absolute; left: 0; right: 0; bottom: 8px; text-align: center; font-size: 1.45rem; transform: rotate(-1.5deg); }
+body[data-season] .hero-art { max-width: 470px; justify-self: center; width: 100%; padding: 14px; }
+/* feature boxes: index cards with a ruled body and a margin line */
+body[data-season] .features { gap: 22px 20px; }
+body[data-season] .feature {
+  position: relative; padding: 20px 46px 20px 18px; border-radius: 3px; border: 0;
+  background: linear-gradient(90deg, transparent calc(100% - 32px), color-mix(in srgb, var(--nt-accent) 45%, transparent) calc(100% - 32px) calc(100% - 30.5px), transparent calc(100% - 30.5px)),
+              repeating-linear-gradient(transparent 0 29px, var(--nt-rule) 29px 30px) 0 18px / 100% calc(100% - 18px) no-repeat, var(--ss-card);
+  box-shadow: 0 2px 4px -1px var(--nt-shadow), 0 12px 20px -16px var(--nt-shadow); transform: rotate(-.7deg); transition: transform .2s;
+}
+body[data-season] .feature:nth-child(even) { transform: rotate(.8deg); }
+body[data-season] .feature:nth-child(3n) { transform: rotate(-.3deg); }
+body[data-season] .feature:hover { transform: rotate(0) translateY(-3px); }
+body[data-season] .feature .spot { width: 74px; height: 74px; padding: 6px; border-radius: 50%; background: var(--nt-notec1); box-shadow: 0 0 0 4px var(--ss-polar), 0 4px 8px -2px var(--nt-shadow); transform: rotate(-6deg); }
+body[data-season] .feature:nth-child(3n+2) .spot { background: var(--nt-notec2); }
+body[data-season] .feature:nth-child(3n) .spot { background: var(--nt-notec3); }
+body[data-season] .feature::before { content: ""; position: absolute; top: -10px; left: 22px; width: 64px; height: 20px; transform: rotate(-8deg); background: var(--ss-tape); opacity: var(--nt-tapeo); clip-path: var(--ss-tear); }
+body[data-season] .feature:nth-child(even)::before { left: auto; right: 46%; transform: rotate(5deg); background: var(--ss-tape-b); }
+body[data-season] .feature h3 { width: fit-content; background: linear-gradient(transparent 62%, var(--ss-mark) 62% 90%, transparent 90%); }
+/* cycles: sticky notes with a hand-circled number */
+body[data-season] .cycles { gap: 22px; }
+body[data-season] .cycle-card { overflow: visible; border: 0; border-radius: 2px 2px 22px 2px; background: var(--nt-notec1); box-shadow: 0 4px 10px -4px var(--nt-shadow); transform: rotate(-1deg); padding-top: 26px; }
+body[data-season] .cycle-card:nth-child(2) { background: var(--nt-notec2); transform: rotate(.9deg); }
+body[data-season] .cycle-card:nth-child(3) { background: var(--nt-notec3); transform: rotate(-.5deg); }
+body[data-season] .cycle-card::before { content: ""; position: absolute; top: -11px; left: 50%; width: 84px; height: 22px; margin-left: -42px; transform: rotate(-3deg); background: var(--ss-tape-b); opacity: var(--nt-tapeo); clip-path: var(--ss-tear); }
+body[data-season] .cycle-card:nth-child(2)::before { background: var(--ss-tape); transform: rotate(4deg); }
+body[data-season] .cycle-card .n { width: 64px; height: 64px; display: grid; place-items: center; font-size: 2.4rem; line-height: 1; padding-top: 6px; color: var(--nt-deep) !important; border: 2.5px solid color-mix(in srgb, var(--nt-deep) 70%, transparent); border-radius: 52% 48% 55% 45% / 47% 55% 45% 53%; transform: rotate(-8deg); }
+body[data-season] .cycle-card .chip { background: color-mix(in srgb, var(--ss-polar) 75%, transparent); box-shadow: 0 1px 2px var(--nt-shadow); }
+body[data-season] .cycle-card .muted { color: var(--nt-ink); opacity: .85; }
+/* steps of the day: torn planner tickets with a doodle number */
+body[data-season] .steps-line { gap: 20px; }
+body[data-season] .steps-line .card { background: var(--ss-card); border: 2px dashed color-mix(in srgb, var(--nt-ink) 22%, transparent); box-shadow: none; padding-top: 18px; }
+body[data-season] .steps-line .card:nth-child(odd) { transform: rotate(-.6deg); }
+body[data-season] .steps-line .card:nth-child(even) { transform: rotate(.6deg); }
+body[data-season] .steps-line .card::before {
+  width: 46px; height: 46px; display: grid; place-items: center; line-height: 1; padding-top: 6px; margin-bottom: 4px; color: var(--nt-deep) !important; font-size: 1.5rem;
+  background: var(--nt-notec2); border-radius: 50% 45% 52% 48% / 46% 54% 46% 54%; box-shadow: 0 0 0 3px var(--ss-polar), 0 3px 6px -2px var(--nt-shadow);
+}
+body[data-season] .steps-line .card:nth-child(2)::before { background: var(--nt-notec1); }
+body[data-season] .steps-line .card:nth-child(3)::before { background: var(--nt-notec3); }
+body[data-season] .steps-line .card::after { content: ""; position: absolute; top: 26px; left: -19px; width: 18px; height: 2px; border-top: 2px dashed color-mix(in srgb, var(--nt-ink) 30%, transparent); }
+body[data-season] .steps-line .card:last-child::after { display: none; }
+/* articles: clipped to the page with a paper clip */
+body[data-season] .article-list { gap: 22px; }
+body[data-season] .article-list .article { position: relative; overflow: visible; }
+body[data-season] .article-list .article::before {
+  content: ""; position: absolute; top: -14px; left: 26px; width: 18px; height: 44px; transform: rotate(14deg); pointer-events: none;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 18 44'%3E%3Cpath d='M12 14 V33 a3.5 3.5 0 0 1 -7 0 V8 a5 5 0 0 1 10 0 V35 a6.5 6.5 0 0 1 -13 0 V14' fill='none' stroke='%23a0948c' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+/* closing band: a big taped note */
+body[data-season] .band { position: relative; background: var(--nt-notec2); border: 2px dashed color-mix(in srgb, var(--nt-accent) 50%, transparent); border-radius: 4px 14px 6px 18px / 14px 6px 18px 8px; transform: rotate(-.4deg); }
+body[data-season] .band::before, body[data-season] .band::after { content: ""; position: absolute; top: -12px; width: 70px; height: 22px; background: var(--ss-tape); opacity: var(--nt-tapeo); clip-path: var(--ss-tear); }
+body[data-season] .band::before { right: -14px; transform: rotate(34deg); }
+body[data-season] .band::after { left: -14px; transform: rotate(-32deg); }
+body[data-season] .band .spot { background: var(--ss-polar); border-radius: 50%; padding: 10px; box-shadow: 0 4px 10px -4px var(--nt-shadow); transform: rotate(-4deg); }
+.sb-sidenote { font-size: 1.35rem; transform: rotate(-2.5deg); width: fit-content; }
+
+/* ======================= today: a planner page ======================= */
+body[data-season] .greet { position: relative; background: var(--nt-noise), var(--nt-labelc); }
+body[data-season] .greet::before, body[data-season] .greet::after { content: ""; position: absolute; top: -11px; width: 60px; height: 20px; background: var(--ss-tape); opacity: var(--nt-tapeo); clip-path: var(--ss-tear); }
+body[data-season] .greet::before { right: 18px; transform: rotate(6deg); }
+body[data-season] .greet::after { left: 18px; transform: rotate(-5deg); background: var(--ss-tape-b); }
+body[data-season] .greet > div:first-child { border-radius: 50%; background: var(--nt-notec1); box-shadow: 0 0 0 4px var(--ss-polar), 0 4px 10px -3px var(--nt-shadow); padding: 6px; transform: rotate(-5deg); }
+body[data-season] .greet .sb-date { font-family: var(--nt-hand); font-size: 1.15rem; color: var(--nt-deep2); transform: rotate(-1.5deg); width: fit-content; line-height: 1.7; }
+/* reading: a notebook page with a margin line */
+body[data-season] .reading {
+  position: relative; padding-inline-start: 46px; border-radius: 3px;
+  background: linear-gradient(90deg, transparent calc(100% - 30px), color-mix(in srgb, var(--nt-accent) 45%, transparent) calc(100% - 30px) calc(100% - 28.5px), transparent calc(100% - 28.5px)), var(--nt-noise), var(--ss-card);
+}
+body[data-season] .reading::before { content: ""; position: absolute; top: -12px; left: 50%; width: 96px; height: 24px; margin-left: -48px; transform: rotate(-2deg); background: var(--ss-tape-b); opacity: var(--nt-tapeo); clip-path: var(--ss-tear); }
+body[data-season] .reading h2 { width: fit-content; background: linear-gradient(transparent 62%, var(--ss-mark) 62% 90%, transparent 90%); padding-inline: 4px; }
+body[data-season] .reading .chip.lav { background: var(--nt-notec3); box-shadow: 0 0 0 2.5px var(--ss-polar), 0 2px 5px -1px var(--nt-shadow); transform: rotate(1.5deg); }
+/* mission: a sticky note with a pin */
+body[data-season] .mission { background: var(--nt-notec2); transform: rotate(-.5deg); padding-top: 22px; box-shadow: 0 6px 12px -8px var(--nt-shadow); }
+body[data-season] .mission::before { content: ""; position: absolute; top: -8px; left: 50%; width: 18px; height: 18px; margin-left: -9px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #fff8 0 20%, transparent 22%), var(--nt-accent); box-shadow: 0 3px 4px -1px var(--nt-shadow); }
+body[data-season] .tip-card { transform: rotate(.4deg); }
+body[data-season] .ifthen-card { border-style: dashed; }
+body[data-season] .ifthen-card > b { font-family: var(--nt-hand); font-weight: 400; font-size: 1.3rem; color: var(--nt-deep2); }
+/* aside: polaroid of the plant, sticker stats, a receipt of what was saved */
+body[data-season] .growth-card { background: var(--ss-polar); border: 0; border-radius: 3px; padding: 14px 14px 46px; position: relative; transform: rotate(1.2deg); box-shadow: 0 2px 3px var(--nt-shadow), 0 14px 22px -16px var(--nt-shadow); }
+body[data-season] .growth-card::after { content: attr(data-cap); position: absolute; left: 0; right: 0; bottom: 6px; text-align: center; font-family: var(--nt-hand); font-size: 1.25rem; color: var(--nt-deep2); }
+body[data-season] .growth-card::before { content: ""; position: absolute; top: -11px; left: 50%; width: 80px; height: 22px; margin-left: -40px; transform: rotate(3deg); background: var(--ss-tape); opacity: var(--nt-tapeo); clip-path: var(--ss-tear); }
+body[data-season] .stat-row { background: transparent; border: 0; box-shadow: none; padding: 4px 0; }
+body[data-season] .stat-row > div { background: var(--nt-notec1); border-radius: 46% 54% 50% 50% / 52% 46% 54% 48%; padding: 12px 4px 10px; box-shadow: 0 0 0 3px var(--ss-polar), 0 4px 8px -3px var(--nt-shadow); transform: rotate(-3deg); line-height: 1.5; }
+body[data-season] .stat-row > div:nth-child(2) { background: var(--nt-notec2); transform: rotate(2.5deg); }
+body[data-season] .stat-row > div:nth-child(3) { background: var(--nt-notec3); transform: rotate(-1deg); }
+body[data-season] .stat-row .small.muted { color: var(--nt-ink); }
+body[data-season] .saved-card { position: relative; border: 0; border-radius: 0; padding-bottom: 26px; background: var(--ss-card); box-shadow: 0 6px 12px -8px var(--nt-shadow);
+  -webkit-mask: conic-gradient(from 135deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) bottom / 16px 8px repeat-x, linear-gradient(#000 0 0) top / 100% calc(100% - 7.9px) no-repeat;
+  mask: conic-gradient(from 135deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) bottom / 16px 8px repeat-x, linear-gradient(#000 0 0) top / 100% calc(100% - 7.9px) no-repeat; }
+body[data-season] .saved-card > b { border-bottom: 2px dashed var(--nt-rule); padding-bottom: 6px; }
+body[data-season] .move-link { border-style: dashed; }
+body[data-season] .rem-list { background: linear-gradient(90deg, transparent calc(100% - 26px), color-mix(in srgb, var(--nt-accent) 40%, transparent) calc(100% - 26px) calc(100% - 24.5px), transparent calc(100% - 24.5px)), var(--ss-card); padding-inline-start: 38px; }
+body[data-season] .today-grid > .stack > .card:not(.reading):not(.tip-card):not(.ifthen-card):nth-of-type(odd) { transform: rotate(-.25deg); }
+
+/* ======================= dark: warm dim paper ======================= */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) body[data-season] { --ss-card: #362d26; --ss-polar: #4a3f36; --ss-mark: color-mix(in srgb, var(--nt-accent2) 20%, transparent); --nt-patc: color-mix(in srgb, var(--nt-accent) 10%, transparent); --mint: var(--nt-btnc); --berry: color-mix(in srgb, var(--nt-deep2) 40%, #fff); --nt-deep2: color-mix(in srgb, var(--nt-accent) 40%, #f3d9c9); --lav-soft: color-mix(in srgb, var(--nt-accent) 14%, #2d2620); }
+  :root:not([data-theme="light"]) body[data-season] .btn.primary, :root:not([data-theme="light"]) body[data-season] .btn.berry, :root:not([data-theme="light"]) body[data-season] .sos-fab { color: #1d1611; }
+  :root:not([data-theme="light"]) .ss-x .nt-art, :root:not([data-theme="light"]) body[data-season] .feature .spot, :root:not([data-theme="light"]) body[data-season] .sb-polaroid > svg { opacity: .9; }
+}
+:root[data-theme="dark"] body[data-season] { --ss-card: #362d26; --ss-polar: #4a3f36; --ss-mark: color-mix(in srgb, var(--nt-accent2) 20%, transparent); --nt-patc: color-mix(in srgb, var(--nt-accent) 10%, transparent); --mint: var(--nt-btnc); --berry: color-mix(in srgb, var(--nt-deep2) 40%, #fff); --nt-deep2: color-mix(in srgb, var(--nt-accent) 40%, #f3d9c9); --lav-soft: color-mix(in srgb, var(--nt-accent) 14%, #2d2620); }
+:root[data-theme="dark"] body[data-season] .btn.primary, :root[data-theme="dark"] body[data-season] .btn.berry, :root[data-theme="dark"] body[data-season] .sos-fab { color: #1d1611; }
+:root[data-theme="dark"] .ss-x .nt-art, :root[data-theme="dark"] body[data-season] .feature .spot, :root[data-theme="dark"] body[data-season] .sb-polaroid > svg { opacity: .9; }
+
+@media (prefers-reduced-motion: reduce) { body[data-season] .feature, body[data-season] .ss-opt { transition: none; } }
+@media print { body[data-season] { background: none; } .ss-x { display: none; } body[data-season] #app > .view > .wrap { box-shadow: none; } }
+
+/* ======================= plain pastel look («ساده») ======================= */
 :root {
   --wc-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='g' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .42 0 0 0 0 .3 0 0 0 0 .24 0 0 0 .38 -.14'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23g)'/%3E%3C/svg%3E");
   --wc-fiber: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='600'%3E%3Cfilter id='f' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.012 .02' numOctaves='3' seed='5' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 .98 .9 0 0 0 -.3'/%3E%3C/filter%3E%3Crect width='600' height='600' filter='url(%23f)'/%3E%3C/svg%3E");
   --wcr-paper: #fdf6ec;
 }
-
 body[data-pal="cream"]    { --p0: #fcf7ef; --p1: #f5e6cf; --p2: #f3e1db; --d0: #1b1720; --d1: #2f2830; --d2: #2b2433; }
 body[data-pal="peach"]    { --p0: #fdf4ec; --p1: #fcdcc8; --p2: #fbe9c4; --d0: #1d1619; --d1: #3c2a2c; --d2: #3a2b26; }
 body[data-pal="butter"]   { --p0: #fef8ea; --p1: #fbe6ae; --p2: #fcd8c2; --d0: #1c1814; --d1: #3a2d24; --d2: #3a2a2c; }
@@ -17,14 +287,11 @@ body[data-pal="rose"]     { --p0: #fcf4f2; --p1: #f6d6d8; --p2: #f8e6d2; --d0: #
 body[data-pal="mint"]     { --p0: #f1faf6; --p1: #cdeee0; --p2: #e2f2d2; --d0: #121b19; --d1: #1f3d34; --d2: #2a3826; }
 body[data-pal="lilac"]    { --p0: #f8f3fb; --p1: #e9d6f2; --p2: #f4d9e6; --d0: #1a1420; --d1: #37284a; --d2: #3b2735; }
 body[data-pal="pink"]     { --p0: #fdf3f5; --p1: #f9d2dc; --p2: #fbe2d4; --d0: #1e1419; --d1: #452634; --d2: #3c2a27; }
-
 body[data-pal] {
   --bg: var(--p0); --b1: var(--p1); --b2: var(--p2);
   --blob: color-mix(in srgb, var(--b1) 45%, var(--surface));
   background-color: var(--bg);
-  background-image:
-    var(--wc-grain),
-    var(--wc-fiber),
+  background-image: var(--wc-grain), var(--wc-fiber),
     radial-gradient(ellipse 46% 38% at 88% 6%, var(--b1), transparent 70%),
     radial-gradient(ellipse 38% 30% at 10% 30%, var(--b2), transparent 72%),
     radial-gradient(ellipse 52% 36% at 70% 72%, color-mix(in srgb, var(--b2) 75%, transparent), transparent 70%),
@@ -38,8 +305,6 @@ body[data-pal] {
 }
 :root[data-theme="dark"] body[data-pal] { --bg: var(--d0); --b1: var(--d1); --b2: var(--d2); }
 :root[data-theme="dark"] { --wc-fiber: linear-gradient(transparent, transparent); --wc-wash1: #3a2a2e; --wc-wash2: #363022; --wc-wash3: #2e2840; --wc-spot: #2e2839; }
-
-/* Cards sit on the paper like little sheets: opaque surface, a soft warm shadow. */
 body[data-pal] .card:not(.pop) { box-shadow: 0 1px 0 color-mix(in srgb, var(--line) 70%, transparent), 0 10px 28px -18px rgba(90, 60, 50, .35); }
 
 /* Recipe paintings fill the card top edge to edge (the paper is inside the painting). */
@@ -48,11 +313,27 @@ body[data-pal] .card:not(.pop) { box-shadow: 0 1px 0 color-mix(in srgb, var(--li
 .recipe .art svg { width: 100%; height: auto; aspect-ratio: 6 / 5; }
 .wc-dish { border-radius: 18px; overflow: hidden; }
 .recipe .art .wc-dish { border-radius: 0; }
-/* In dark mode the dish stays a light little painting, just a touch dimmer. */
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .wc-dish { filter: brightness(.9) saturate(.95); } }
 :root[data-theme="dark"] .wc-dish { filter: brightness(.9) saturate(.95); }
+/* Exercise figures sit on a little sheet of the same watercolor paper. */
+.fig { background-color: var(--blob); background-image: var(--wc-grain); background-size: 240px 240px; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .fig { background-image: none; } }
+:root[data-theme="dark"] .fig { background-image: none; }
 
-/* Settings: background color picker */
+/* markup helpers used by the home and today pages, neutral without a theme */
+.sb-polaroid { margin: 0; }
+.tip-card { background: var(--lav-soft); border-color: transparent; }
+body:not([data-season]) .sb-only, body:not([data-season]) .ss-x { display: none !important; }
+
+/* ======================= settings: theme picker ======================= */
+.ss-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(92px, 1fr)); gap: 8px; }
+.ss-opt { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 8px 4px 6px; border: 2px solid var(--line); border-radius: 14px 10px 16px 9px / 10px 15px 9px 14px; background: var(--surface); cursor: pointer; color: var(--ink); font-weight: 700; font-size: .86rem; line-height: 1.45; text-align: center; transition: transform .15s; }
+.ss-opt:hover { transform: rotate(-1.5deg) translateY(-2px); }
+.ss-opt[aria-checked="true"] { border: 2.5px solid var(--ink); background: color-mix(in srgb, var(--sun-soft) 70%, var(--surface)); box-shadow: 0 3px 0 var(--ink); }
+.ss-ico { width: 52px; height: 52px; display: grid; place-items: center; font-size: 1.8rem; }
+.ss-ico .nt-art { width: 52px; height: 52px; display: block; }
+.ss-lbl small { display: block; font-weight: 400; font-size: .74rem; color: var(--ink-soft); line-height: 1.5; }
+.ss-plain { width: 40px; height: 40px; border-radius: 50%; border: 2px dashed var(--ink-soft); background: var(--surface-2); }
 .th-sw { display: flex; flex-wrap: wrap; gap: 8px 6px; }
 .th-opt { display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 62px; max-width: 96px; text-align: center; padding: 6px 4px; border: 0; background: none; cursor: pointer; border-radius: 14px; color: var(--ink-soft); font-size: .82rem; font-weight: 700; line-height: 1.4; }
 .th-dot { width: 44px; height: 44px; border-radius: 50%; border: 2px solid var(--line); box-shadow: inset 0 -5px 9px rgba(120, 72, 70, .14), inset 0 4px 6px rgba(255, 255, 255, .5); position: relative; transition: transform .15s; }
@@ -61,7 +342,11 @@ body[data-pal] .card:not(.pop) { box-shadow: 0 1px 0 color-mix(in srgb, var(--li
 .th-opt[aria-checked="true"] .th-dot { border: 3px solid var(--ink); }
 .th-opt[aria-checked="true"] .th-dot::after { content: "✓"; position: absolute; inset: 0; display: grid; place-items: center; color: #5b4343; font-weight: 900; font-size: 1.1rem; }
 
-/* Exercise figures sit on a little sheet of the same watercolor paper. */
-.fig { background-color: var(--blob); background-image: var(--wc-grain); background-size: 240px 240px; }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .fig { background-image: none; } }
-:root[data-theme="dark"] .fig { background-image: none; }
+/* tools: index cards with sticker icons */
+body[data-season] .tools-grid { gap: 16px; }
+body[data-season] .tools-grid .tool:nth-child(4n+1) { transform: rotate(-.5deg); }
+body[data-season] .tools-grid .tool:nth-child(4n+3) { transform: rotate(.5deg); }
+body[data-season] .tools-grid .tool:hover { transform: rotate(0) translateY(-2px); }
+body[data-season] .tool .tool-i { width: 48px; height: 48px; display: grid; place-items: center; font-size: 1.5rem; border-radius: 50% 46% 52% 48% / 48% 54% 46% 52%; background: var(--nt-notec1); box-shadow: 0 0 0 3px var(--ss-polar), 0 3px 6px -2px var(--nt-shadow); }
+body[data-season] .tools-grid .tool:nth-child(3n+2) .tool-i { background: var(--nt-notec2); }
+body[data-season] .tools-grid .tool:nth-child(3n) .tool-i { background: var(--nt-notec3); }

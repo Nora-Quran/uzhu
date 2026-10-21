@@ -47,7 +47,7 @@
       <div class="mission stack" style="gap:6px"><b>🎯 مأموریت امروز</b><p>${esc(d.mission)}</p></div>
       ${(d.tasks || []).length ? `<div class="card stack" style="gap:8px"><b>کارهای امروز (امتحانی، ذخیره نمی‌شه)</b>${d.tasks.map((t, i) => `<label class="check" for="tt${i}"><input type="checkbox" id="tt${i}"><span>${esc(typeof t === 'string' ? t : t.text || t.t || '')}</span></label>`).join('')}</div>` : ''}
       <div class="card stack" style="gap:6px;background:var(--lav-soft);border-color:transparent"><b>🔬 نکته‌ی علمی</b><p>${esc(d.tip)}</p></div>
-      <div class="card pop stack cp-cta" style="gap:10px;text-align:center"><h3>آماده‌ای ادامه بدی؟</h3><p class="muted">ثبت‌نام رایگانه و فقط یک ایمیل لازمه.</p><div class="row" style="justify-content:center"><a class="btn primary big" href="#signup">رایگان شروع کن</a><a class="btn ghost" href="#recipes">دستورهای بی‌قند</a></div></div>
+      <div class="card pop stack cp-cta" style="gap:10px;text-align:center"><h3>آماده‌ای ادامه بدی؟</h3><p class="muted">ثبت‌نام رایگانه و فقط یک ایمیل لازمه.</p><div class="row" style="justify-content:center"><a class="btn primary big" href="#signup">رایگان شروع کن</a><a class="btn ghost" href="#recipes">رسپی‌های بی‌قند</a></div></div>
     </section>`;
   };
   A.mounts.try = () => {
@@ -70,7 +70,7 @@
     out.forEach(o => { o.n = norm(o.text); o.nt = norm(o.title); });
     return out;
   }
-  const KIND = { recipe: 'دستورها', article: 'مقاله‌ها', move: 'حرکت‌های ورزشی', swap: 'جایگزین‌ها', faq: 'پرسش‌ها', term: 'واژه‌ها', tool: 'ابزارها', ext: 'خواب' };
+  const KIND = { recipe: 'رسپی‌ها', article: 'مقاله‌ها', move: 'حرکت‌های ورزشی', swap: 'جایگزین‌ها', faq: 'پرسش‌ها', term: 'واژه‌ها', tool: 'ابزارها', ext: 'خواب' };
   function search(q) {
     const words = norm(q).split(/\s+/).filter(w => w.length > 1 || /\d/.test(w));
     if (!words.length) return [];
@@ -82,7 +82,7 @@
   }
   let lastQ = '';
   A.titles.search = 'جست‌وجو';
-  A.views.search = () => page('جست‌وجو', 'دنبال چی می‌گردی؟', 'دستور، مقاله، حرکت ورزشی، جایگزین، پرسش یا واژه.',
+  A.views.search = () => page('جست‌وجو', 'دنبال چی می‌گردی؟', 'رسپی، مقاله، حرکت ورزشی، جایگزین، پرسش یا واژه.',
     `<input class="input cp-q" id="cpq" type="search" placeholder="مثلاً: کیک، پلی‌کیستیک، پیاده‌روی، نوشابه" value="${esc(lastQ)}" autocomplete="off">
      <div id="cpres" class="stack" style="gap:14px"></div>`);
   A.mounts.search = () => {
@@ -125,7 +125,8 @@
   add('mount', r => {
     const w = $('.topbar .wrap'); if (!w) return;
     let q = $('.cp-quick', w); if (!q) { q = document.createElement('div'); q.className = 'cp-quick'; w.appendChild(q); }
-    const items = [on('search') && ['search', '🔍', 'جست‌وجو'], on('sleep') && A.views.sleep && ['sleep', '😴', 'بخش خواب']].filter(Boolean);
+    // Sleep has its own tab in the bottom bar, so only search lives here.
+    const items = [on('search') && ['search', '🔍', 'جست‌وجو']].filter(Boolean);
     q.innerHTML = items.map(([h, i, l]) => `<a href="#${h}" aria-label="${l}" title="${l}" class="${r === h ? 'on' : ''}">${i}</a>`).join('');
   });
   document.addEventListener('keydown', e => { if (e.key === '/' && !/INPUT|TEXTAREA|SELECT/.test(document.activeElement?.tagName || '') && on('search')) { e.preventDefault(); A.go('search'); } });
@@ -214,7 +215,7 @@
   add('recipesTop', () => {
     const all = [...new Set(A.RECIPES.flatMap(tagsOf))];
     return `<div class="stack cp-rf" style="gap:10px">
-      <input class="input" id="rq" type="search" placeholder="جست‌وجو در دستورها یا مواد: موز، خرما، کاکائو…" value="${esc(rq)}">
+      <input class="input" id="rq" type="search" placeholder="جست‌وجو در رسپی‌ها یا مواد: موز، خرما، کاکائو…" value="${esc(rq)}">
       <div class="row cp-tags">${on('favorites') ? `<button class="chip ${rfav ? 'berry' : ''}" id="rfav">❤️ نشون‌شده‌ها</button>` : ''}${all.map(t => `<button class="chip ${t === rtag ? 'mint' : ''}" data-tag="${esc(t)}">${esc(t)}</button>`).join('')}</div></div>`;
   });
   function filterRecipes() {
@@ -225,7 +226,7 @@
       card.hidden = !ok; n += ok;
     });
     let em = $('.cp-empty');
-    if (!n) { if (!em) { em = document.createElement('div'); em.className = 'card cp-empty'; $('.recipe-grid')?.after(em); } em.textContent = rfav ? 'هنوز دستوری رو نشون نکردی. روی ♡ هر دستور بزن.' : 'دستوری با این فیلتر پیدا نشد.'; }
+    if (!n) { if (!em) { em = document.createElement('div'); em.className = 'card cp-empty'; $('.recipe-grid')?.after(em); } em.textContent = rfav ? 'هنوز رسپی‌ای رو نشون نکردی. روی ♡ هر رسپی بزن.' : 'رسپی‌ای با این فیلتر پیدا نشد.'; }
     else em?.remove();
   }
   add('mount', r => {
@@ -277,7 +278,7 @@
         ${on('favorites') ? `<button class="btn ghost" id="rfv">${f.includes(r.id) ? '❤️ نشون شده' : '♡ نشون کن'}</button>` : ''}
         <span class="cp-scale"><span class="small muted">مقدار:</span>${[.5, 1, 2, 3].map(k => `<button class="chip ${k === 1 ? 'mint' : ''}" data-k="${k}">${k === .5 ? 'نصف' : '×' + fa(k)}</button>`).join('')}</span></div>
       ${t.length ? `<div class="row">${t.map(x => `<span class="chip lav">${esc(x)}</span>`).join('')}</div>` : ''}
-      ${on('nutrition') && m.kcal ? `<div class="cp-nut"><div><b class="num">${fa(m.kcal)}</b><span>کالری</span></div><div><b class="num">${fa(m.sugar)}</b><span>گرم قند کل</span></div><div><b class="num">${fa(m.protein)}</b><span>گرم پروتئین</span></div><div><b class="num">${fa(m.fiber)}</b><span>گرم فیبر</span></div><p class="small muted">هر وعده${m.servings ? ` (از ${fa(m.servings)} وعده)` : ''}، تخمینی. قندِ این دستورها از میوه و خرماست، نه قند افزوده.</p></div>` : ''}`;
+      ${on('nutrition') && m.kcal ? `<div class="cp-nut"><div><b class="num">${fa(m.kcal)}</b><span>کالری</span></div><div><b class="num">${fa(m.sugar)}</b><span>گرم قند کل</span></div><div><b class="num">${fa(m.protein)}</b><span>گرم پروتئین</span></div><div><b class="num">${fa(m.fiber)}</b><span>گرم فیبر</span></div><p class="small muted">هر وعده${m.servings ? ` (از ${fa(m.servings)} وعده)` : ''}، تخمینی. قندِ این رسپی‌ها از میوه و خرماست، نه قند افزوده.</p></div>` : ''}`;
   });
   add('recipeEnd', r => {
     const m = RM[r.id] || {};
@@ -313,7 +314,7 @@
         <div class="row" style="justify-content:space-between"><b>${esc(r.title)}</b><button class="btn ghost" id="cx">بستن ✕</button></div>
         <div class="progress"><i style="width:${Math.round(((i + 1) / (steps.length + 1)) * 100)}%"></i></div>
         <div class="cp-cook-body">${i < 0 ? `<span class="eyebrow">اول، مواد رو آماده کن</span><ul class="cp-cook-ing">${ings.map((x, n) => `<li><label class="check" for="ci${n}"><input type="checkbox" id="ci${n}"><span>${esc(x)}</span></label></li>`).join('')}</ul>`
-          : last ? `<div style="max-width:200px;margin:0 auto">${A.ART.mascot('happy', { arms: 'up' })}</div><h2>نوش جان! 🎉</h2><p>یه دستور بی‌قند دیگه یاد گرفتی. عکسش رو برای یکی بفرست که دوستش داری.</p>`
+          : last ? `<div style="max-width:200px;margin:0 auto">${A.ART.mascot('happy', { arms: 'up' })}</div><h2>نوش جان! 🎉</h2><p>یه رسپی بی‌قند دیگه یاد گرفتی. عکسش رو برای یکی بفرست که دوستش داری.</p>`
           : `<span class="eyebrow">مرحله‌ی ${fa(i + 1)} از ${fa(steps.length)}</span><p class="cp-cook-step">${esc(steps[i])}</p>${mins ? `<button class="btn sun big" id="ct">⏱ تایمر ${fa(mins)} دقیقه</button><div class="cp-cook-t" id="ctv"></div>` : ''}`}</div>
         <div class="row" style="justify-content:space-between"><button class="btn ghost big" id="cp" ${i < 0 ? 'disabled' : ''}>→ قبلی</button>${last ? `<button class="btn primary big" id="cdone">تمومه</button>` : `<button class="btn primary big" id="cn">${i < 0 ? 'شروع پخت' : 'بعدی'} ←</button>`}</div>
         ${lock ? '<p class="small muted" style="text-align:center">صفحه تا آخر آشپزی خاموش نمی‌شه.</p>' : ''}</div>`;
@@ -379,7 +380,7 @@
 
   /* tools hub entries */
   A.tools.push(
-    { route: 'search', icon: '🔍', title: 'جست‌وجو', desc: 'دستور، مقاله، حرکت، جایگزین و پرسش', show: () => on('search') },
+    { route: 'search', icon: '🔍', title: 'جست‌وجو', desc: 'رسپی، مقاله، حرکت، جایگزین و پرسش', show: () => on('search') },
     { route: 'mealplan', icon: '🍽', title: 'برنامه‌ی غذایی هفته', desc: 'صبحانه و میان‌وعده‌ی بی‌قند برای ۷ روز', show: () => on('mealplan') },
     { route: 'faq', icon: '❓', title: 'پرسش‌های پرتکرار', desc: 'میوه، شیرین‌کننده، لغزش، PCOS و…', show: () => on('faq') },
     { route: 'glossary', icon: '🔤', title: 'واژه‌نامه', desc: 'اصطلاح‌های علمی به زبان ساده', show: () => on('glossary') },

@@ -20,7 +20,7 @@
   const safeLink = u => /^(https?:\/\/|#|\.\/|\/)/i.test(String(u || '').trim()) ? u : '';
 
   const FEATURES = [
-    ['sos', 'دکمه‌ی «هوس دارم»'], ['move', 'بخش ورزش'], ['recipes', 'دستورها'], ['learn', 'علم قند'], ['savings', 'شمارنده‌ی پس‌انداز'],
+    ['sos', 'دکمه‌ی «هوس دارم»'], ['move', 'بخش ورزش'], ['recipes', 'رسپی‌ها'], ['learn', 'علم قند'], ['savings', 'شمارنده‌ی پس‌انداز'],
     ['freeze', 'روز امن'], ['prep', 'هفته‌ی آماده‌سازی'], ['reintro', 'بازگشت آگاهانه'], ['journeys', 'مسیرهای موضوعی'], ['challenges', 'چالش‌ها'],
     ['companion', 'همراه پرانرژی'], ['buddy', 'یار بی‌قند'], ['team', 'تیم خانواده'], ['league', 'لیگ هفتگی'], ['quiz', 'کوییز روزانه'],
     ['coach', 'بازخورد مربی'], ['slipwizard', 'تحلیل لغزش'], ['taarof', 'جمله‌های تعارف'], ['checkin', 'چک‌این صبح'], ['timeline', 'خط زمانی بدن'],
@@ -28,8 +28,8 @@
     ['shopping', 'لیست خرید'], ['trackers', 'ردیاب آب و چای'], ['plate', 'عکس بشقاب'], ['sameday', '«مثل دیروز»'], ['kitchen', 'آشپزخونه تعطیله'],
     ['builder', 'تمرین‌ساز'], ['lazy', 'جلسه‌ی تنبل'], ['mindful', 'لحظه‌ی آگاهانه'], ['occasions', 'تقویم مناسبت‌ها'], ['letters', 'نامه به خودم'],
     ['trial', 'امتحان روز اول بدون ثبت‌نام'], ['search', 'جست‌وجوی سراسری'], ['faq', 'پرسش‌های پرتکرار'], ['glossary', 'واژه‌نامه'], ['mealplan', 'برنامه‌ی غذایی هفته'],
-    ['nutrition', 'ارزش غذایی دستورها'], ['cookmode', 'حالت آشپزی'], ['favorites', 'دستورهای نشان‌شده'], ['goaltips', 'کارت مخصوص هدف تو'], ['takeaway', 'چکیده‌ی متن روز'], ['sleep', 'بخش خواب'],
-    ['nextstep', 'قدم بعدی و راهنمای سریع'], ['install', 'دعوت به نصب اپ'], ['sugardiary', 'دفترچه‌ی قند'], ['risk', 'آزمون خطر دیابت'], ['backup', 'پشتیبان‌گیری'], ['badges', 'نشان‌ها'], ['calendar', 'تقویم من'], ['bodytrack', 'اندازه‌ها و آزمایش‌ها'], ['report', 'گزارش برای پزشک'], ['a11y', 'خوانایی و خواندن متن'], ['theme', 'پس‌زمینه‌ی پاستلی و انتخاب رنگ'], ['move21', 'برنامه‌ی ورزش ۲۱ روزه با سه سطح'], ['nighttheme', 'تم‌های فصلی و مناسبتی چک‌لیست شب'],
+    ['nutrition', 'ارزش غذایی رسپی‌ها'], ['cookmode', 'حالت آشپزی'], ['favorites', 'رسپی‌های نشان‌شده'], ['goaltips', 'کارت مخصوص هدف تو'], ['takeaway', 'چکیده‌ی متن روز'], ['sleep', 'بخش خواب'],
+    ['nextstep', 'قدم بعدی و راهنمای سریع'], ['install', 'دعوت به نصب اپ'], ['sugardiary', 'دفترچه‌ی قند'], ['risk', 'آزمون خطر دیابت'], ['backup', 'پشتیبان‌گیری'], ['badges', 'نشان‌ها'], ['calendar', 'تقویم من'], ['bodytrack', 'اندازه‌ها و آزمایش‌ها'], ['report', 'گزارش برای پزشک'], ['a11y', 'خوانایی و خواندن متن'], ['theme', 'تم فصلی و مناسبتی کل برنامه'], ['move21', 'برنامه‌ی ورزش ۲۱ روزه با سه سطح'], ['nighttheme', 'ظاهر دفترچه‌ای چک‌لیست شب'], ['breakfast', 'بخش صبحانه'],
   ];
   const on = k => A.site.settings.features?.[k] !== false;
 
@@ -225,14 +225,14 @@
   const val = id => ($('#' + id)?.value || '').trim();
   function contentView() {
     const k = contentSel.kind;
-    const kinds = [['day', 'متن روزها'], ['recipe', 'دستورها'], ['article', 'مقاله‌ها'], ['quotes', 'جمله‌های انگیزشی'], ['sos', 'تمرین‌های هوس']];
+    const kinds = [['day', 'متن روزها'], ['recipe', 'رسپی‌ها'], ['article', 'مقاله‌ها'], ['quotes', 'جمله‌های انگیزشی'], ['sos', 'تمرین‌های هوس']];
     let picker = '', form = '';
     if (k === 'day') {
       picker = `<select class="input" id="pick" style="max-width:420px">${PROGRAM.cycles.map(c => c.days.map(d => `<option value="c${c.id}d${d.day}" ${contentSel.id === `c${c.id}d${d.day}` ? 'selected' : ''}>دوره‌ی ${fa(c.id)}، روز ${fa(d.day)}: ${esc(d.title)}</option>`).join('')).join('')}</select>`;
       const m = /^c(\d)d(\d+)$/.exec(contentSel.id) || [0, 1, 1]; const d = PROGRAM.cycles.find(c => c.id === +m[1])?.days[+m[2] - 1] || {};
       form = `${fld('f-title', 'عنوان', d.title)}${fld('f-technique', 'تکنیک', d.technique)}${area('f-read', 'متن روز (هر پاراگراف یک خط)', lines(d.read), 8)}${area('f-mission', 'مأموریت', d.mission, 2)}${area('f-tip', 'نکته‌ی علمی', d.tip, 2)}${area('f-tasks', 'کارهای چک‌لیست شب (هر کدوم یک خط)', lines(d.tasks), 5)}${fld('f-reflect', 'سؤال شب', d.reflect)}${area('f-reminders', 'یادآورها (هر خط: ساعت | متن)', (d.reminders || []).map(r => `${r.time} | ${r.text}`).join('\n'), 4)}`;
     } else if (k === 'recipe') {
-      picker = `<select class="input" id="pick" style="max-width:420px">${RECIPES.map(r => `<option value="${esc(r.id)}" ${contentSel.id === r.id ? 'selected' : ''}>${esc(r.title)}</option>`).join('')}<option value="__new" ${contentSel.id === '__new' ? 'selected' : ''}>+ دستور تازه</option></select>`;
+      picker = `<select class="input" id="pick" style="max-width:420px">${RECIPES.map(r => `<option value="${esc(r.id)}" ${contentSel.id === r.id ? 'selected' : ''}>${esc(r.title)}</option>`).join('')}<option value="__new" ${contentSel.id === '__new' ? 'selected' : ''}>+ رسپی تازه</option></select>`;
       const r = RECIPES.find(x => x.id === contentSel.id) || {};
       form = `${contentSel.id === '__new' ? fld('f-id', 'شناسه‌ی انگلیسی (مثلاً date-cookies)', '') : ''}${fld('f-title', 'عنوان', r.title)}${fld('f-category', 'دسته (کیک، دسر، میان‌وعده، نوشیدنی، صبحانه)', r.category || 'دسر')}${fld('f-time', 'زمان', r.time)}${fld('f-difficulty', 'سختی', r.difficulty)}${fld('f-serves', 'برای چند نفر', r.serves)}${area('f-intro', 'معرفی', r.intro, 2)}${area('f-ingredients', 'مواد (هر کدوم یک خط)', lines(r.ingredients), 6)}${area('f-steps', 'مراحل (هر کدوم یک خط)', lines(r.steps), 6)}${area('f-tip', 'نکته', r.tip, 2)}
         <div class="field"><label for="f-svgFrom">تصویر</label><select class="input" id="f-svgFrom"><option value="">${contentSel.id === '__new' ? 'تصویر پیش‌فرض' : 'همون تصویر فعلی'}</option>${RECIPES.map(x => `<option value="${esc(x.id)}">مثل تصویر «${esc(x.title)}»</option>`).join('')}</select></div>`;
@@ -314,7 +314,7 @@
     return `<form id="bf" class="card stack" style="max-width:620px"><b>فرستادن اعلان به همه‌ی کاربرها</b>
       <p class="small muted">به همه‌ی دستگاه‌هایی که اعلان رو فعال کردن فرستاده می‌شه (حداکثر تا ۵ دقیقه‌ی بعد). برای پیامی که توی خود سایت دیده بشه، از «نوار اطلاع‌رسانی» در تنظیمات سایت استفاده کن.</p>
       ${area('b-text', 'متن پیام', '', 3)}
-      <div class="field"><label for="b-link">با زدن روی اعلان کجا باز بشه؟</label><select class="input" id="b-link">${[['#today', 'برنامه‌ی امروز'], ['#move', 'ورزش'], ['#night', 'چک‌لیست شب'], ['#recipes', 'دستورها'], ['#learn', 'علم قند'], ['#more', 'ابزارها']].map(([v, t]) => `<option value="${v}">${t}</option>`).join('')}</select></div>
+      <div class="field"><label for="b-link">با زدن روی اعلان کجا باز بشه؟</label><select class="input" id="b-link">${[['#today', 'برنامه‌ی امروز'], ['#move', 'ورزش'], ['#night', 'چک‌لیست شب'], ['#recipes', 'رسپی‌ها'], ['#learn', 'علم قند'], ['#more', 'ابزارها']].map(([v, t]) => `<option value="${v}">${t}</option>`).join('')}</select></div>
       <div class="row"><button class="btn berry" type="submit">ارسال</button><button class="btn ghost" type="button" id="b-ok" hidden>بله، برای همه بفرست</button></div><p class="small" id="b-res"></p></form>`;
   }
   function mountBroadcast() {

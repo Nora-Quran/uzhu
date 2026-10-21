@@ -198,7 +198,9 @@
   ls.set('uzhu:nightTheme', '');
   const choice = () => { const v = ls.get(KEY); return T[v] || v === 'plain' ? v : ''; };
   // the theme actually shown: a theme id, or '' for the plain look
-  const current = () => { if (!on('theme')) return ''; const v = choice(); return v === 'plain' ? '' : v || autoTheme(); };
+  // the admin's site-wide default (Settings → ظاهر سایت) applies when the visitor hasn't picked a theme
+  const siteDefault = () => { const d = A.site?.settings?.brand?.theme; return T[d] || d === 'plain' ? d : ''; };
+  const current = () => { if (!on('theme')) return ''; const v = choice() || siteDefault(); return v === 'plain' ? '' : v || autoTheme(); };
 
   /* ---------------- cached drawings ---------------- */
   // Every SVG string has its own filter id, so one string is used at most once per page.
@@ -295,7 +297,7 @@
     return `<div class="card stack ss-set" style="gap:10px"><b>🎨 تم برنامه</b>
       <p class="small muted">کل برنامه، حتی چک‌لیست شب، با نقاشی‌های آبرنگی همون فصل یا مناسبت تزئین می‌شه. حالت خودکار خودش با تقویم عوض می‌شه.</p>
       <div class="ss-grid" role="radiogroup" aria-label="تم برنامه">
-        ${tile('', 'خودکار', one(ICON[auto]()), `بر اساس فصل و مناسبت، الان ${T[auto].label}`)}
+        ${tile('', 'خودکار', one(ICON[T[siteDefault()] ? siteDefault() : auto]()), siteDefault() === 'plain' ? 'پیش‌فرض سایت: ساده' : T[siteDefault()] ? `پیش‌فرض سایت: ${T[siteDefault()].label}` : `بر اساس فصل و مناسبت، الان ${T[auto].label}`)}
         ${ORDER.map(k => tile(k, T[k].label, decor(k, 'icon'))).join('')}
         ${tile('plain', 'ساده', '<span class="ss-plain"></span>', 'بدون تم')}
       </div>

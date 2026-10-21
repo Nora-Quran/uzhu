@@ -113,3 +113,28 @@ create trigger uzhu_cheer_nick before insert on public.uzhu_cheers for each row 
 -- Every 5 minutes: pg_cron calls the edge function `uzhu-send` (supabase/functions/uzhu-send), which sends due reminders.
 -- create extension if not exists pg_cron; create extension if not exists pg_net;
 -- select cron.schedule('uzhu-send-reminders', '*/5 * * * *', $$ select net.http_post(url := 'https://<project>.supabase.co/functions/v1/uzhu-send', headers := jsonb_build_object('Content-Type','application/json','x-cron-secret',(select value from public.uzhu_private where key='cron_secret')), body := '{}'::jsonb); $$);
+
+-- Admin list management from the admin panel (each checks uzhu_is_admin inside; nobody can remove themselves)
+create function public.uzhu_admin_list() returns setof text language sql stable security definer set search_path = public as $$
+  select email from public.uzhu_admins where public.uzhu_is_admin() order by email;
+$$;
+create function public.uzhu_admin_add(e text) returns boolean language sql security definer set search_path = public as $$
+  with i as (
+    insert into public.uzhu_admins(email)
+    select lower(trim(e)) where public.uzhu_is_admin() and lower(trim(e)) ~ '^[^@[:space:]]+@[^@[:space:]]+[.][^@[:space:]]+$'
+    on conflict do nothing returning 1
+  ) select public.uzhu_is_admin() and lower(trim(e)) ~ '^[^@[:space:]]+@[^@[:space:]]+[.][^@[:space:]]+$';
+$$;
+create function public.uzhu_admin_remove(e text) returns boolean language sql security definer set search_path = public as $$
+  with d as (
+    delete from public.uzhu_admins where email = lower(trim(e)) and public.uzhu_is_admin()
+      and lower(trim(e)) <> lower(coalesce(auth.jwt() ->> 'email', ''))
+    returning 1
+  ) select exists (select 1 from d);
+$$;
+revoke all on function public.uzhu_admin_list() from public, anon;
+revoke all on function public.uzhu_admin_add(text) from public, anon;
+revoke all on function public.uzhu_admin_remove(text) from public, anon;
+grant execute on function public.uzhu_admin_list() to authenticated;
+grant execute on function public.uzhu_admin_add(text) to authenticated;
+grant execute on function public.uzhu_admin_remove(text) to authenticated;

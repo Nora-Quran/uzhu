@@ -4,6 +4,7 @@
   const { fa, esc, STORE, PROGRAM, RECIPES, ARTICLES } = A;
   const $ = (s, el = document) => el.querySelector(s);
   const $$ = (s, el = document) => [...el.querySelectorAll(s)];
+  const ART = window.UZHU_ART;
   let isAdmin = false;
   Object.defineProperty(A, 'isAdmin', { get: () => isAdmin });
   // Article HTML written in the admin panel: keep simple formatting tags and safe links only.
@@ -69,6 +70,12 @@
     try { isAdmin = await STORE.isAdmin(); adminFor = A.user?.email || null; } catch (e) { isAdmin = false; }
   });
 
+  let brandNow = null;
+  function applyBrand(b) {
+    const n = Number(b.logo) || 0; if (n === brandNow) return; brandNow = n;
+    const logo = $('#logo'); if (logo) logo.innerHTML = n ? `<img src="img/logos/icon-${n}.svg" alt="" width="40" height="40" style="display:block;width:100%;height:auto;border-radius:10px">` : ART.mascot('happy');
+    const fav = document.querySelector('link[rel=icon]'); if (fav) fav.href = n ? `img/logos/icon-${n}.svg` : 'img/icon.svg';
+  }
   // Banner, feature toggles and texts that live in app.js markup.
   let adminFor = null;
   A.H.mount = (A.H.mount || []).concat(r => {
@@ -79,6 +86,7 @@
       else STORE.isAdmin().then(v => { if (v !== isAdmin) { isAdmin = v; A.render(); } }).catch(() => {});
     }
     const st = A.site.settings;
+    applyBrand(st.brand || {});
     const ann = st.announcement;
     let bar = $('#ann');
     if (ann?.on && ann.text && !ssGet('uzhu:ann:' + hashStr(ann.text))) {
@@ -280,15 +288,37 @@
         <label class="check" for="s-ann-on"><input type="checkbox" id="s-ann-on" ${ann.on ? 'checked' : ''}><span>نمایش داده بشه</span></label>
         ${fld('s-ann-text', 'متن', ann.text)}${fld('s-ann-link', 'لینک (اختیاری، مثلاً #recipes)', ann.link)}
         <div class="field"><label for="s-ann-tone">رنگ</label><select class="input" id="s-ann-tone">${[['mint', 'سبز'], ['sun', 'زرد'], ['berry', 'صورتی'], ['lav', 'بنفش']].map(([v, t]) => `<option value="${v}" ${ann.tone === v ? 'selected' : ''}>${t}</option>`).join('')}</select></div></div>
+      ${brandCard(st.brand || {})}
       <div class="card stack"><b>بخش‌ها و ویژگی‌ها</b><p class="small muted">هر کدوم رو خاموش کنی، برای همه‌ی کاربرها پنهان می‌شه.</p>
         <div class="feat-grid">${FEATURES.map(([k, t]) => `<label class="check" for="s-f-${k}"><input type="checkbox" id="s-f-${k}" ${on(k) ? 'checked' : ''}><span>${t}</span></label>`).join('')}</div></div>
       <div class="card stack"><b>ساعت‌های پیش‌فرض یادآور برای کاربرهای تازه</b><div class="row">${['صبح', 'ظهر', 'عصر', 'شب'].map((t, i) => `<label class="small">${t}<br><input class="input" type="time" id="s-t${i}" value="${(df.times || ['09:00', '13:00', '16:30', '21:30'])[i]}" style="width:auto"></label>`).join('')}<label class="small">ورزش<br><input class="input" type="time" id="s-mt" value="${df.moveTime || '18:00'}" style="width:auto"></label></div></div>
       <div class="card stack"><b>متن‌های صفحه‌ی اول</b>${fld('s-hero-title', 'تیتر اصلی (خالی یعنی پیش‌فرض)', hero.title)}${area('s-hero-lead', 'متن زیر تیتر', hero.lead, 3)}${area('s-footer', 'متن پایین صفحه', st.footer, 2)}</div>
       <div class="card stack"><b>پیام‌ها</b>${area('s-msg-m', 'پیام‌های صبح (هر کدوم یک خط)', lines(msg.morning), 4)}${area('s-msg-e', 'پیام‌های شب (هر کدوم یک خط)', lines(msg.evening), 4)}${area('s-coach', 'یادداشت مربی برای همه (در بازخورد دوره دیده می‌شه)', st.coach?.text, 3)}</div>
       <div class="card stack"><b>جایگزین‌های اضافه</b>${area('s-swaps', 'هر خط: به‌جای | بخور | توضیح', (st.swaps || []).map(s => `${s.from} | ${s.to} | ${s.note || ''}`).join('\n'), 4)}</div>
-      <div class="row"><button class="btn primary big" type="submit">ذخیره‌ی تنظیمات</button></div></form>`;
+      <div class="row"><button class="btn primary big" type="submit">ذخیره‌ی تنظیمات</button></div></form>
+      <div class="card stack" id="adm-box" style="margin-top:16px"><b>👥 ادمین‌ها</b><p class="small muted">هر کسی که اینجا اضافه بشه، بعد از ورود با همین ایمیل (ایمیلِ تأییدشده) به این پنل دسترسی داره.</p><div id="adm-list" class="stack" style="gap:6px"><span class="small muted">در حال بارگذاری…</span></div>
+        <div class="row"><input class="input" id="adm-new" type="email" dir="ltr" placeholder="email@example.com" aria-label="ایمیل ادمین تازه" style="flex:1;min-width:200px"><button class="btn ghost" type="button" id="adm-add">افزودن ادمین</button></div></div>`;
+  }
+  // Logo choice (img/logos) and the site-wide default theme; every visitor sees these unless they picked their own theme.
+  const LOGOS = [[0, 'یوژوی فعلی'], [1, 'بغلِ گرم'], [2, 'استکانِ جوونه'], [3, 'پسته‌ی خندون'], [4, 'حلقه‌ی ۲۱ روزه'], [5, 'انارِ دل'], [6, 'صبحِ تازه']];
+  function brandCard(b) {
+    const S = A.season, cur = Number(b.logo) || 0;
+    const themes = S ? [['', 'خودکار (بر اساس فصل و مناسبت)'], ...S.ORDER.map(k => [k, S.T[k].label]), ['plain', 'ساده (بدون تم)']] : [];
+    return `<div class="card stack"><b>🎨 ظاهر سایت</b>
+      <span class="small muted">لوگو (بالای صفحه و آیکون مرورگر)</span>
+      <div class="brand-logos" role="radiogroup" aria-label="لوگو">${LOGOS.map(([n, t]) => `<label class="brand-logo"><input type="radio" name="s-logo" value="${n}" ${cur === n ? 'checked' : ''}><span class="bl-art">${n ? `<img src="img/logos/icon-${n}.svg" alt="" width="56" height="56">` : ART.mascot('happy')}</span><span class="small">${t}</span></label>`).join('')}</div>
+      ${themes.length ? `<div class="field"><label for="s-theme">تم پیش‌فرض سایت</label><select class="input" id="s-theme">${themes.map(([k, t]) => `<option value="${k}" ${(b.theme || '') === k ? 'selected' : ''}>${esc(t)}</option>`).join('')}</select><span class="small muted">هر کاربر هنوز می‌تونه از تنظیمات خودش تم دیگه‌ای انتخاب کنه.</span></div>` : ''}</div>`;
   }
   function mountSettings() {
+    const box = $('#adm-list'), drawAdmins = async () => {
+      let list; try { list = await STORE.admins(); } catch (e) { box.innerHTML = `<span class="small muted">${esc(e.message)}</span>`; return; }
+      if (!list) { box.innerHTML = '<span class="small muted">در نسخه‌ی آزمایشی (بدون سرور)، اولین حسابی که روی این مرورگر ساخته شده ادمینه.</span>'; $('#adm-add').disabled = true; return; }
+      const me = (A.user?.email || '').toLowerCase();
+      box.innerHTML = list.map(e => `<div class="row" style="justify-content:space-between"><span dir="ltr">${esc(e)}</span>${e === me ? '<span class="chip">خودت</span>' : `<button class="btn ghost" type="button" data-adm-del="${esc(e)}">حذف</button>`}</div>`).join('');
+      $$('[data-adm-del]', box).forEach(b => b.onclick = async () => { try { await STORE.removeAdmin(b.dataset.admDel); A.toast('حذف شد.', 'bell'); drawAdmins(); } catch (e) { A.toast(e.message, 'bell'); } });
+    };
+    $('#adm-add').onclick = async () => { const e = val('adm-new'); if (!e) return; try { await STORE.addAdmin(e); $('#adm-new').value = ''; A.toast('ادمین اضافه شد. باید با همین ایمیل ثبت‌نام و ایمیلش رو تأیید کنه.', 'bell'); drawAdmins(); } catch (er) { A.toast(er.message, 'bell'); } };
+    drawAdmins();
     $('#sf').onsubmit = async e => {
       e.preventDefault();
       const next = {
@@ -299,6 +329,7 @@
         footer: val('s-footer'),
         messages: { morning: unlines(val('s-msg-m')), evening: unlines(val('s-msg-e')) },
         coach: { text: val('s-coach') },
+        brand: { logo: Number($('input[name=s-logo]:checked')?.value || 0), theme: $('#s-theme') ? val('s-theme') : (A.site.settings.brand?.theme || '') },
         swaps: unlines(val('s-swaps')).map(l => { const [from, to, note] = l.split('|').map(s => s.trim()); return { from, to, note }; }).filter(s => s.from && s.to),
       };
       try {

@@ -57,6 +57,8 @@
     // Site settings and content edits made in the admin panel (this browser only in local mode).
     async getSite() { return { settings: LS.get('uzhu:site:settings', {}), content: LS.get('uzhu:site:content', []) }; },
     async isAdmin() { const u = this.current(); if (!u) return false; const users = LS.get('uzhu:users', {}); const first = Object.entries(users).sort((a, b) => (a[1].createdAt || 0) - (b[1].createdAt || 0))[0]; return !!first && first[0] === u.email; },
+    // Admin list lives on the server only; in local mode the first account on this browser is the admin.
+    async admins() { return null; }, async addAdmin() { throw new Error('فقط در نسخه‌ی آنلاین'); }, async removeAdmin() { throw new Error('فقط در نسخه‌ی آنلاین'); },
     async setSetting(key, value) { const st = LS.get('uzhu:site:settings', {}); st[key] = value; LS.set('uzhu:site:settings', st); },
     async saveContent(kind, id, data, hidden = false) { const c = LS.get('uzhu:site:content', []).filter(x => !(x.kind === kind && x.id === id)); c.push({ kind, id, data, hidden }); LS.set('uzhu:site:content', c); },
     async deleteContent(kind, id) { LS.set('uzhu:site:content', LS.get('uzhu:site:content', []).filter(x => !(x.kind === kind && x.id === id))); },
@@ -166,6 +168,9 @@
       return { settings: Object.fromEntries((st.data || []).map(r => [r.key, r.value])), content: ct.data || [] };
     },
     async isAdmin() { if (!this.user) return false; const { data } = await this.sb.rpc('uzhu_is_admin'); return !!data; },
+    async admins() { const { data, error } = await this.sb.rpc('uzhu_admin_list'); if (error) throw new Error(error.message); return data || []; },
+    async addAdmin(email) { const { data, error } = await this.sb.rpc('uzhu_admin_add', { e: email }); if (error) throw new Error(error.message); if (!data) throw new Error('ایمیل درست نیست یا اجازه‌ی این کار رو نداری.'); },
+    async removeAdmin(email) { const { data, error } = await this.sb.rpc('uzhu_admin_remove', { e: email }); if (error) throw new Error(error.message); if (!data) throw new Error('حذف نشد. خودت رو نمی‌تونی حذف کنی.'); },
     async setSetting(key, value) { const { error } = await this.sb.from('uzhu_settings').upsert({ key, value, updated_at: new Date().toISOString() }); if (error) throw new Error(error.message); },
     async saveContent(kind, id, data, hidden = false) { const { error } = await this.sb.from('uzhu_content').upsert({ kind, id, data, hidden, updated_at: new Date().toISOString() }); if (error) throw new Error(error.message); },
     async deleteContent(kind, id) { await this.sb.from('uzhu_content').delete().eq('kind', kind).eq('id', id); },

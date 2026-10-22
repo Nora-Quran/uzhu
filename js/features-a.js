@@ -93,7 +93,7 @@
     if (!on('checkin') || pref().checkin === false) return '';
     const c = ck()[today()];
     if (!c) return `<div class="card fa-ci stack" id="fa-ci" style="gap:8px">
-      <b>☀️ چک‌این صبح: امروز چطوری؟</b>
+      <b>☀️ امروز چطوری؟</b>
       <div class="fa-taps fa-moods" role="group" aria-label="حال">${MOODS.map((e, i) => `<button type="button" data-mood="${i}" aria-label="${MOODN[i]}">${e}</button>`).join('')}</div>
       <div class="row small" style="gap:6px;flex-wrap:nowrap"><span class="muted">انرژی</span><div class="fa-taps" role="group" aria-label="انرژی از ۱ تا ۵">${[1, 2, 3, 4, 5].map(n => `<button type="button" data-en="${n}" aria-label="انرژی ${fa(n)}">${fa(n)}</button>`).join('')}</div></div></div>`;
     if (c.energy <= 2 && !c.hideTip) return `<div class="card fa-ci stack" id="fa-ci" style="gap:8px">${lowEnergyTip()}</div>`;
@@ -894,7 +894,7 @@
     return items.length ? `<div class="card stack" style="gap:10px"><b>بیشتر از مسیر تو</b><div class="fa-jgrid">${items.join('')}</div></div>` : '';
   });
   hook('settings', () => {
-    const rows = [['checkin', 'fa-s1', 'checkin', 'چک‌این صبح (حال و انرژی)'], ['companion', 'fa-s2', 'companion', 'همراه و انرژی روزانه'], ['quiz', 'fa-s3', 'quiz', 'سؤال یک‌دقیقه‌ای بعد از متن روز']].filter(r => on(r[0]));
+    const rows = [['checkin', 'fa-s1', 'checkin', 'امروز چطوری؟ (حال و انرژی)'], ['companion', 'fa-s2', 'companion', 'همراه و انرژی روزانه'], ['quiz', 'fa-s3', 'quiz', 'سؤال یک‌دقیقه‌ای بعد از متن روز']].filter(r => on(r[0]));
     const social = on('buddy') || on('team') || on('league');
     if (!rows.length && !social) return '';
     return `<div class="card stack" style="gap:8px"><b>صفحه‌ی امروز</b>${rows.map(([, id, k, t]) => `<label class="check" for="${id}"><input type="checkbox" id="${id}" ${pref()[k] !== false ? 'checked' : ''}><span>${t}</span></label>`).join('')}

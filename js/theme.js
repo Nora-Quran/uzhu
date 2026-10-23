@@ -109,6 +109,56 @@
     spoon: () => [W('path', 'd="M10 46 Q50 54 90 46 Q86 86 50 88 Q14 86 10 46Z"', '#b8c4d4', .6) + G('path', 'd="M60 50 L90 46 Q86 86 60 87Z"', '#5c6a80', .2) + W('ellipse', 'cx="50" cy="46" rx="40" ry="6"', '#d6dee8', .8) + ln('M62 40 L94 6', '#8c97a6', 4, .7) + W('ellipse', 'cx="58" cy="44" rx="8" ry="5" transform="rotate(-45 58 44)"', '#a8b4c4', .8), face(50, 66, .8)],
     kite: () => [W('path', 'd="M50 4 L84 38 L50 78 L16 38Z"', C.rose, .55) + G('path', 'd="M50 4 L84 38 L50 38Z M50 38 L16 38 L50 78Z"', C.lav, .45) + ln('M50 4 L50 78 M16 38 L84 38', '#fff', 1.4, .7) + ln('M50 78 Q40 88 52 94 Q62 98 54 100', C.brownD, 1.4, .6) + [[46, 86], [56, 96]].map(([x, y]) => `<g transform="translate(${x - 6} ${y - 4}) scale(.12)">${E.bow(C.sky)[0]}</g>`).join(''), face(50, 40, .8)],
     cloud: () => [W('path', 'd="M20 70 Q4 70 6 56 Q8 42 24 44 Q26 24 46 26 Q60 14 74 30 Q94 30 92 50 Q98 70 78 70Z"', C.white, .95) + G('path', 'd="M20 70 Q50 64 78 70 Q90 66 92 56 Q86 72 20 70Z"', C.sky, .5), face(50, 52, .9)],
+    /* space */
+    planet: (c = C.peach, ring = C.gold, f = false) => [`<g transform="rotate(-16 50 50)">${ln('M6 52 A44 12 0 0 1 94 52', ring, 3, .75)}</g>` + W('circle', 'cx="50" cy="50" r="29"', c, .62) + G('path', 'd="M68 27 A29 29 0 0 1 36 76 A31 31 0 0 0 68 27Z"', '#000', .08)
+      + G('ellipse', 'cx="40" cy="58" rx="9" ry="4"', '#fff', .35) + G('ellipse', 'cx="62" cy="40" rx="6" ry="3"', '#fff', .3) + [[34, 36, 2], [44, 30, 1.4], [60, 64, 1.8]].map(([x, y, r]) => `<circle cx="${x}" cy="${y}" r="${r}" fill="#fff" fill-opacity=".7"/>`).join('')
+      + `<g transform="rotate(-16 50 50)">${ln('M6 52 A44 12 0 0 0 94 52', ring, 3, .85)}</g>`, f ? face(50, 52, .9) : ''],
+    rocket: () => [W('path', 'd="M40 74 Q50 104 60 74 Q50 84 40 74Z"', C.peach, .7) + W('path', 'd="M44 74 Q50 94 56 74Z"', C.butter, .9)
+      + W('path', 'd="M33 50 Q16 60 15 84 Q25 73 35 71Z"', C.terra, .7) + W('path', 'd="M67 50 Q84 60 85 84 Q75 73 65 71Z"', C.terra, .7)
+      + W('path', 'd="M50 4 C67 18 70 42 67 72 L33 72 C30 42 33 18 50 4Z"', '#fbefd7', .95) + G('path', 'd="M33 46 L67 46 L67 72 L33 72Z"', C.rose, .35) + G('path', 'd="M56 10 C66 22 70 42 67 72 L58 72 C60 46 60 26 56 10Z"', C.terra, .14)
+      + W('path', 'd="M50 4 C57 10 61 17 63 24 L37 24 C39 17 43 10 50 4Z"', C.terra, .78) + W('rect', 'x="32" y="68" width="36" height="7" rx="3"', C.terra, .8) + W('circle', 'cx="50" cy="40" r="10"', C.terra, .75) + W('circle', 'cx="50" cy="40" r="6.8"', C.sky, .75) + HL('circle', 'cx="47" cy="37" r="2.2"', .7),
+      ''],
+    moon: (c = '#e6ded0') => [W('circle', 'cx="50" cy="50" r="34"', c, .85) + G('path', 'd="M74 26 A34 34 0 0 1 36 81 A37 37 0 0 0 74 26Z"', '#8f8577', .2) + [[34, 34, 6], [66, 62, 7], [40, 70, 4], [70, 36, 3.5]].map(([x, y, r]) => W('circle', `cx="${x}" cy="${y}" r="${r}"`, '#b4aa9a', .45, 1)).join(''), face(52, 50, .95)],
+    astro: () => [W('path', 'd="M24 98 Q22 70 50 68 Q78 70 76 98Z"', '#f2ede4', .95) + G('path', 'd="M58 70 Q76 74 76 98 L60 98Z"', C.sky, .3) + W('rect', 'x="40" y="78" width="20" height="12" rx="3"', '#dfe8ee', .9) + `<g transform="translate(43 79) scale(.14)">${W('path', `d="${STAR}"`, C.gold, .8)}</g>`
+      + W('circle', 'cx="33" cy="26" r="8"', '#b98058', .75) + W('circle', 'cx="67" cy="26" r="8"', '#b98058', .75) + G('circle', 'cx="33" cy="26" r="4"', C.rose, .6) + G('circle', 'cx="67" cy="26" r="4"', C.rose, .6)
+      + W('ellipse', 'cx="50" cy="46" rx="22" ry="20"', '#c48e63', .8) + W('ellipse', 'cx="50" cy="54" rx="9.5" ry="7"', '#f3dfc7', .95)
+      + W('circle', 'cx="50" cy="44" r="33"', '#d6ecf8', .22, 2.4) + ln('M28 26 Q36 16 48 14', '#fff', 3, .7) + W('ellipse', 'cx="50" cy="74" rx="24" ry="5"', '#e3dccf', .95),
+      face(50, 46, .95) + `<ellipse cx="50" cy="51.5" rx="2.6" ry="1.8" fill="${FACE}"/>`],
+    comet: (c = C.gold) => [ln('M14 86 Q34 70 56 48 M24 92 Q42 78 60 58 M8 74 Q28 62 50 42', c, 2.2, .5) + `<g transform="translate(48 8) scale(.46)">${W('path', `d="${STAR}"`, c, .7)}</g>`, ''],
+    /* animals */
+    bear: (c = '#c08a60', bow = '') => [W('ellipse', 'cx="50" cy="74" rx="27" ry="22"', c, .78) + W('ellipse', 'cx="50" cy="78" rx="14" ry="12"', '#f3dfc7', .9)
+      + W('ellipse', 'cx="32" cy="92" rx="10" ry="7"', c, .8) + W('ellipse', 'cx="68" cy="92" rx="10" ry="7"', c, .8) + G('ellipse', 'cx="32" cy="92" rx="5" ry="3.6"', '#f3dfc7', .9) + G('ellipse', 'cx="68" cy="92" rx="5" ry="3.6"', '#f3dfc7', .9)
+      + W('circle', 'cx="30" cy="22" r="9"', c, .8) + W('circle', 'cx="70" cy="22" r="9"', c, .8) + G('circle', 'cx="30" cy="22" r="4.5"', C.rose, .55) + G('circle', 'cx="70" cy="22" r="4.5"', C.rose, .55)
+      + W('circle', 'cx="50" cy="40" r="23"', c, .82) + W('ellipse', 'cx="50" cy="49" rx="10" ry="7.5"', '#f3dfc7', .95) + G('path', 'd="M66 24 A23 23 0 0 1 52 63 A25 25 0 0 0 66 24Z"', '#000', .07)
+      + (bow ? `<g transform="translate(62 6) scale(.34) rotate(18 50 50)">${E.bow(bow)[0]}</g>` : ''),
+      face(50, 41, .95) + `<ellipse cx="50" cy="46.5" rx="2.8" ry="2" fill="${FACE}"/>`],
+    bearFace: (c = '#c08a60') => [W('circle', 'cx="24" cy="30" r="12"', c, .8) + W('circle', 'cx="76" cy="30" r="12"', c, .8) + G('circle', 'cx="24" cy="30" r="6"', C.rose, .55) + G('circle', 'cx="76" cy="30" r="6"', C.rose, .55)
+      + W('ellipse', 'cx="50" cy="56" rx="33" ry="29"', c, .82) + W('ellipse', 'cx="50" cy="67" rx="13" ry="10"', '#f3dfc7', .95), face(50, 56, 1.25) + `<ellipse cx="50" cy="63" rx="3.4" ry="2.5" fill="${FACE}"/>`],
+    bunny: (c = '#e8e2ea') => [W('ellipse', 'cx="40" cy="20" rx="7" ry="18" transform="rotate(-10 40 20)"', c, .9) + W('ellipse', 'cx="60" cy="20" rx="7" ry="18" transform="rotate(10 60 20)"', c, .9) + G('ellipse', 'cx="40" cy="22" rx="3" ry="12" transform="rotate(-10 40 22)"', C.rose, .5) + G('ellipse', 'cx="60" cy="22" rx="3" ry="12" transform="rotate(10 60 22)"', C.rose, .5)
+      + W('ellipse', 'cx="50" cy="76" rx="24" ry="21"', c, .9) + W('circle', 'cx="74" cy="88" r="7"', '#fff', .95) + W('ellipse', 'cx="50" cy="80" rx="12" ry="11"', '#fbf6f2', .9)
+      + W('circle', 'cx="50" cy="48" r="19"', c, .92) + G('path', 'd="M62 34 A19 19 0 0 1 52 67 A21 21 0 0 0 62 34Z"', '#8a7a90', .14) + W('ellipse', 'cx="36" cy="94" rx="8" ry="5"', c, .9) + W('ellipse', 'cx="62" cy="95" rx="8" ry="5"', c, .9),
+      face(50, 49, .85) + `<ellipse cx="50" cy="53" rx="2" ry="1.5" fill="${C.dusty}"/>`],
+    mouse: (c = '#bab2ab') => [ln('M74 82 Q94 84 92 66 Q90 54 98 50', '#a8968a', 2, .7) + W('ellipse', 'cx="56" cy="72" rx="24" ry="18"', c, .8) + W('ellipse', 'cx="62" cy="76" rx="12" ry="9"', '#8f6a50', .45)
+      + W('circle', 'cx="24" cy="34" r="11"', c, .85) + W('circle', 'cx="48" cy="32" r="11"', c, .85) + G('circle', 'cx="24" cy="34" r="6"', C.rose, .6) + G('circle', 'cx="48" cy="32" r="6"', C.rose, .6)
+      + W('ellipse', 'cx="36" cy="52" rx="19" ry="16"', c, .88) + W('ellipse', 'cx="44" cy="90" rx="7" ry="4.5"', c, .85) + W('ellipse', 'cx="66" cy="90" rx="7" ry="4.5"', c, .85),
+      face(34, 52, .78) + `<circle cx="18" cy="56" r="2.4" fill="${C.dusty}"/>`],
+    mushroom: () => [W('path', 'd="M40 56 Q35 80 37 96 L63 96 Q65 80 60 56Z"', '#f3e6cc', .95) + G('path', 'd="M52 56 L60 56 Q65 80 63 96 L54 96Z"', C.brown, .14) + W('path', 'd="M45 96 L45 84 Q50 77 55 84 L55 96Z"', C.brown, .7)
+      + W('path', 'd="M6 56 Q8 14 50 12 Q92 14 94 56 Q50 64 6 56Z"', '#a9c49a', .75) + G('path', 'd="M60 14 Q92 18 94 56 Q80 60 66 60 Q72 34 60 14Z"', C.sageD, .25)
+      + [[22, 40, 6, 4], [32, 24, 4.5, 3.4], [72, 26, 5, 3.6], [82, 44, 5, 3.6], [62, 48, 3.4, 2.6], [20, 52, 3, 2.2]].map(([x, y, rx, ry]) => W('ellipse', `cx="${x}" cy="${y}" rx="${rx}" ry="${ry}"`, '#fffaf0', .95, 1)).join('')
+      + W('path', 'd="M41 48 L41 38 Q50 27 59 38 L59 48Z"', '#fbf1d6', .95) + ln('M41 48 L41 38 Q50 27 59 38 L59 48Z M50 30 L50 48 M41 40 L59 40', C.brown, 1.4, .7)
+      + ln('M12 59 ' + Array.from({ length: 13 }, (_, i) => `L${15 + i * 6} ${i % 2 ? 59 : 65}`).join(' '), C.terra, 1.2, .7)
+      + ln('M22 96 Q18 86 22 78 M22 88 Q14 84 12 78 M22 86 Q28 82 30 76 M78 96 Q82 86 78 78 M78 88 Q86 84 88 80', C.sageD, 1.6, .6), ''],
+    sprig: (c = C.mustard, c2 = C.sage) => [ln('M50 98 Q46 60 54 8', C.brownD, 1.6, .55) + Array.from({ length: 7 }, (_, i) => { const y = 86 - i * 11, x = 50 + (i * .6), s = i % 2 ? 1 : -1; return W('ellipse', `cx="${x + s * 9}" cy="${y}" rx="8" ry="3.6" transform="rotate(${s * -28} ${x + s * 9} ${y})"`, i % 3 ? c : c2, .6, 1); }).join(''), ''],
+    gyp: () => [ln('M50 98 Q48 70 50 40 M50 70 Q36 56 28 34 M50 62 Q62 48 72 28 M50 48 Q42 32 44 14 M50 48 Q58 30 60 10 M28 34 Q20 24 18 14 M72 28 Q82 22 86 12', C.sageD, 1.3, .55)
+      + [[18, 14], [24, 10], [28, 34], [22, 28], [44, 14], [40, 8], [48, 10], [60, 10], [56, 6], [66, 14], [72, 28], [78, 22], [86, 12], [82, 8], [34, 40], [64, 34], [50, 40], [30, 18], [70, 18]].map(([x, y], i) => W('circle', `cx="${x}" cy="${y}" r="${2.6 + (i % 3) * .7}"`, i % 4 ? '#fffaf2' : C.rose, .95, .8)).join(''), ''],
+    tulip: (c = C.rose) => [ln('M50 98 Q52 70 50 42', C.sageD, 2.4, .7) + W('path', 'd="M50 96 Q30 84 30 62 Q44 72 50 92Z"', C.sage, .6) + W('path', 'd="M51 90 Q68 76 72 60 Q58 66 52 84Z"', C.sage, .55)
+      + W('path', 'd="M36 22 Q34 40 42 46 Q50 50 58 46 Q66 40 64 22 L57 30 L50 18 L43 30Z"', c, .7) + G('path', 'd="M50 18 L57 30 L64 22 Q66 40 58 46 Q54 48 50 48Z"', '#000', .07), ''],
+    doily: (c = '#fff6ee') => {
+      const N = 18, pts = Array.from({ length: N }, (_, i) => { const a = i / N * Math.PI * 2, b = (i + .5) / N * Math.PI * 2, r = 40, R = 47; return `${i ? 'L' : 'M'}${(50 + Math.cos(a) * r).toFixed(1)} ${(50 + Math.sin(a) * r).toFixed(1)} Q${(50 + Math.cos(b) * R).toFixed(1)} ${(50 + Math.sin(b) * R).toFixed(1)} ${(50 + Math.cos(a + Math.PI * 2 / N) * r).toFixed(1)} ${(50 + Math.sin(a + Math.PI * 2 / N) * r).toFixed(1)}`; }).join(' ') + 'Z';
+      return [W('path', `d="${pts}"`, c, .95, 1.2) + Array.from({ length: N }, (_, i) => { const a = (i + .5) / N * Math.PI * 2; return `<circle cx="${(50 + Math.cos(a) * 40).toFixed(1)}" cy="${(50 + Math.sin(a) * 40).toFixed(1)}" r="1.8" fill="${C.dusty}" fill-opacity=".35"/>`; }).join('')
+        + `<circle cx="50" cy="50" r="30" fill="none" stroke="${C.dusty}" stroke-opacity=".35" stroke-width="1.2" stroke-dasharray="2 3"/>` + `<g transform="translate(30 30) scale(.4)">${W('path', `d="${HEART}"`, C.rose, .7)}</g>`, ''];
+    },
+    ribbon: (c = C.rose) => [W('path', 'd="M4 40 Q20 30 36 42 Q50 52 64 42 Q80 30 96 40 L96 50 Q80 40 64 52 Q50 62 36 52 Q20 40 4 50Z"', c, .55) + `<g transform="translate(30 22) scale(.4)">${E.bow(c)[0]}</g>`, ''],
   };
   // compose elements into one SVG with its own uniquely named watercolor filter
   const frame = (vb, parts, cls = '') => {
@@ -166,9 +216,25 @@
       tr: () => frame('0 0 160 140', [[E.cloud(), 30, 10, 1, 0], [E.sun(), 0, 0, .45, 0]]),
       gut: () => [one(E.butterfly()), one(E.blossom(C.butter)), one(E.heart(C.rose)), one(E.leaf(C.green, C.sageD))],
       scene: () => [one(E.tulips()), one(E.cup('#e5f1df', C.sage, 'heart')), one(E.sabzeh(true))] },
+    // picture themes: only picked by hand (kind 'style'), never by the calendar
+    space: { label: 'فضایی', icon: '🚀', kind: 'style', notes: ['یه قدم کوچیک، یه پرش بزرگ', 'تا ماه و برگشت، بی‌قند!', 'تو یه ستاره‌ای'],
+      tl: () => frame('0 0 160 140', [[E.planet(C.peach, C.gold, true), 14, 8, .95, 0], [E.star(C.gold), 112, 6, .26, 12], [E.sparkle(C.gold), 6, 92, .24, 0], [E.star('#8fb8b0'), 104, 96, .22, -10]]),
+      tr: () => frame('0 0 160 140', [[E.rocket(), 50, 0, 1.05, -28], [E.moon(), 4, 70, .44, 0], [E.sparkle(C.gold), 128, 96, .2, 0]]),
+      gut: () => [one(E.planet('#9fc4bb', C.gold)), one(E.star(C.gold)), one(E.moon()), one(E.comet())],
+      scene: () => [one(E.astro()), one(E.rocket()), one(E.planet(C.butter, C.rose, true))] },
+    animals: { label: 'حیوونا', icon: '🐻', kind: 'style', notes: ['آروم و پیوسته، مثل خرس کوچولو', 'دوستات هواتو دارن', 'یه روز خوب دیگه، با هم'],
+      tl: () => frame('0 0 160 140', [[E.mushroom(), 18, 0, 1.05, -4], [E.sprig(C.mustard, C.sage), 0, 50, .6, -16], [E.mouse(), 96, 84, .46, 0]]),
+      tr: () => frame('0 0 160 140', [[E.bunny(), 52, 18, .9, 4], [E.tulip(C.rose), 10, 40, .62, -10], [E.sprig(C.sage, C.mustard), 128, 60, .5, 14]]),
+      gut: () => [one(E.bearFace()), one(E.tulip(C.rose)), one(E.mouse()), one(E.heart(C.rose))],
+      scene: () => [one(E.mouse()), one(E.mushroom()), one(E.bear())] },
+    bow: { label: 'پاپیونی', icon: '🎀', kind: 'style', notes: ['با خودت مهربون باش', 'امروز یه هدیه‌ست', 'کوچولو ولی محکم'],
+      tl: () => frame('0 0 160 140', [[E.bow(C.rose), 18, 6, .95, -10], [E.heart(C.dusty), 104, 74, .34, 14], [E.bow('#e8b9a5'), 4, 84, .4, 12]]),
+      tr: () => frame('0 0 160 140', [[E.gyp(), 40, 0, 1.1, 8], [E.bow(C.dusty), 4, 66, .5, -14], [E.heart(C.rose), 120, 90, .26, 0]]),
+      gut: () => [one(E.bow(C.rose)), one(E.heart(C.rose)), one(E.doily()), one(E.bow('#c9a27a'))],
+      scene: () => [one(E.bear('#c9956c', C.rose)), one(E.cup('#f8dde3', C.dusty, 'heart')), one(E.doily())] },
   };
-  const ORDER = ['autumn', 'winter', 'spring', 'summer', 'nowruz', 'yalda', 'ramadan', 'suri', 'sizdah'];
-  const HEARTC = { autumn: C.rose, winter: C.dusty, spring: C.rose, summer: C.peach, nowruz: C.red, yalda: C.berry, ramadan: C.gold, suri: C.orange, sizdah: C.rose };
+  const ORDER = ['autumn', 'winter', 'spring', 'summer', 'nowruz', 'yalda', 'ramadan', 'suri', 'sizdah', 'space', 'animals', 'bow'];
+  const HEARTC = { autumn: C.rose, winter: C.dusty, spring: C.rose, summer: C.peach, nowruz: C.red, yalda: C.berry, ramadan: C.gold, suri: C.orange, sizdah: C.rose, space: C.peach, animals: C.rose, bow: C.rose };
 
   /* ---------------- auto pick by date ---------------- */
   const jp = d => { const o = {}; new Intl.DateTimeFormat('en-US-u-ca-persian-nu-latn', { year: 'numeric', month: 'numeric', day: 'numeric' }).formatToParts(d).forEach(p => { if (p.type !== 'literal') o[p.type] = parseInt(p.value, 10); }); return o; };
@@ -204,7 +270,7 @@
 
   /* ---------------- cached drawings ---------------- */
   // Every SVG string has its own filter id, so one string is used at most once per page.
-  const ICON = { autumn: () => E.maple(), winter: () => E.snowflake(), spring: () => E.blossom(), summer: () => E.sun(), nowruz: () => E.sabzeh(), yalda: () => E.pomegranate(), ramadan: () => E.crescent(), suri: () => E.fire(), sizdah: () => E.kite() };
+  const ICON = { autumn: () => E.maple(), winter: () => E.snowflake(), spring: () => E.blossom(), summer: () => E.sun(), nowruz: () => E.sabzeh(), yalda: () => E.pomegranate(), ramadan: () => E.crescent(), suri: () => E.fire(), sizdah: () => E.kite(), space: () => E.planet(C.peach, C.gold, true), animals: () => E.bearFace(), bow: () => E.bow(C.rose) };
   const cache = new Map();
   function decor(id, slot) {
     const th = T[id]; if (!th) return slot === 'pool' ? [] : '';
@@ -212,7 +278,8 @@
     if (!cache.has(k)) {
       cache.set(k, slot === 'tl' ? th.tl() : slot === 'tr' ? th.tr() : slot === 'icon' ? one(ICON[id]())
         : slot === 'heart' ? frame('-4 -4 108 108', [[E.heart(HEARTC[id]), 0, 0]], 'nt-heart')
-        : slot === 'pool' ? th.scene().concat(th.gut()) : slot === 'gut' ? th.gut() : slot === 'scene' ? th.scene() : '');
+        : slot === 'pool' ? th.scene().concat(th.gut()) : slot === 'gut' ? th.gut() : slot === 'scene' ? th.scene()
+        : slot === 'row' ? row(id) : slot === 'top' ? topArt(id) : '');
     }
     return cache.get(k);
   }
@@ -260,32 +327,227 @@
     b.dataset.topic = t;
     if (id) { b.dataset.season = id; delete b.dataset.pal; loadFont(); }
     else { delete b.dataset.season; const p = ls.get(BGKEY); b.dataset.pal = PALS.some(x => x[0] === p) ? p : AUTO[t]; }
+    paintArt(id);
+  }
+  // the theme's background art (CSS variables holding SVG data URIs) and the little row in the phone top bar
+  let painted = null;
+  function paintArt(id) {
+    const b = document.body; if (painted === id) return; painted = id;
+    const vars = { '--ss-bgl': ['bg', .6], '--ss-bgd': ['bg', .3], '--ss-shl': ['sheet', .3], '--ss-shd': ['sheet', .18], '--ss-garl': ['gar', .95], '--ss-gard': ['gar', .7] };
+    Object.entries(vars).forEach(([k, [a, op]]) => { if (id) b.style.setProperty(k, art(id, a, op)); else b.style.removeProperty(k); });
+    document.querySelectorAll('.topbar .ss-top').forEach(n => n.remove());
+    const bar = $('.topbar .wrap');
+    if (id && bar) { const n = el('div', 'ss-top', decor(id, 'top')); n.setAttribute('aria-hidden', 'true'); bar.appendChild(n); }
   }
 
-  // a corner cluster on the first sheet and a small row (with a handwritten note) at the end of the last one
+  /* ---------------- extra theme art: garland, scattered background, peeking animals, stickers, card frames ---------------- */
+  // g: garland elements, f: pennant colors, pk: peeking animals, st: corner stickers, bg: scattered background elements
+  const X = {
+    autumn: { g: () => [E.maple(C.terra, C.rust), E.leaf(C.mustard, C.terra), E.berries()], f: [C.terra, C.mustard, C.rose], pk: ['bear'], st: ['leaf', 'heart', 'sparkle', 'bow'], bg: () => [E.maple(C.mustard, C.terra), E.leaf(C.sage), E.heart(C.rose), E.maple(C.terra, C.rust), E.berries(), E.leaf(C.terra, C.rust)] },
+    winter: { g: () => [E.snowflake(C.skyD), E.hat(C.dusty), E.snowflake(C.lav)], f: [C.sky, C.lav, C.dusty], pk: ['polar'], st: ['star', 'heart', 'sparkle'], bg: () => [E.snowflake(C.sky), E.snowflake(C.lav), E.hat(C.skyD), E.heart(C.dusty), E.snowflake(C.skyD), E.mittens()] },
+    spring: { g: () => [E.blossom(C.rose), E.butterfly(), E.blossom(C.lav)], f: [C.rose, C.sage, C.butter], pk: ['bunny'], st: ['flower', 'tulip', 'heart', 'sparkle'], bg: () => [E.blossom(C.rose), E.butterfly(C.peach, C.butter), E.leaf(C.sage), E.blossom(C.lav), E.tulip(C.rose), E.butterfly()] },
+    summer: { g: () => [E.lemon(), E.sun(), E.watermelon(false)], f: [C.sky, C.butter, C.peach], pk: ['bear'], st: ['star', 'heart', 'sparkle', 'flower'], bg: () => [E.lemon(), E.shell(), E.sunflower(), E.heart(C.peach), E.watermelon(false), E.lemon()] },
+    nowruz: { g: () => [E.blossom(C.rose), E.eggs(), E.leaf(C.green, C.sageD)], f: [C.red, C.green, C.butter], pk: ['bunny'], st: ['flower', 'heart', 'leaf', 'sparkle'], bg: () => [E.blossom(C.rose), E.hyacinth(), E.leaf(C.green, C.sageD), E.heart(C.red), E.eggs(), E.blossom(C.lav)] },
+    yalda: { g: () => [E.pomegranate(), E.star(C.gold), E.leaf(C.sageD, '#3d6b37')], f: [C.berry, C.gold, C.sageD], pk: ['bear'], st: ['heart', 'star', 'sparkle'], bg: () => [E.pomopen(), E.star(C.gold), E.pomegranate(), E.heart(C.berry), E.candle(), E.leaf(C.sageD, '#3d6b37')] },
+    ramadan: { g: () => [E.lantern(), E.star(C.gold), E.crescent()], f: [C.gold, C.navy, C.lav], pk: ['bear'], st: ['star', 'sparkle', 'heart'], bg: () => [E.star(C.gold), E.lantern(), E.sparkle(C.gold), E.crescent(), E.star(C.lav), E.sparkle(C.lav)] },
+    suri: { g: () => [E.sparkle(C.orange), E.star(C.gold), E.fire()], f: [C.orange, C.gold, C.red], pk: ['bear'], st: ['star', 'sparkle', 'heart'], bg: () => [E.sparkle(C.orange), E.star(C.gold), E.fire(), E.heart(C.orange), E.sparkle(C.gold), E.star(C.orange)] },
+    sizdah: { g: () => [E.kite(), E.blossom(C.butter), E.butterfly()], f: [C.sky, C.green, C.rose], pk: ['bunny'], st: ['flower', 'heart', 'leaf', 'sparkle'], bg: () => [E.kite(), E.cloud(), E.butterfly(), E.blossom(C.butter), E.leaf(C.green, C.sageD), E.blossom(C.rose)] },
+    space: { g: () => [E.star(C.gold), E.planet('#9fc4bb', C.gold), E.moon()], f: [C.peach, '#9fc4bb', C.butter], pk: ['astro'], st: ['star', 'planet', 'sparkle', 'heart'], bg: () => [E.planet('#9fc4bb', C.gold), E.star('#8fb8b0'), E.planet(C.peach, C.rose), E.comet(), E.star(C.terra), E.moon()] },
+    animals: { g: () => [E.bearFace(), E.tulip(C.rose), E.bunny()], f: [C.sky, C.rose, C.butter], pk: ['bear', 'bunny', 'mouse'], st: ['bearface', 'tulip', 'heart', 'sparkle'], bg: () => [E.bearFace('#f1e9df'), E.tulip(C.rose), E.bearFace(), E.tulip(C.peach), E.sprig(C.mustard, C.sage), E.bunny()] },
+    bow: { g: () => [E.bow(C.rose), E.heart(C.rose), E.bow('#c9a27a')], f: [C.rose, '#f2c4ca', '#e3c6aa'], pk: ['bowbear'], st: ['bow', 'heart', 'sparkle', 'tulip'], bg: () => [E.bow(C.rose), E.heart(C.dusty), E.bow('#d4ad92'), E.heart(C.rose), E.bow(C.dusty), E.gyp()] },
+  };
+  const place = (e, x, y, s = 1, r = 0) => { const t = `translate(${x} ${y}) rotate(${r} ${50 * s} ${50 * s}) scale(${s})`; return [`<g transform="${t}">${e[0]}</g>`, e[1] ? `<g transform="${t}">${e[1]}</g>` : '']; };
+  // a standalone SVG document (for CSS backgrounds) with the same watercolor filter
+  const doc = (w, h, parts, raw = '', op = 1) => {
+    const ps = parts.map(p => place(...p));
+    return `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}"><defs><filter id="f" x="-5%" y="-5%" width="110%" height="110%" color-interpolation-filters="sRGB"><feTurbulence type="fractalNoise" baseFrequency=".032" numOctaves="2" seed="4" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="4" xChannelSelector="R" yChannelSelector="G" result="w"/><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="6" result="g"/><feColorMatrix in="g" type="matrix" values="0 0 0 0 .38  0 0 0 0 .26  0 0 0 0 .2  0 0 0 -.8 .44" result="gc"/><feComposite in="gc" in2="w" operator="in" result="gm"/><feMerge><feMergeNode in="w"/><feMergeNode in="gm"/></feMerge></filter></defs><g opacity="${op}"><g filter="url(#f)">${raw}${ps.map(a => a[0]).join('')}</g>${ps.map(a => a[1]).join('')}</g></svg>`;
+  };
+  const uri = s => `url("data:image/svg+xml,${encodeURIComponent(s)}")`;
+  const ART = {
+    // bunting with a theme element hanging from each dip of the string
+    gar: (id, op) => {
+      const x = X[id], els = x.g(); let raw = ''; const parts = [];
+      for (let k = 0; k < 3; k++) {
+        const x0 = k * 120; raw += ln(`M${x0} 8 Q${x0 + 60} 32 ${x0 + 120} 8`, C.brownD, 1.4, .6);
+        [.2, .8].forEach((t, j) => { const fx = x0 + 120 * t, fy = 8 + 48 * t * (1 - t); raw += W('path', `d="M${fx - 8} ${fy - 1} L${fx + 8} ${fy + 1} L${fx + 1} ${fy + 19}Z"`, x.f[(k * 2 + j) % x.f.length], .66, 1) + `<circle cx="${fx}" cy="${fy + 6}" r="1.4" fill="#fff" fill-opacity=".8"/>`; });
+        raw += ln(`M${x0 + 60} 20 L${x0 + 60} 25`, C.brownD, 1.2, .55);
+        parts.push([els[k], x0 + 44, 23, .32, k % 2 ? 8 : -8]);
+      }
+      return doc(360, 58, parts, raw, op);
+    },
+    // the patterned table: a few bigger elements scattered over a large tile
+    bg: (id, op) => { const b = X[id].bg(); const at = [[24, 30, .5, -14], [300, 70, .4, 12], [150, 236, .46, -6], [352, 306, .38, 18], [40, 392, .42, 8], [232, 452, .32, -10]]; return doc(440, 520, at.map((p, i) => [b[i % b.length], ...p]).concat([[E.sparkle(C.gold), 210, 120, .12], [E.sparkle(C.gold), 120, 470, .1], [E.sparkle(C.gold), 410, 210, .1]]), '', op); },
+    // the paper sheet: tiny, very faint elements that show between the cards
+    sheet: (id, op) => { const b = X[id].bg(); return doc(380, 460, [[b[1], 30, 60, .22, -12], [b[2], 280, 210, .2, 10], [b[4 % b.length], 120, 380, .2, -4], [E.sparkle(C.gold), 330, 40, .1], [E.heart(HEARTC[id]), 200, 120, .09, 8], [E.sparkle(C.gold), 40, 260, .08]], '', op); },
+  };
+  const artCache = new Map();
+  const art = (id, k, op) => { const key = id + k + op; if (!artCache.has(key)) artCache.set(key, uri(ART[k](id, op))); return artCache.get(key); };
+  // small rows of elements: inside the top of the first sheet, and in the phone top bar
+  function row(id) { const g = X[id].g(); return frame('0 0 262 42', [[g[0], 0, 5, .32, -8], [E.sparkle(C.gold), 40, 13, .15], [g[1], 64, 3, .34, 6], [E.heart(HEARTC[id]), 113, 6, .3, -4], [g[2], 162, 3, .34, -6], [E.sparkle(C.gold), 208, 13, .15], [g[0], 228, 5, .32, 10]], 'ss-rowart'); }
+  function topArt(id) { const g = X[id].g(); return frame('0 0 120 40', [[g[1], 0, 4, .32, -8], [E.sparkle(C.gold), 38, 14, .13], [g[0], 52, 2, .36, 4], [E.sparkle(C.gold), 92, 6, .12], [E.heart(HEARTC[id]), 96, 20, .2, 10]]); }
+
+  // peeking animals: crisp little drawings (no ids, so one string can be used many times)
+  const PKC = { bear: ['#c79a72', '#f3dfc7'], polar: ['#f7f2ea', '#fffaf4'], bunny: ['#ece5ee', '#fff8fb'], mouse: ['#bfb6ae', '#efe6de'] };
+  function peek(kind) {
+    const base = kind === 'astro' || kind === 'bowbear' ? 'bear' : kind, [c, m] = PKC[base], s = 'stroke="#7a5a48" stroke-opacity=".42" stroke-width="1.2"';
+    const ears = base === 'bunny' ? `<ellipse cx="23" cy="4" rx="5" ry="12" transform="rotate(-12 23 4)" fill="${c}" ${s}/><ellipse cx="37" cy="4" rx="5" ry="12" transform="rotate(12 37 4)" fill="${c}" ${s}/><ellipse cx="23" cy="5" rx="2.2" ry="8" transform="rotate(-12 23 5)" fill="#f4b9c8"/><ellipse cx="37" cy="5" rx="2.2" ry="8" transform="rotate(12 37 5)" fill="#f4b9c8"/>`
+      : base === 'mouse' ? `<circle cx="15" cy="13" r="9" fill="${c}" ${s}/><circle cx="45" cy="13" r="9" fill="${c}" ${s}/><circle cx="15" cy="13" r="5" fill="#f4b9c8"/><circle cx="45" cy="13" r="5" fill="#f4b9c8"/>`
+      : `<circle cx="17" cy="13" r="7" fill="${c}" ${s}/><circle cx="43" cy="13" r="7" fill="${c}" ${s}/><circle cx="17" cy="13" r="3.4" fill="#f2b8b0"/><circle cx="43" cy="13" r="3.4" fill="#f2b8b0"/>`;
+    const nose = base === 'bear' || base === 'polar' ? `<ellipse cx="30" cy="31" rx="6.5" ry="4.8" fill="${m}"/><ellipse cx="30" cy="29.6" rx="2.1" ry="1.5" fill="${FACE}"/><path d="M28.2 32.4 Q30 34 31.8 32.4" fill="none" stroke="${FACE}" stroke-width="1" stroke-linecap="round"/>`
+      : `<ellipse cx="30" cy="30.5" rx="1.8" ry="1.3" fill="${C.dusty}"/><path d="M28 32.6 Q30 34.4 32 32.6" fill="none" stroke="${FACE}" stroke-width="1" stroke-linecap="round"/>`;
+    const bow = kind === 'bowbear' ? `<g transform="translate(37 1) rotate(16)"><path d="M8 7 C3 0 -3 2 -1 7 C0 11 5 10 8 7Z M8 7 C13 0 19 2 17 7 C16 11 11 10 8 7Z" style="fill:var(--nt-tape)" stroke="#a3405b" stroke-opacity=".35" stroke-width=".8"/><circle cx="8" cy="7" r="2.2" style="fill:var(--nt-accent)"/></g>` : '';
+    const helmet = kind === 'astro' ? `<circle cx="30" cy="24" r="21" fill="#dff0fb" fill-opacity=".28" stroke="#8fb9d9" stroke-width="1.8"/><path d="M15 16 Q20 7 30 5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-opacity=".9"/>` : '';
+    return `<svg viewBox="0 -10 60 56" aria-hidden="true" focusable="false">${ears}<ellipse cx="30" cy="25" rx="17" ry="15" fill="${c}" ${s}/>${bow}<circle cx="23.5" cy="24" r="1.8" fill="${FACE}"/><circle cx="36.5" cy="24" r="1.8" fill="${FACE}"/><ellipse cx="19" cy="29.5" rx="3" ry="1.8" fill="#f08a9a" opacity=".55"/><ellipse cx="41" cy="29.5" rx="3" ry="1.8" fill="#f08a9a" opacity=".55"/>${nose}${helmet}<ellipse cx="15" cy="41" rx="6.5" ry="4.6" fill="${c}" ${s}/><ellipse cx="45" cy="41" rx="6.5" ry="4.6" fill="${c}" ${s}/><path d="M13 40 L13 43 M17 40 L17 43 M43 40 L43 43 M47 40 L47 43" stroke="#7a5a48" stroke-opacity=".4" stroke-width=".9" stroke-linecap="round"/></svg>`;
+  }
+  // die-cut corner stickers, tinted with the theme colors (style fills follow light/dark automatically)
+  const ST = {
+    heart: [['path', `d="${HEART}"`, 'var(--nt-tape)']],
+    sparkle: [['path', 'd="M50 8 Q54 46 92 50 Q54 54 50 92 Q46 54 8 50 Q46 46 50 8Z"', '#efc25a']],
+    star: [['path', `d="${STAR}"`, 'var(--nt-accent2)']],
+    leaf: [['path', 'd="M50 6 C80 28 78 70 50 94 C22 70 20 28 50 6Z"', 'var(--nt-accent)'], ['path', 'd="M50 14 L50 92"', 'none']],
+    flower: [0, 72, 144, 216, 288].map(a => ['ellipse', `cx="50" cy="28" rx="15" ry="20" transform="rotate(${a} 50 50)"`, 'var(--nt-tape)']).concat([['circle', 'cx="50" cy="50" r="11"', '#f3cd6b']]),
+    tulip: [['path', 'd="M47 56 L53 56 L54 96 L46 96Z"', '#93bb85'], ['path', 'd="M50 92 Q26 84 28 62 Q44 70 50 88Z"', '#93bb85'], ['path', 'd="M30 14 Q26 40 38 50 Q50 58 62 50 Q74 40 70 14 L60 26 L50 10 L40 26Z"', 'var(--nt-tape)']],
+    bow: [['path', 'd="M50 46 C30 14 4 22 12 42 C18 58 38 54 50 46Z M50 46 C70 14 96 22 88 42 C82 58 62 54 50 46Z"', 'var(--nt-tape)'], ['path', 'd="M46 50 L32 90 L41 84 L48 94 L52 52Z M54 50 L66 88 L58 84 L52 94 L48 52Z"', 'var(--nt-tape)'], ['circle', 'cx="50" cy="47" r="8"', 'var(--nt-accent)']],
+    planet: [['ellipse', 'cx="50" cy="52" rx="46" ry="13" transform="rotate(-16 50 52)"', '#efc25a'], ['circle', 'cx="50" cy="50" r="28"', 'var(--nt-accent)'], ['ellipse', 'cx="50" cy="52" rx="40" ry="7" transform="rotate(-16 50 52)"', 'var(--ss-polar)']],
+    bearface: [['circle', 'cx="24" cy="30" r="13"', '#c79a72'], ['circle', 'cx="76" cy="30" r="13"', '#c79a72'], ['ellipse', 'cx="50" cy="56" rx="34" ry="29"', '#c79a72'], ['ellipse', 'cx="50" cy="66" rx="13" ry="10"', '#f3dfc7']],
+  };
+  function sticker(k) {
+    const p = ST[k] || ST.heart, sh = (t, a, f, x = '') => `<${t} ${a} style="fill:${f}"${x}/>`;
+    const extra = k === 'bearface' ? `<circle cx="38" cy="52" r="3.4" fill="${FACE}"/><circle cx="62" cy="52" r="3.4" fill="${FACE}"/><ellipse cx="50" cy="62" rx="4.4" ry="3.2" fill="${FACE}"/><ellipse cx="29" cy="62" rx="5" ry="3" fill="#f08a9a" opacity=".6"/><ellipse cx="71" cy="62" rx="5" ry="3" fill="#f08a9a" opacity=".6"/>`
+      : k === 'heart' || k === 'star' || k === 'planet' ? `<ellipse cx="38" cy="36" rx="5" ry="3.5" transform="rotate(-30 38 36)" fill="#fff" fill-opacity=".5"/>` : k === 'leaf' ? '<path d="M50 16 L50 90" stroke="#fff" stroke-opacity=".55" stroke-width="3" stroke-linecap="round"/>' : '';
+    return `<svg viewBox="-10 -10 120 120" aria-hidden="true" focusable="false"><g style="stroke:var(--ss-polar);stroke-width:16;stroke-linejoin:round">${p.map(([t, a]) => sh(t, a, 'var(--ss-polar)')).join('')}</g>${p.filter(x => x[2] !== 'none').map(([t, a, f]) => sh(t, a, f)).join('')}${extra}</svg>`;
+  }
+  const CLIP = {
+    binder: '<svg viewBox="0 0 40 38" aria-hidden="true" focusable="false"><path d="M13 19 Q10 3 20 2 Q30 3 27 19" fill="none" stroke="#9c7a35" stroke-width="2.2" stroke-linecap="round"/><path d="M15 19 Q14 8 20 7.5 Q26 8 25 19" fill="none" stroke="#c9a24f" stroke-width="1.4" stroke-linecap="round"/><rect x="4" y="17" width="32" height="19" rx="2.5" fill="#d8b25a"/><rect x="6" y="19" width="28" height="4.5" rx="2" fill="#f4dc95" opacity=".85"/><rect x="4" y="31" width="32" height="5" rx="2" fill="#b38b3c" opacity=".55"/></svg>',
+    board: '<svg viewBox="0 0 96 38" aria-hidden="true" focusable="false"><path d="M34 15 L37 3 Q48 -1 59 3 L62 15Z" fill="#d1a94f"/><circle cx="48" cy="7.5" r="2.8" style="fill:var(--nt-paper)"/><rect x="6" y="13" width="84" height="22" rx="5" fill="#ddb862"/><rect x="9" y="15.5" width="78" height="5" rx="2.5" fill="#f6e1a0" opacity=".85"/><rect x="6" y="30" width="84" height="5" rx="2.5" fill="#b08638" opacity=".5"/><circle cx="14" cy="24" r="2.2" fill="#b08638" opacity=".7"/><circle cx="82" cy="24" r="2.2" fill="#b08638" opacity=".7"/></svg>',
+  };
+  const EDGE = {
+    lace: '<svg class="ss-fx ss-lace" aria-hidden="true" focusable="false"><rect class="a" width="100%" height="100%" rx="12"/><rect class="b" width="100%" height="100%" rx="12"/><rect class="c" width="100%" height="100%" rx="12"/></svg>',
+    scal: '<svg class="ss-fx ss-scal" aria-hidden="true" focusable="false"><rect class="a" width="100%" height="100%" rx="10"/><rect class="b" width="100%" height="100%" rx="10"/></svg>',
+    wob: '<svg class="ss-fx ss-wob" viewBox="0 0 1000 1000" preserveAspectRatio="none" aria-hidden="true" focusable="false"><path d="M7 8 C260 3 520 9 760 4 C860 3 930 7 993 6 C997 260 992 520 996 760 C997 880 994 950 994 993 C740 997 480 991 240 996 C140 997 60 994 6 994 C3 740 8 480 4 240 C3 140 6 60 7 8Z"/><path class="w2" d="M5 4 C300 7 600 2 996 5 M995 3 C999 300 993 640 998 996 M997 997 C640 993 300 999 3 996 M2 998 C6 640 1 300 5 3"/></svg>',
+  };
   const hash = s => [...String(s)].reduce((h, c) => (h * 31 + c.charCodeAt(0)) >>> 0, 7);
+  const mix = h => { h = Math.imul(h ^ (h >>> 16), 0x45d9f3b); h = Math.imul(h ^ (h >>> 16), 0x45d9f3b); return (h ^ (h >>> 16)) >>> 0; };
   const el = (tag, cls, html) => { const n = document.createElement(tag); n.className = cls; if (html != null) n.innerHTML = html; return n; };
+  const FX = (cls, html) => el('div', 'ss-fx ' + cls, html);
+
+  // is there room above a card (in its parent) for an animal to peek over it without covering anything?
+  function roomAbove(node, x0, x1, top, depth = 0) {
+    const par = node.parentElement;
+    let prev = node.previousElementSibling, seen = 0;
+    for (; prev && seen < 14; prev = prev.previousElementSibling) {
+      if (prev.classList.contains('ss-x') || prev.classList.contains('ss-fx') || !prev.offsetHeight || getComputedStyle(prev).position === 'absolute') continue;
+      const outer = prev.getBoundingClientRect();
+      if (outer.top >= top - 2) continue; // beside the card (same grid row), not above it
+      seen++;
+      const rg = document.createRange(); rg.selectNodeContents(prev);
+      const pr = rg.getBoundingClientRect(), box = pr.width || pr.height ? pr : outer;
+      if (box.bottom > top - 48 && box.left < x1 + 6 && box.right > x0 - 6) return false;
+      if (outer.bottom < top - 60) return true;
+    }
+    if (seen) return true;
+    if (!par || par.matches('#app > .view > .wrap')) return true;
+    if (depth > 3 || Math.abs(par.getBoundingClientRect().top - top) > 6 || getComputedStyle(par).overflow !== 'visible') return false;
+    return roomAbove(par, x0, x1, top, depth + 1);
+  }
+  const OWN = '.feature,.cycle-card,.greet,.reading,.mission,.growth-card,.band,.sb-polaroid,.ss-set';
+  const NOEDGE = OWN + ',.tip-card,.pop,.recipe,.tool,.ifthen-card,.rem-list,.done-card';
+  const EDGES = ['ss-e-lace', 'ss-e-stk', 'ss-e-wob', 'ss-e-scal'];
+  function unframe(c) { c.querySelectorAll(':scope > .ss-fx').forEach(x => x.remove()); c.classList.remove('ss-rel', ...EDGES); delete c.dataset.ssf; }
+  // washi tape, clips, a peeking animal, lace/sticker/scalloped/hand-drawn edges and corner stickers, picked per card
+  function frameCards(view, id) {
+    const r = document.body.dataset.route || 'home', x = X[id], sheet = view.querySelector(':scope > .wrap');
+    const cards = [...view.querySelectorAll('.card')].filter(c => !c.parentElement.closest('.card,.modal') && !c.matches('.stat-row,.saved-card,.nt-sec'));
+    let peeks = view.querySelectorAll('.ss-fx.ss-pk').length;
+    cards.slice(0, 60).forEach((c, n) => {
+      const [fid, cnt] = (c.dataset.ssf || '').split(':');
+      if (fid === id && (cnt === '0' || c.querySelector(':scope > .ss-fx'))) return;
+      unframe(c);
+      if (!c.offsetWidth) return;
+      let cs = getComputedStyle(c), clipped = cs.overflowX !== 'visible' || cs.overflowY !== 'visible' || (cs.maskImage && cs.maskImage !== 'none') || (cs.webkitMaskImage && cs.webkitMaskImage !== 'none');
+      for (let a = c.parentElement; a && a !== sheet && a !== view && !clipped; a = a.parentElement) { const s = getComputedStyle(a); if (s.overflowX !== 'visible' || s.overflowY !== 'visible') clipped = true; }
+      if (clipped) { c.dataset.ssf = id + ':0'; return; }
+      const h = mix(hash(r + ':' + n + ':' + id)), w = c.offsetWidth, adds = [];
+      if (cs.position === 'static') c.classList.add('ss-rel');
+      // the top: tape, a clip or a peeking animal
+      const pt = parseFloat(cs.paddingTop) || 0;
+      if (!c.matches(OWN) && pt >= 13) {
+        let t = h % 9;
+        if (pt < 18 && t >= 4) t = 3;
+        if (t === 6) {
+          const cr = c.getBoundingClientRect();
+          if (peeks < 3 && w > 200 && (!sheet || cr.top - sheet.getBoundingClientRect().top > 160) && roomAbove(c, cr.left + 14, cr.left + 74, cr.top)) { peeks++; adds.push(FX('ss-pk', peek(x.pk[(h >>> 9) % x.pk.length]))); } else t = 3;
+        }
+        if (t === 7 && w < 300) t = 4;
+        if (t === 2) adds.push(FX('ss-tp g l'));
+        if (t === 3) adds.push(FX('ss-tp s c'));
+        if (t === 4) adds.push(FX('ss-clip', CLIP.binder));
+        if (t === 5) adds.push(FX('ss-tp g l'), FX('ss-tp p c'));
+        if (t === 7) adds.push(FX('ss-clip ss-board', CLIP.board));
+        if (t === 8) adds.push(FX('ss-tp p c'));
+      }
+      // the edge
+      const e = (h >>> 4) % 10;
+      if (e < 4 && !c.matches(NOEDGE) && w > 160) { c.classList.add(EDGES[e]); if (e === 0) adds.push(el('div', '', EDGE.lace).firstChild); if (e === 2) adds.push(el('div', '', EDGE.wob).firstChild); if (e === 3) adds.push(el('div', '', EDGE.scal).firstChild); }
+      // a corner sticker
+      if ((h >>> 8) % 10 < 4 && w > 140) adds.push(FX('ss-st ' + ((h >>> 12) % 2 ? 'l' : 'r'), sticker(x.st[(h >>> 13) % x.st.length])));
+      adds.forEach(a => { a.setAttribute('aria-hidden', 'true'); c.appendChild(a); });
+      c.dataset.ssf = id + ':' + adds.length;
+    });
+  }
+
+  // layout can still move after the frames are placed (fonts, images): an animal that lost its room becomes tape
+  function checkPeeks() {
+    document.querySelectorAll('#app .ss-fx.ss-pk').forEach(k => {
+      const c = k.parentElement, cr = c.getBoundingClientRect();
+      if (c.offsetWidth && roomAbove(c, cr.left + 14, cr.left + 74, cr.top)) return;
+      const t = FX('ss-tp s c'); t.setAttribute('aria-hidden', 'true'); k.replaceWith(t);
+    });
+  }
+  let pkT = [];
+  const laterPeeks = () => { pkT.forEach(clearTimeout); pkT = [400, 1200, 3000].map(ms => setTimeout(() => { try { checkPeeks(); } catch (e) { console.error(e); } }, ms)); };
+  window.addEventListener('resize', laterPeeks);
+
+  // a corner cluster on each side of the first sheet, a garland and an animal over its top edge, a small row of
+  // elements inside its top, and a row (with a handwritten note) at the end of the last sheet
   function decorate() {
     document.querySelectorAll('#app .ss-x').forEach(n => n.remove());
+    document.querySelectorAll('#app [data-ssf]').forEach(unframe);
     const id = current(), view = $('#app > .view');
     if (!id || !view || view.classList.contains('nt-view') || (view.querySelector('.night-page') && on('nighttheme'))) return;
     const sheets = [...view.children].filter(n => n.classList.contains('wrap'));
     if (!sheets.length) return;
-    const r = document.body.dataset.route || 'home', h = hash(r), th = T[id];
+    const r = document.body.dataset.route || 'home', h = hash(r), th = T[id], x = X[id];
     const first = sheets[0], last = sheets[sheets.length - 1];
-    // which corners: both, only the right one or only the left one (the phone shows one)
-    const mode = h % 3;
-    if (mode !== 2) first.prepend(el('div', 'ss-x ss-corner ss-tr' + (mode === 0 ? ' ss-pair' : ''), decor(id, 'tr')));
-    if (mode !== 1) first.prepend(el('div', 'ss-x ss-corner ss-tl', decor(id, 'tl')));
+    first.prepend(el('div', 'ss-x ss-toprow', decor(id, 'row')));
+    first.prepend(el('div', 'ss-x ss-peektop' + (h % 2 ? ' alt' : ''), peek(x.pk[h % x.pk.length])));
+    first.prepend(el('div', 'ss-x ss-corner ss-tr', decor(id, 'tr')));
+    first.prepend(el('div', 'ss-x ss-corner ss-tl', decor(id, 'tl')));
+    first.prepend(el('div', 'ss-x ss-garland'));
     const pool = decor(id, 'pool'), n = pool.length, s = (h >>> 3) % n;
     const pick = [pool[s], pool[(s + 3) % n], pool[(s + 5) % n]];
     const note = th.notes[(h >>> 5) % th.notes.length];
     last.appendChild(el('div', 'ss-x ss-scene',
       `<div class="ss-it">${pick[0]}</div><p class="ss-note sb-hand"><span>${esc(note)}</span>${decor(id, 'heart')}</p><div class="ss-it ss-mid">${pick[1]}</div><div class="ss-it">${pick[2]}</div>`));
+    document.querySelectorAll('#app .ss-x').forEach(n => n.setAttribute('aria-hidden', 'true'));
+    frameCards(view, id);
+    laterPeeks();
+  }
+  // cards drawn after the page mounted (lists that fill in, tabs) get their frames a moment later
+  let mo, moT;
+  function watch() {
+    const app = $('#app'); if (mo || !app || !window.MutationObserver) return;
+    const ours = n => n.nodeType === 1 && n.classList && (n.classList.contains('ss-fx') || n.classList.contains('ss-x'));
+    mo = new MutationObserver(ms => {
+      if (ms.every(m => [...m.addedNodes, ...m.removedNodes].every(ours))) return;
+      clearTimeout(moT);
+      moT = setTimeout(() => { try { const id = current(), view = $('#app > .view'); if (id && view && !view.classList.contains('nt-view') && view.querySelector(':scope > .wrap > .ss-x')) frameCards(view, id); } catch (e) { console.error(e); } }, 160);
+    });
+    mo.observe(app, { childList: true, subtree: true });
   }
 
   apply();
-  add('mount', r => { apply(r); try { decorate(); } catch (e) { console.error(e); } });
+  add('mount', r => { apply(r); try { decorate(); watch(); } catch (e) { console.error(e); } });
 
   /* ---------------- settings ---------------- */
   function settingsCard() {
@@ -298,8 +560,10 @@
       <p class="small muted">کل برنامه، حتی چک‌لیست شب، با نقاشی‌های آبرنگی همون فصل یا مناسبت تزئین می‌شه. حالت خودکار خودش با تقویم عوض می‌شه.</p>
       <div class="ss-grid" role="radiogroup" aria-label="تم برنامه">
         ${tile('', 'خودکار', one(ICON[T[siteDefault()] ? siteDefault() : auto]()), siteDefault() === 'plain' ? 'پیش‌فرض سایت: ساده' : T[siteDefault()] ? `پیش‌فرض سایت: ${T[siteDefault()].label}` : `بر اساس فصل و مناسبت، الان ${T[auto].label}`)}
-        ${ORDER.map(k => tile(k, T[k].label, decor(k, 'icon'))).join('')}
+        ${ORDER.filter(k => T[k].kind !== 'style').map(k => tile(k, T[k].label, decor(k, 'icon'))).join('')}
         ${tile('plain', 'ساده', '<span class="ss-plain"></span>', 'بدون تم')}
+        <b class="small ss-gh">طرح‌ها <small class="muted">همیشگی، با فصل عوض نمی‌شن</small></b>
+        ${ORDER.filter(k => T[k].kind === 'style').map(k => tile(k, T[k].label, decor(k, 'icon'))).join('')}
       </div>
       <div class="stack ss-pal" style="gap:8px"${v === 'plain' ? '' : ' hidden'}><b class="small">رنگ پس‌زمینه‌ی حالت ساده</b>
         <div class="th-sw" role="radiogroup" aria-label="رنگ پس‌زمینه">
@@ -308,6 +572,17 @@
         </div></div></div>`;
   }
   add('settings', settingsCard);
+  // the night page's own theme menu (js/night-theme.js) lists seasons and occasions; add the picture themes to it
+  add('mount', r => {
+    if (r !== 'night') return;
+    setTimeout(() => {
+      const sel = document.getElementById('nt-pick'); if (!sel || sel.querySelector('[data-ss-style]')) return;
+      const g = document.createElement('optgroup'); g.label = 'طرح‌ها'; g.dataset.ssStyle = '1';
+      ORDER.filter(k => T[k].kind === 'style').forEach(k => { const o = document.createElement('option'); o.value = k; o.textContent = `${T[k].icon} ${T[k].label}`; o.selected = choice() === k; g.appendChild(o); });
+      const plain = sel.querySelector('option[value="plain"]'); sel.insertBefore(g, plain);
+      if (T[choice()]?.kind === 'style') sel.value = choice();
+    }, 0);
+  });
   add('mount', r => {
     if (r !== 'settings') return;
     document.querySelectorAll('[data-season-pick]').forEach(b => b.onclick = () => {

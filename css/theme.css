@@ -380,7 +380,7 @@ body[data-season] {
 .ss-top { display: none; position: absolute; top: 50%; left: 50%; width: 104px; transform: translate(-50%, -50%); pointer-events: none; }
 .ss-top .nt-art { display: block; width: 100%; height: auto; overflow: visible; }
 body:not([data-season]) .ss-top { display: none !important; }
-@media (max-width: 860px) { body[data-season] .ss-top { display: block; } }
+@media (max-width: 860px) { body[data-season] .ss-top { display: block; } body[data-season] .topbar:has(.nav:not(.app)) .ss-top { display: none; } }
 @media (max-width: 620px) {
   .ss-garland { top: -60px; height: 44px; background-size: auto 44px; }
   .ss-peektop { width: 44px; top: -34px; left: 30%; }

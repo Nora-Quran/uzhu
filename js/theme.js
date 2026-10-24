@@ -142,6 +142,23 @@
       + W('circle', 'cx="24" cy="34" r="11"', c, .85) + W('circle', 'cx="48" cy="32" r="11"', c, .85) + G('circle', 'cx="24" cy="34" r="6"', C.rose, .6) + G('circle', 'cx="48" cy="32" r="6"', C.rose, .6)
       + W('ellipse', 'cx="36" cy="52" rx="19" ry="16"', c, .88) + W('ellipse', 'cx="44" cy="90" rx="7" ry="4.5"', c, .85) + W('ellipse', 'cx="66" cy="90" rx="7" ry="4.5"', c, .85),
       face(34, 52, .78) + `<circle cx="18" cy="56" r="2.4" fill="${C.dusty}"/>`],
+    fox: (c = '#e8955a') => [W('path', 'd="M58 92 Q92 96 94 64 Q95 50 86 42 Q78 56 81 66 Q80 82 58 84Z"', c, .78) + W('path', 'd="M86 42 Q95 50 94 62 Q87 60 82 50Z"', '#fbf1e4', .95)
+      + W('ellipse', 'cx="50" cy="76" rx="22" ry="20"', c, .82) + W('ellipse', 'cx="50" cy="80" rx="11" ry="13"', '#fbf1e4', .95) + W('ellipse', 'cx="38" cy="94" rx="8" ry="5"', '#8a5a3c', .7) + W('ellipse', 'cx="62" cy="94" rx="8" ry="5"', '#8a5a3c', .7)
+      + W('path', 'd="M28 36 L23 6 L46 24Z"', c, .85) + W('path', 'd="M72 36 L77 6 L54 24Z"', c, .85) + G('path', 'd="M30 28 L27 13 L40 24Z"', '#7a4a32', .45) + G('path', 'd="M70 28 L73 13 L60 24Z"', '#7a4a32', .45)
+      + W('path', 'd="M50 22 C67 22 77 32 79 44 C81 52 70 60 50 63 C30 60 19 52 21 44 C23 32 33 22 50 22Z"', c, .86) + G('path', 'd="M64 26 C74 32 80 42 78 50 C72 56 62 60 54 62 C66 50 68 36 64 26Z"', C.rust, .14)
+      + W('path', 'd="M21 46 C31 46 42 50 50 60 C58 50 69 46 79 46 C76 55 64 63 50 64 C36 63 24 55 21 46Z"', '#fbf1e4', .95),
+      face(50, 43, .95) + `<ellipse cx="50" cy="55" rx="3.4" ry="2.5" fill="${FACE}"/>`],
+    swan: (c = '#fbf8f4', rim = '#a99bbf') => [ln('M6 90 Q18 85 30 90 T54 90 T78 90 T96 90', C.skyD, 1.8, .45) + ln('M18 96 Q30 92 42 96 T66 96', C.sky, 1.6, .4)
+      + `<path d="M30 66 C21 52 22 40 30 30 C36 22 35 14 28 13" fill="none" stroke="${rim}" stroke-opacity=".55" stroke-width="12" stroke-linecap="round"/>`
+      + W('path', 'd="M18 70 C18 56 32 52 48 58 C62 62 76 56 88 44 C90 60 86 80 64 87 C44 92 20 86 18 70Z"', rim, .55, 2.4)
+      + W('path', 'd="M18 70 C18 56 32 52 48 58 C62 62 76 56 88 44 C90 60 86 80 64 87 C44 92 20 86 18 70Z"', c, .97, 0)
+      + `<path d="M30 66 C21 52 22 40 30 30 C36 22 35 14 28 13" fill="none" stroke="${c}" stroke-width="9" stroke-linecap="round"/>`
+      + W('circle', 'cx="27" cy="16" r="9"', rim, .5, 2) + W('circle', 'cx="27" cy="16" r="8.4"', c, 1, 0)
+      + W('path', 'd="M42 66 C54 58 72 60 84 50 C82 68 68 79 50 78 C45 76 42 71 42 66Z"', '#efe7f3', .95, 1.2) + ln('M52 70 Q64 68 74 62 M56 75 Q66 73 76 68', rim, 1.2, .5)
+      + W('path', 'd="M19 14 L7 19 L19 22Z"', C.orange, .9, 1) + G('path', 'd="M19 13 L15 15 L15 21 L19 22Z"', '#3a2a2a', .6)
+      + G('ellipse', 'cx="56" cy="62" rx="4" ry="3"', C.rose, .5),
+      `<circle cx="28" cy="14.5" r="1.7" fill="${FACE}"/><ellipse cx="31.5" cy="19" rx="2.4" ry="1.4" fill="#f08a9a" opacity=".6"/>`
+      + `<g transform="translate(26 26) rotate(-12) scale(.18)"><path d="M50 46 C30 16 4 24 12 42 C18 58 38 54 50 46Z M50 46 C70 16 96 24 88 42 C82 58 62 54 50 46Z" fill="${C.rose}" fill-opacity=".85"/><circle cx="50" cy="46" r="8" fill="${C.dusty}"/></g>`],
     mushroom: () => [W('path', 'd="M40 56 Q35 80 37 96 L63 96 Q65 80 60 56Z"', '#f3e6cc', .95) + G('path', 'd="M52 56 L60 56 Q65 80 63 96 L54 96Z"', C.brown, .14) + W('path', 'd="M45 96 L45 84 Q50 77 55 84 L55 96Z"', C.brown, .7)
       + W('path', 'd="M6 56 Q8 14 50 12 Q92 14 94 56 Q50 64 6 56Z"', '#a9c49a', .75) + G('path', 'd="M60 14 Q92 18 94 56 Q80 60 66 60 Q72 34 60 14Z"', C.sageD, .25)
       + [[22, 40, 6, 4], [32, 24, 4.5, 3.4], [72, 26, 5, 3.6], [82, 44, 5, 3.6], [62, 48, 3.4, 2.6], [20, 52, 3, 2.2]].map(([x, y, rx, ry]) => W('ellipse', `cx="${x}" cy="${y}" rx="${rx}" ry="${ry}"`, '#fffaf0', .95, 1)).join('')
@@ -223,10 +240,10 @@
       gut: () => [one(E.planet('#9fc4bb', C.gold)), one(E.star(C.gold)), one(E.moon()), one(E.comet())],
       scene: () => [one(E.astro()), one(E.rocket()), one(E.planet(C.butter, C.rose, true))] },
     animals: { label: 'حیوونا', icon: '🐻', kind: 'style', notes: ['آروم و پیوسته، مثل خرس کوچولو', 'دوستات هواتو دارن', 'یه روز خوب دیگه، با هم'],
-      tl: () => frame('0 0 160 140', [[E.mushroom(), 18, 0, 1.05, -4], [E.sprig(C.mustard, C.sage), 0, 50, .6, -16], [E.mouse(), 96, 84, .46, 0]]),
-      tr: () => frame('0 0 160 140', [[E.bunny(), 52, 18, .9, 4], [E.tulip(C.rose), 10, 40, .62, -10], [E.sprig(C.sage, C.mustard), 128, 60, .5, 14]]),
-      gut: () => [one(E.bearFace()), one(E.tulip(C.rose)), one(E.mouse()), one(E.heart(C.rose))],
-      scene: () => [one(E.mouse()), one(E.mushroom()), one(E.bear())] },
+      tl: () => frame('0 0 160 140', [[E.mushroom(), 4, 0, .9, -4], [E.fox(), 70, 30, .8, 4], [E.sprig(C.mustard, C.sage), 0, 70, .5, -16], [E.mouse(), 2, 92, .4, 0]]),
+      tr: () => frame('0 0 160 140', [[E.swan(), 0, 46, .78, 0], [E.bunny(), 76, 12, .8, 4], [E.tulip(C.rose), 128, 60, .45, 10], [E.sprig(C.sage, C.mustard), 62, 0, .36, -20]]),
+      gut: () => [one(E.bearFace()), one(E.swan()), one(E.fox()), one(E.heart(C.rose))],
+      scene: () => [one(E.fox()), one(E.swan()), one(E.bear()), one(E.mouse())] },
     bow: { label: 'پاپیونی', icon: '🎀', kind: 'style', notes: ['با خودت مهربون باش', 'امروز یه هدیه‌ست', 'کوچولو ولی محکم'],
       tl: () => frame('0 0 160 140', [[E.bow(C.rose), 18, 6, .95, -10], [E.heart(C.dusty), 104, 74, .34, 14], [E.bow('#e8b9a5'), 4, 84, .4, 12]]),
       tr: () => frame('0 0 160 140', [[E.gyp(), 40, 0, 1.1, 8], [E.bow(C.dusty), 4, 66, .5, -14], [E.heart(C.rose), 120, 90, .26, 0]]),
@@ -353,7 +370,7 @@
     suri: { g: () => [E.sparkle(C.orange), E.star(C.gold), E.fire()], f: [C.orange, C.gold, C.red], pk: ['bear'], st: ['star', 'sparkle', 'heart'], bg: () => [E.sparkle(C.orange), E.star(C.gold), E.fire(), E.heart(C.orange), E.sparkle(C.gold), E.star(C.orange)] },
     sizdah: { g: () => [E.kite(), E.blossom(C.butter), E.butterfly()], f: [C.sky, C.green, C.rose], pk: ['bunny'], st: ['flower', 'heart', 'leaf', 'sparkle'], bg: () => [E.kite(), E.cloud(), E.butterfly(), E.blossom(C.butter), E.leaf(C.green, C.sageD), E.blossom(C.rose)] },
     space: { g: () => [E.star(C.gold), E.planet('#9fc4bb', C.gold), E.moon()], f: [C.peach, '#9fc4bb', C.butter], pk: ['astro'], st: ['star', 'planet', 'sparkle', 'heart'], bg: () => [E.planet('#9fc4bb', C.gold), E.star('#8fb8b0'), E.planet(C.peach, C.rose), E.comet(), E.star(C.terra), E.moon()] },
-    animals: { g: () => [E.bearFace(), E.tulip(C.rose), E.bunny()], f: [C.sky, C.rose, C.butter], pk: ['bear', 'bunny', 'mouse'], st: ['bearface', 'tulip', 'heart', 'sparkle'], bg: () => [E.bearFace('#f1e9df'), E.tulip(C.rose), E.bearFace(), E.tulip(C.peach), E.sprig(C.mustard, C.sage), E.bunny()] },
+    animals: { g: () => [E.fox(), E.swan(), E.bearFace()], f: [C.sky, C.rose, C.butter], pk: ['bear', 'bunny', 'fox', 'mouse'], st: ['bearface', 'foxface', 'tulip', 'heart', 'sparkle'], bg: () => [E.bearFace('#f1e9df'), E.swan(), E.fox(), E.tulip(C.peach), E.sprig(C.mustard, C.sage), E.bunny()] },
     bow: { g: () => [E.bow(C.rose), E.heart(C.rose), E.bow('#c9a27a')], f: [C.rose, '#f2c4ca', '#e3c6aa'], pk: ['bowbear'], st: ['bow', 'heart', 'sparkle', 'tulip'], bg: () => [E.bow(C.rose), E.heart(C.dusty), E.bow('#d4ad92'), E.heart(C.rose), E.bow(C.dusty), E.gyp()] },
   };
   const place = (e, x, y, s = 1, r = 0) => { const t = `translate(${x} ${y}) rotate(${r} ${50 * s} ${50 * s}) scale(${s})`; return [`<g transform="${t}">${e[0]}</g>`, e[1] ? `<g transform="${t}">${e[1]}</g>` : '']; };
@@ -387,13 +404,15 @@
   function topArt(id) { const g = X[id].g(); return frame('0 0 120 40', [[g[1], 0, 4, .32, -8], [E.sparkle(C.gold), 38, 14, .13], [g[0], 52, 2, .36, 4], [E.sparkle(C.gold), 92, 6, .12], [E.heart(HEARTC[id]), 96, 20, .2, 10]]); }
 
   // peeking animals: crisp little drawings (no ids, so one string can be used many times)
-  const PKC = { bear: ['#c79a72', '#f3dfc7'], polar: ['#f7f2ea', '#fffaf4'], bunny: ['#ece5ee', '#fff8fb'], mouse: ['#bfb6ae', '#efe6de'] };
+  const PKC = { fox: ['#e8955a', '#fbf1e4'], bear: ['#c79a72', '#f3dfc7'], polar: ['#f7f2ea', '#fffaf4'], bunny: ['#ece5ee', '#fff8fb'], mouse: ['#bfb6ae', '#efe6de'] };
   function peek(kind) {
     const base = kind === 'astro' || kind === 'bowbear' ? 'bear' : kind, [c, m] = PKC[base], s = 'stroke="#7a5a48" stroke-opacity=".42" stroke-width="1.2"';
     const ears = base === 'bunny' ? `<ellipse cx="23" cy="4" rx="5" ry="12" transform="rotate(-12 23 4)" fill="${c}" ${s}/><ellipse cx="37" cy="4" rx="5" ry="12" transform="rotate(12 37 4)" fill="${c}" ${s}/><ellipse cx="23" cy="5" rx="2.2" ry="8" transform="rotate(-12 23 5)" fill="#f4b9c8"/><ellipse cx="37" cy="5" rx="2.2" ry="8" transform="rotate(12 37 5)" fill="#f4b9c8"/>`
+      : base === 'fox' ? `<path d="M14 22 L11 0 L29 12Z" fill="${c}" ${s} stroke-linejoin="round"/><path d="M46 22 L49 0 L31 12Z" fill="${c}" ${s} stroke-linejoin="round"/><path d="M15 16 L13 5 L24 12Z" fill="#7a4a32" fill-opacity=".55"/><path d="M45 16 L47 5 L36 12Z" fill="#7a4a32" fill-opacity=".55"/>`
       : base === 'mouse' ? `<circle cx="15" cy="13" r="9" fill="${c}" ${s}/><circle cx="45" cy="13" r="9" fill="${c}" ${s}/><circle cx="15" cy="13" r="5" fill="#f4b9c8"/><circle cx="45" cy="13" r="5" fill="#f4b9c8"/>`
       : `<circle cx="17" cy="13" r="7" fill="${c}" ${s}/><circle cx="43" cy="13" r="7" fill="${c}" ${s}/><circle cx="17" cy="13" r="3.4" fill="#f2b8b0"/><circle cx="43" cy="13" r="3.4" fill="#f2b8b0"/>`;
     const nose = base === 'bear' || base === 'polar' ? `<ellipse cx="30" cy="31" rx="6.5" ry="4.8" fill="${m}"/><ellipse cx="30" cy="29.6" rx="2.1" ry="1.5" fill="${FACE}"/><path d="M28.2 32.4 Q30 34 31.8 32.4" fill="none" stroke="${FACE}" stroke-width="1" stroke-linecap="round"/>`
+      : base === 'fox' ? `<path d="M13 27 C19 27 26 30 30 36 C34 30 41 27 47 27 C45 34 38 39 30 40 C22 39 15 34 13 27Z" fill="${m}"/><ellipse cx="30" cy="33" rx="2.4" ry="1.8" fill="${FACE}"/>`
       : `<ellipse cx="30" cy="30.5" rx="1.8" ry="1.3" fill="${C.dusty}"/><path d="M28 32.6 Q30 34.4 32 32.6" fill="none" stroke="${FACE}" stroke-width="1" stroke-linecap="round"/>`;
     const bow = kind === 'bowbear' ? `<g transform="translate(37 1) rotate(16)"><path d="M8 7 C3 0 -3 2 -1 7 C0 11 5 10 8 7Z M8 7 C13 0 19 2 17 7 C16 11 11 10 8 7Z" style="fill:var(--nt-tape)" stroke="#a3405b" stroke-opacity=".35" stroke-width=".8"/><circle cx="8" cy="7" r="2.2" style="fill:var(--nt-accent)"/></g>` : '';
     const helmet = kind === 'astro' ? `<circle cx="30" cy="24" r="21" fill="#dff0fb" fill-opacity=".28" stroke="#8fb9d9" stroke-width="1.8"/><path d="M15 16 Q20 7 30 5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-opacity=".9"/>` : '';
@@ -409,11 +428,13 @@
     tulip: [['path', 'd="M47 56 L53 56 L54 96 L46 96Z"', '#93bb85'], ['path', 'd="M50 92 Q26 84 28 62 Q44 70 50 88Z"', '#93bb85'], ['path', 'd="M30 14 Q26 40 38 50 Q50 58 62 50 Q74 40 70 14 L60 26 L50 10 L40 26Z"', 'var(--nt-tape)']],
     bow: [['path', 'd="M50 46 C30 14 4 22 12 42 C18 58 38 54 50 46Z M50 46 C70 14 96 22 88 42 C82 58 62 54 50 46Z"', 'var(--nt-tape)'], ['path', 'd="M46 50 L32 90 L41 84 L48 94 L52 52Z M54 50 L66 88 L58 84 L52 94 L48 52Z"', 'var(--nt-tape)'], ['circle', 'cx="50" cy="47" r="8"', 'var(--nt-accent)']],
     planet: [['ellipse', 'cx="50" cy="52" rx="46" ry="13" transform="rotate(-16 50 52)"', '#efc25a'], ['circle', 'cx="50" cy="50" r="28"', 'var(--nt-accent)'], ['ellipse', 'cx="50" cy="52" rx="40" ry="7" transform="rotate(-16 50 52)"', 'var(--ss-polar)']],
+    foxface: [['path', 'd="M24 44 L16 6 L46 28Z"', '#e8955a'], ['path', 'd="M76 44 L84 6 L54 28Z"', '#e8955a'], ['path', 'd="M50 26 C72 26 86 40 88 54 C90 66 72 82 50 86 C28 82 10 66 12 54 C14 40 28 26 50 26Z"', '#e8955a'], ['path', 'd="M12 56 C26 56 42 62 50 76 C58 62 74 56 88 56 C84 70 68 84 50 86 C32 84 16 70 12 56Z"', '#fbf1e4']],
     bearface: [['circle', 'cx="24" cy="30" r="13"', '#c79a72'], ['circle', 'cx="76" cy="30" r="13"', '#c79a72'], ['ellipse', 'cx="50" cy="56" rx="34" ry="29"', '#c79a72'], ['ellipse', 'cx="50" cy="66" rx="13" ry="10"', '#f3dfc7']],
   };
   function sticker(k) {
     const p = ST[k] || ST.heart, sh = (t, a, f, x = '') => `<${t} ${a} style="fill:${f}"${x}/>`;
-    const extra = k === 'bearface' ? `<circle cx="38" cy="52" r="3.4" fill="${FACE}"/><circle cx="62" cy="52" r="3.4" fill="${FACE}"/><ellipse cx="50" cy="62" rx="4.4" ry="3.2" fill="${FACE}"/><ellipse cx="29" cy="62" rx="5" ry="3" fill="#f08a9a" opacity=".6"/><ellipse cx="71" cy="62" rx="5" ry="3" fill="#f08a9a" opacity=".6"/>`
+    const extra = k === 'foxface' ? `<path d="M24 36 L21 16 L38 30Z M76 36 L79 16 L62 30Z" fill="#7a4a32" fill-opacity=".5"/><circle cx="37" cy="54" r="3.6" fill="${FACE}"/><circle cx="63" cy="54" r="3.6" fill="${FACE}"/><ellipse cx="50" cy="72" rx="4.6" ry="3.4" fill="${FACE}"/><ellipse cx="27" cy="64" rx="5" ry="3" fill="#f08a9a" opacity=".6"/><ellipse cx="73" cy="64" rx="5" ry="3" fill="#f08a9a" opacity=".6"/>`
+      : k === 'bearface' ? `<circle cx="38" cy="52" r="3.4" fill="${FACE}"/><circle cx="62" cy="52" r="3.4" fill="${FACE}"/><ellipse cx="50" cy="62" rx="4.4" ry="3.2" fill="${FACE}"/><ellipse cx="29" cy="62" rx="5" ry="3" fill="#f08a9a" opacity=".6"/><ellipse cx="71" cy="62" rx="5" ry="3" fill="#f08a9a" opacity=".6"/>`
       : k === 'heart' || k === 'star' || k === 'planet' ? `<ellipse cx="38" cy="36" rx="5" ry="3.5" transform="rotate(-30 38 36)" fill="#fff" fill-opacity=".5"/>` : k === 'leaf' ? '<path d="M50 16 L50 90" stroke="#fff" stroke-opacity=".55" stroke-width="3" stroke-linecap="round"/>' : '';
     return `<svg viewBox="-10 -10 120 120" aria-hidden="true" focusable="false"><g style="stroke:var(--ss-polar);stroke-width:16;stroke-linejoin:round">${p.map(([t, a]) => sh(t, a, 'var(--ss-polar)')).join('')}</g>${p.filter(x => x[2] !== 'none').map(([t, a, f]) => sh(t, a, f)).join('')}${extra}</svg>`;
   }

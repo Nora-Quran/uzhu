@@ -501,6 +501,7 @@
       refresh();
     };
   }
+  // The database accepts only these texts (md5 list in supabase/schema.sql): update both together.
   const CHEERS = ['آفرین! ادامه بده 💪', 'بهت افتخار می‌کنم 🌟', 'امروز هم با همیم 🤝', 'هوس‌ها حریفت نیستن 🛡️', 'یه چای بی‌قند مهمون من ☕', 'تو الگوی منی 🌱'];
   let cheerCache = null; // { code, t, list }: avoids a server call on every Today render
   async function loadCheerChip() {

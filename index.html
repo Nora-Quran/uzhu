@@ -2,6 +2,8 @@
 <html lang="fa" dir="rtl">
 <head>
 <meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; media-src 'self' data: blob:; connect-src 'self' https://kebpeiyvbyrdypckvdmc.supabase.co wss://kebpeiyvbyrdypckvdmc.supabase.co; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>حبه</title>
 <meta name="claude:viewport-fit-sides" content="cover">
@@ -46,7 +48,7 @@
 </head>
 <body>
 <div class="splash" id="splash" aria-hidden="true"><img src="img/icon.svg" alt="" width="180" height="180"><div class="splash-name">حَبه</div><div class="splash-tag">یار روزهای بی‌قند</div></div>
-<script>(function(){var s=document.getElementById('splash'),t0=Date.now(),done=false;try{if(sessionStorage.getItem('habbeh:splash')){s.remove();return}sessionStorage.setItem('habbeh:splash','1')}catch(e){}function h(){if(done)return;done=true;setTimeout(function(){s.classList.add('out');setTimeout(function(){s.remove()},600)},Math.max(0,1600-(Date.now()-t0)))}if(document.readyState==='complete')h();else addEventListener('load',h);setTimeout(h,3500)})();</script>
+<script src="js/splash.js"></script>
 <header class="topbar"><div class="wrap">
   <a class="brand" href="#home"><span class="logo" id="logo"></span>حَبه</a>
   <nav class="nav" id="nav" aria-label="منو"></nav>

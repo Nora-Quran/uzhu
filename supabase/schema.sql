@@ -138,3 +138,31 @@ revoke all on function public.uzhu_admin_remove(text) from public, anon;
 grant execute on function public.uzhu_admin_list() to authenticated;
 grant execute on function public.uzhu_admin_add(text) to authenticated;
 grant execute on function public.uzhu_admin_remove(text) to authenticated;
+
+-- Security hardening (applied 2026-10-25)
+-- Push endpoints must belong to a real browser push service, so uzhu-send never sends requests anywhere else.
+alter table public.uzhu_push add constraint uzhu_push_endpoint_service check (endpoint ~ '^https://(fcm\.googleapis\.com|updates\.push\.services\.mozilla\.com|[a-z0-9-]+\.notify\.windows\.com|web\.push\.apple\.com)/' and char_length(endpoint) <= 1000);
+-- Size limits so one account cannot fill the database.
+alter table public.uzhu_push add constraint uzhu_push_size check (jsonb_typeof(schedule) = 'array' and octet_length(schedule::text) <= 1000000 and octet_length(keys::text) <= 2000);
+alter table public.uzhu_profiles add constraint uzhu_profiles_size check (octet_length(coalesce(data::text, '')) <= 5000000 and char_length(coalesce(name, '')) <= 200 and char_length(coalesce(email, '')) <= 320);
+alter table public.uzhu_public add constraint uzhu_public_size check (char_length(nick) <= 40 and char_length(code) <= 40 and char_length(coalesce(team, '')) <= 60 and octet_length(coalesce(cheers::text, '')) <= 20000);
+-- Cheers: the sender is recorded by the server, only the app's six ready-made texts are accepted
+-- (md5 of each entry of CHEERS in js/features-a.js: update these hashes if that list changes),
+-- and each sender may send at most 3 a day to the same friend and 30 a day in total.
+alter table public.uzhu_cheers add column if not exists from_user uuid default auth.uid();
+create index if not exists uzhu_cheers_from on public.uzhu_cheers (from_user, created_at);
+create or replace function public.uzhu_cheer_nick() returns trigger language plpgsql security definer set search_path = public as $$
+begin
+  new.from_user := auth.uid();
+  new.from_nick := coalesce((select nick from public.uzhu_public where user_id = auth.uid()), 'یک دوست');
+  new.created_at := now();
+  if md5(new.text) not in ('e92f15788b1275eca699497acca79b7d', '8ba10be014b2fc72031272108baee83b', '1904b73b28a43a8225e8fbd806fc52a1', '9164bdb40c02e66635786878a6c560f4', '5071b3248cbad5e0862d5b5395a0a9cf', 'c349e3881ed880a02e1552a3fdb52d34') then
+    raise exception 'cheer text not allowed';
+  end if;
+  if (select count(*) from public.uzhu_cheers where from_user = new.from_user and created_at > now() - interval '1 day') >= 30
+     or (select count(*) from public.uzhu_cheers where from_user = new.from_user and to_code = new.to_code and created_at > now() - interval '1 day') >= 3 then
+    raise exception 'too many cheers today';
+  end if;
+  return new;
+end $$;
+revoke all on function public.uzhu_cheer_nick() from public, anon, authenticated;

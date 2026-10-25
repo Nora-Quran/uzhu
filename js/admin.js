@@ -1,7 +1,10 @@
 /* Uzhu admin panel (#admin): site settings, content editing, reports, broadcast.
    Also applies the admin's settings and content edits to the site on every load. */
 (window.UZHU_PLUGINS = window.UZHU_PLUGINS || []).push(function (A) {
-  const { fa, esc, STORE, PROGRAM, RECIPES, ARTICLES } = A;
+  const { esc, STORE, PROGRAM, RECIPES, ARTICLES } = A;
+  // Reports show values from users' own saved data, which anyone can edit, so every value is escaped before it reaches the page.
+  const fa = v => esc(A.fa(v));
+  const num = v => Number.isFinite(+v) ? +v : 0;
   const $ = (s, el = document) => el.querySelector(s);
   const $$ = (s, el = document) => [...el.querySelectorAll(s)];
   const ART = window.UZHU_ART;
@@ -148,7 +151,7 @@
     const doneDays = p => Object.values(p.d.log || {}).filter(l => l.done);
     const count = (arr, f) => arr.reduce((m, x) => { [].concat(f(x) || []).forEach(k => { m[k] = (m[k] || 0) + 1; }); return m; }, {});
     const hours = new Array(24).fill(0); let beaten = 0, gave = 0;
-    P.forEach(p => { (p.d.sos?.events || []).forEach(e => { hours[e.hour] = (hours[e.hour] || 0) + 1; }); beaten += p.d.sos?.beaten || 0; gave += p.d.sos?.gave || 0; });
+    P.forEach(p => { (p.d.sos?.events || []).forEach(e => { hours[e.hour] = (hours[e.hour] || 0) + 1; }); beaten += num(p.d.sos?.beaten); gave += num(p.d.sos?.gave); });
     const allDone = P.flatMap(doneDays);
     const cravingByDay = new Array(21).fill(0).map(() => [0, 0]);
     P.forEach(p => Object.entries(p.d.log || {}).forEach(([k, l]) => { const m = /d(\d+)$/.exec(k); if (m && l.done && l.craving != null) { const i = +m[1] - 1; if (cravingByDay[i]) { cravingByDay[i][0] += l.craving; cravingByDay[i][1]++; } } }));
@@ -201,7 +204,7 @@
   function userRows() {
     const q = userQuery.trim().toLowerCase();
     return (report?.profiles || []).filter(p => !q || (p.name || '').toLowerCase().includes(q) || (p.email || '').toLowerCase().includes(q))
-      .map(p => { const d = p.data || {}; const done = Object.values(d.log || {}).filter(l => l.done).length; return { name: p.name || '', email: p.email || '', created: (p.created || '').slice(0, 10), updated: (p.updated || '').slice(0, 10), cycle: d.cycle || 1, day: d.day || 1, done, level: d.profile?.level || '-', beaten: d.sos?.beaten || 0 }; })
+      .map(p => { const d = p.data || {}; const done = Object.values(d.log || {}).filter(l => l.done).length; return { name: p.name || '', email: p.email || '', created: (p.created || '').slice(0, 10), updated: (p.updated || '').slice(0, 10), cycle: num(d.cycle) || 1, day: num(d.day) || 1, done, level: String(d.profile?.level || '-'), beaten: num(d.sos?.beaten) }; })
       .sort((a, b) => b.updated.localeCompare(a.updated));
   }
   function usersView() {
@@ -218,7 +221,7 @@
     q.oninput = () => { userQuery = q.value; const pos = q.selectionStart; A.render(); const n = $('#uq'); if (n) { n.focus(); n.setSelectionRange(pos, pos); } };
     $('#csv').onclick = () => {
       const rows = userRows(); const head = ['name', 'email', 'created', 'updated', 'cycle', 'day', 'done', 'level', 'cravings_beaten'];
-      const csv = [head.join(','), ...rows.map(r => [r.name, r.email, r.created, r.updated, r.cycle, r.day, r.done, r.level, r.beaten].map(v => `"${String(v).replace(/"/g, '""')}"`).join(','))].join('\n');
+      const csv = [head.join(','), ...rows.map(r => [r.name, r.email, r.created, r.updated, r.cycle, r.day, r.done, r.level, r.beaten].map(v => `"${String(v).replace(/^[=+\-@\t\r]/, "'$&").replace(/"/g, '""')}"`).join(','))].join('\n');
       try { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob(['\ufeff' + csv], { type: 'text/csv' })); a.download = 'uzhu-users.csv'; a.click(); } catch (e) {}
       const t = $('#csvout'); t.hidden = false; t.value = csv; t.select();
       navigator.clipboard?.writeText(csv).then(() => A.toast('فایل CSV ساخته و در کلیپ‌بورد هم کپی شد.', 'bell'), () => {});

@@ -1,4 +1,4 @@
-/* یوژو | Uzhu — رسپی‌های بیشتر: بستنی‌ها و پروتئین‌بارها (بدون شکر، عسل و شیره).
+/* حبه | Uzhu — رسپی‌های بیشتر: بستنی‌ها و پروتئین‌بارها (بدون شکر، عسل و شیره).
    Pushes into window.UZHU_RECIPES (same shape as js/recipes.js) and merges nutrition into
    window.UZHU_CONTENT.recipeMeta through a plugin that runs before content-plus.js reads it. */
 (function () {

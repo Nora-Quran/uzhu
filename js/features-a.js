@@ -530,7 +530,7 @@
     const s = soc(); if (!s.on) return;
     const api = SOCIAL();
     $('#fa-copy').onclick = async () => { try { await navigator.clipboard.writeText(s.code); A.toast('کد کپی شد.', 'bell'); } catch (e) { A.toast('کدت: ' + s.code, 'bell'); } };
-    const sh = $('#fa-share'); if (sh) sh.onclick = () => navigator.share({ text: `بیا با هم قند رو کم کنیم! توی یوژو کد من رو اضافه کن: ${s.code}` }).catch(() => {});
+    const sh = $('#fa-share'); if (sh) sh.onclick = () => navigator.share({ text: `بیا با هم قند رو کم کنیم! توی حبه کد من رو اضافه کن: ${s.code}` }).catch(() => {});
     $('#fa-off').onclick = async () => {
       if (api) await safe(() => api.publish({ code: s.code, nick: '', streak: 0, done_today: false, week_points: 0, week: '', team: null, league: false }));
       s.on = false; s.league = false; s.team = ''; A.save(); A.toast('اشتراک‌گذاری خاموش شد. دیگه چیزی از تو نمایش داده نمی‌شه.', 'bell'); refresh();
@@ -854,7 +854,7 @@
         ${finished ? `<p class="small muted">${clean >= 14 ? 'دوره‌ی خیلی محکمی بود. عادت‌هات دارن خودکار می‌شن.' : 'هر روزی که اومدی حساب شد. دوره‌ی بعد رو با یک تمرکز کوچیک شروع کن، مثلاً فقط چای بی‌قند.'}</p>` : ''}</div>`;
     }).join('');
     return `<section class="wrap auth stack" style="gap:16px;max-width:720px">
-      ${head('گزارش خودکار از داده‌های خودت', 'بازخورد مربی', 'هر هفته و در پایان هر دوره، یوژو کارهایی که کردی رو می‌بینه و جمع‌بندی می‌کنه؛ بدون سرزنش.')}
+      ${head('گزارش خودکار از داده‌های خودت', 'بازخورد مربی', 'هر هفته و در پایان هر دوره، حبه کارهایی که کردی رو می‌بینه و جمع‌بندی می‌کنه؛ بدون سرزنش.')}
       ${notes.length ? `<div class="card pop stack" style="gap:8px"><span class="eyebrow">✍️ یادداشت مربی</span>${notes.map(n => `<p>${esc(n.text)}</p>`).join('')}</div>` : ''}
       <div class="card stack" style="gap:10px"><div class="row" style="justify-content:space-between"><b>📅 هفت روز اخیر</b><span class="small muted">${fa(x.nights)} شب ثبت، ${fa(x.walk)} پیاده‌روی، ${fa(x.sos)} هوس رد شده</span></div>
         ${fb.good.length ? `<div class="stack" style="gap:4px"><b class="small" style="color:var(--mint)">چه چیزی خوب پیش رفت</b>${fb.good.map(g => `<p class="small">🌿 ${g}</p>`).join('')}</div>` : '<p class="small muted">هنوز داده‌ی کافی برای این هفته نیست. با چند روز ثبت، اینجا پر می‌شه.</p>'}

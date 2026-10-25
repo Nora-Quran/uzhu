@@ -1,4 +1,4 @@
-/* Uzhu illustrations in a soft watercolor style: the mascot "یوژو" (a cheerful pistachio sprout) and scene art, as inline SVG.
+/* Uzhu illustrations in a soft watercolor style: the mascot "حبه" (a cheerful pistachio sprout) and scene art, as inline SVG.
    Every drawing carries its own watercolor filter (wobbly edges + paper grain) with a unique id, so the same art can sit
    on one page many times. API: window.UZHU_ART = { mascot(mood, opts), hero(), spots.<key>, sparkle(x, y, s, c) }. */
 (function () {
@@ -77,13 +77,13 @@
   // The mascot. mood: happy | calm | sleepy | wow. opts.arms: up | wave | (down). opts.extra: svg drawn on top (props).
   function mascot(mood = 'happy', opts = {}) {
     const fid = uid('m'), [p, c] = mascotParts(mood, opts);
-    return `<svg viewBox="0 0 200 210" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="یوژو"><defs>${filt(fid, 4, 4)}</defs><g filter="url(#${fid})">${p}</g>${c}${opts.extra || ''}</svg>`;
+    return `<svg viewBox="0 0 200 210" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="حبه"><defs>${filt(fid, 4, 4)}</defs><g filter="url(#${fid})">${p}</g>${c}${opts.extra || ''}</svg>`;
   }
 
   /* ---------- hero: Uzhu waving goodbye to a grumpy sugar cube, with fruit friends ---------- */
   function hero() {
     const f = uid('h'), f2 = uid('hm'), [mp, mc] = mascotParts('happy', { arms: 'wave' });
-    return `<svg viewBox="0 0 520 380" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="یوژو با یک حبه‌قند بداخلاق خداحافظی می‌کند"><defs>${filt(f, 7, 9, .02)}${filt(f2, 4, 4)}</defs>
+    return `<svg viewBox="0 0 520 380" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="حبه با یک حبه‌قند بداخلاق خداحافظی می‌کند"><defs>${filt(f, 7, 9, .02)}${filt(f2, 4, 4)}</defs>
       <g filter="url(#${f})">
         ${wash('M120 90 C190 20 330 18 420 70 C500 116 510 236 452 300 C392 366 230 372 140 330 C56 290 40 160 120 90z', '--wc-wash1', '#fde3d2', .95)}
         ${wash('M300 60 C360 40 440 70 460 130 C474 176 430 200 380 180 C330 160 250 92 300 60z', '--wc-wash2', '#fbecc0', .7)}

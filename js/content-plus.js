@@ -38,7 +38,7 @@
     if (!d) return page('امتحان', 'روز اول', '', '<div class="card">محتوا بارگذاری نشد.</div>');
     const m = DM.c1d1 || {};
     return `<section class="wrap stack" style="gap:16px;max-width:760px">
-      <div class="card pop greet"><div>${A.ART.mascot('happy', { arms: 'wave' })}</div><div class="stack" style="gap:4px;min-width:0"><span class="eyebrow">پیش‌نمایش رایگان</span><h2>این روز اول برنامه‌ی یوژوئه</h2><p class="muted">همین الان بخونش و کارهاش رو امتحان کن. اگه خوشت اومد، با ثبت‌نام بقیه‌ی ۶۳ روز، یادآورها و چک‌لیست شبانه برات باز می‌شه.</p></div></div>
+      <div class="card pop greet"><div>${A.ART.mascot('happy', { arms: 'wave' })}</div><div class="stack" style="gap:4px;min-width:0"><span class="eyebrow">پیش‌نمایش رایگان</span><h2>این روز اول برنامه‌ی حبه است</h2><p class="muted">همین الان بخونش و کارهاش رو امتحان کن. اگه خوشت اومد، با ثبت‌نام بقیه‌ی ۶۳ روز، یادآورها و چک‌لیست شبانه برات باز می‌شه.</p></div></div>
       <article class="card reading stack">
         <div class="row" style="justify-content:space-between"><span class="eyebrow">متن روز ۱${m.readMin ? `، ${fa(m.readMin)} دقیقه خوندن` : ''}</span><span class="chip lav">${esc(d.technique)}</span></div>
         <h2>${esc(d.title)}</h2>${d.read.map(p => `<p>${esc(p)}</p>`).join('')}

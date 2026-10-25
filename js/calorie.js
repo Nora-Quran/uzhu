@@ -322,7 +322,7 @@
     const r = (window.UZHU_RECIPES || []).find(x => x.id === rid), m = window.UZHU_CONTENT?.recipeMeta?.[rid];
     if (!r || !m || !m.kcal) return null;
     const p = m.protein || 0, f = Math.round(m.kcal * 0.35 / 9 * 10) / 10, c = Math.max(0, Math.round((m.kcal - p * 4 - f * 9) / 4));
-    return { id: 'r:' + rid, n: r.title, u: '۱ وعده' + (r.serves ? ` (کل رسپی: ${r.serves})` : ''), k: m.kcal, p, c, f, fb: m.fiber || 0, s: 0, cat: 'رسپی‌های یوژو', kw: 'رسپی ' + (r.category || ''), recipe: true };
+    return { id: 'r:' + rid, n: r.title, u: '۱ وعده' + (r.serves ? ` (کل رسپی: ${r.serves})` : ''), k: m.kcal, p, c, f, fb: m.fiber || 0, s: 0, cat: 'رسپی‌های حبه', kw: 'رسپی ' + (r.category || ''), recipe: true };
   };
   const recipeFoods = () => (window.UZHU_RECIPES || []).map(r => recipeFood(r.id)).filter(Boolean);
   const food = id => {
@@ -460,7 +460,7 @@
   function guestView() {
     return `<section class="wrap stack cal-page" style="gap:16px;max-width:760px">
       ${hero('یه دفترچه‌ی مهربون برای غذاهای روزت', 'اگه دوست داری بدونی روزانه چقدر انرژی می‌گیری، اینجا با غذاهای آشنای ایرانی و واحدهای خونگی (کفگیر، کف دست، لیوان) راحت ثبتش می‌کنی. اجباری هم نیست؛ هر وقت خواستی.')}
-      <div class="cal-feats">${[['🎯', 'هدف روزانه‌ی منطقی', 'با قد و وزن و سن و میزان تحرکت، با یه کف ایمن'], ['🍲', 'بیش از ۲۰۰ غذای آشنا', 'از قورمه‌سبزی و کته تا نون سنگک و چای با قند'], ['🍰', 'رسپی‌های یوژو', 'رسپی‌های بی‌قند سایت هم توی فهرسته'], ['📊', 'حلقه‌ی امروز و نمودار هفته', 'پروتئین، فیبر و قند افزوده هم کنارش']].map(([i, t, d]) => `<div class="card stack" style="gap:4px"><span class="cal-fi">${i}</span><b>${t}</b><span class="small muted">${d}</span></div>`).join('')}</div>
+      <div class="cal-feats">${[['🎯', 'هدف روزانه‌ی منطقی', 'با قد و وزن و سن و میزان تحرکت، با یه کف ایمن'], ['🍲', 'بیش از ۲۰۰ غذای آشنا', 'از قورمه‌سبزی و کته تا نون سنگک و چای با قند'], ['🍰', 'رسپی‌های حبه', 'رسپی‌های بی‌قند سایت هم توی فهرسته'], ['📊', 'حلقه‌ی امروز و نمودار هفته', 'پروتئین، فیبر و قند افزوده هم کنارش']].map(([i, t, d]) => `<div class="card stack" style="gap:4px"><span class="cal-fi">${i}</span><b>${t}</b><span class="small muted">${d}</span></div>`).join('')}</div>
       ${caution}
       <div class="row" style="justify-content:center;gap:10px"><a class="btn primary big" href="#signup">ثبت‌نام رایگان و شروع</a><a class="btn ghost" href="#login">وارد می‌شم</a></div></section>`;
   }
@@ -496,7 +496,7 @@
   }
 
   function foodBtn(f) {
-    return `<button type="button" class="cal-food" data-add="${esc(f.id)}"><span class="cal-in"><b>${esc(f.n)}</b><span class="small muted">${esc(f.u)}${f.recipe ? '، رسپی یوژو' : f.custom ? '، خودم' : ''}</span></span><span class="cal-fk num">${fa(r0(f.k))}<small>کالری</small></span><span class="cal-plus" aria-hidden="true">+</span></button>`;
+    return `<button type="button" class="cal-food" data-add="${esc(f.id)}"><span class="cal-in"><b>${esc(f.n)}</b><span class="small muted">${esc(f.u)}${f.recipe ? '، رسپی حبه' : f.custom ? '، خودم' : ''}</span></span><span class="cal-fk num">${fa(r0(f.k))}<small>کالری</small></span><span class="cal-plus" aria-hidden="true">+</span></button>`;
   }
   function quickIds() {
     const c = C(), cnt = {};
@@ -511,7 +511,7 @@
       return r.length ? r.map(foodBtn).join('') : `<p class="small muted cal-empty">چیزی پیدا نشد. می‌تونی «${esc(query.trim())}» رو به‌عنوان خوراکی خودت اضافه کنی.</p>`;
     }
     if (cat) {
-      const list = cat === 'رسپی‌های یوژو' ? recipeFoods() : cat === 'خوراکی‌های خودم' ? C().custom.filter(x => !x.hidden).map(x => food(x.id)) : Object.values(DB).filter(f => f.cat === cat);
+      const list = cat === 'رسپی‌های حبه' ? recipeFoods() : cat === 'خوراکی‌های خودم' ? C().custom.filter(x => !x.hidden).map(x => food(x.id)) : Object.values(DB).filter(f => f.cat === cat);
       return list.length ? list.map(foodBtn).join('') : '<p class="small muted cal-empty">هنوز چیزی اینجا نیست.</p>';
     }
     return '';
@@ -557,7 +557,7 @@
         <div class="cal-meals" role="radiogroup" aria-label="وعده">${MEALS.map(([m, n, i]) => `<button type="button" role="radio" aria-checked="${m === meal}" class="${m === meal ? 'on' : ''}" data-meal="${m}">${i} ${n}</button>`).join('')}</div>
         <input class="input" id="cal-q" type="search" placeholder="جستجو: کته، سنگک، قورمه، چای با قند، سیب…" value="${esc(query)}" autocomplete="off" aria-label="جستجوی خوراکی">
         ${qids.length ? `<div class="cal-quick"><span class="small muted">زود دوباره اضافه کن:</span>${qids.map(id => `<button type="button" class="cal-qc" data-add="${esc(id)}">${esc(food(id).n)}</button>`).join('')}</div>` : ''}
-        <div class="filters cal-cats">${[...CATS, 'رسپی‌های یوژو', ...(C().custom.some(x => !x.hidden) ? ['خوراکی‌های خودم'] : [])].map(x => `<button type="button" data-cat="${esc(x)}" class="${x === cat ? 'on' : ''}">${esc(x)}</button>`).join('')}</div>
+        <div class="filters cal-cats">${[...CATS, 'رسپی‌های حبه', ...(C().custom.some(x => !x.hidden) ? ['خوراکی‌های خودم'] : [])].map(x => `<button type="button" data-cat="${esc(x)}" class="${x === cat ? 'on' : ''}">${esc(x)}</button>`).join('')}</div>
         <div id="cal-res" class="cal-res">${resultsHtml()}</div>
       </div>
 

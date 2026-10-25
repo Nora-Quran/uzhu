@@ -172,7 +172,7 @@
     if (!('mediaSession' in navigator)) return;
     try {
       const on = Object.keys(live);
-      navigator.mediaSession.metadata = on.length ? new MediaMetadata({ title: on.map(id => LAYERS.find(l => l.id === id).name).join(' + '), artist: 'یوژو · صداهای خواب' }) : null;
+      navigator.mediaSession.metadata = on.length ? new MediaMetadata({ title: on.map(id => LAYERS.find(l => l.id === id).name).join(' + '), artist: 'حبه · صداهای خواب' }) : null;
       navigator.mediaSession.setActionHandler('pause', stopAll);
       navigator.mediaSession.setActionHandler('stop', stopAll);
     } catch (e) {}

@@ -54,7 +54,7 @@
     return [
       { time: fromMin(Math.max(toMin('13:00'), Math.min(toMin('16:00'), bed - 8 * 60))), text: 'از الان دیگه چای پررنگ و قهوه نه ☕ کافئین تا ۸ ساعت توی بدن می‌مونه و خواب عمیق امشب رو کم می‌کنه. دمنوش یا چای کم‌رنگ عالیه.', spot: 'moon', url: '#sleep' },
       { time: fromMin(bed - 60), text: 'یک ساعت تا وقت خوابت مونده 🌙 نورهای خونه رو کم کن، گوشی رو بذار شارژ و یه کار آروم شروع کن.', spot: 'moon', url: '#sleep' },
-      { time: fromMin(bed - 15), text: 'وقت چک‌لیست خواب و رفتن به رختخوابه 😴 اگه خوابت نمی‌بره، صداهای خواب یوژو رو روشن کن.', spot: 'moon', url: '#sleepcheck' },
+      { time: fromMin(bed - 15), text: 'وقت چک‌لیست خواب و رفتن به رختخوابه 😴 اگه خوابت نمی‌بره، صداهای خواب حبه رو روشن کن.', spot: 'moon', url: '#sleepcheck' },
       { time: fromMin(wake + 10), text: 'صبح بخیر ☀️ پرده رو کنار بزن و ۱۰ دقیقه نور صبح بگیر؛ ساعت بدنت با همین تنظیم می‌شه. دفترچه‌ی خواب دیشب رو هم پر کن.', spot: 'bell', url: '#sleepdiary' },
     ].filter(r => /^\d\d:\d\d$/.test(r.time));
   });
@@ -165,7 +165,7 @@
       ${(S.myths || []).length ? `<div class="section-head" style="margin:8px 0 0"><span class="eyebrow">باور یا واقعیت؟</span><h2>باورهای رایج درباره‌ی خواب</h2></div>
         <div class="sl-myths sl-fold">${S.myths.map((m, i) => `<details class="card ${i > 3 ? 'sl-x' : ''}"><summary><span class="chip berry">باور</span> ${esc(m.myth)}</summary><p><span class="chip mint">واقعیت</span> ${esc(m.fact)}</p></details>`).join('')}</div>${S.myths.length > 4 ? `<button class="btn ghost sl-all">همه‌ی ${fa(S.myths.length)} باور ↓</button>` : ''}` : ''}
       ${musicList()}
-      <p class="small muted">بخش خواب یوژو ابزار آموزشیه و جای تشخیص و درمان پزشکی رو نمی‌گیره.</p>
+      <p class="small muted">بخش خواب حبه ابزار آموزشیه و جای تشخیص و درمان پزشکی رو نمی‌گیره.</p>
     </section>`;
   };
   A.mounts.sleep = () => {

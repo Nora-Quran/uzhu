@@ -3,19 +3,20 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>یوژو</title>
+<title>حبه</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<meta name="description" content="یوژو: برنامه‌ی روان‌شناختی قدم‌به‌قدم برای ترک قند و شیرینی در دوره‌های ۲۱ روزه.">
+<meta name="description" content="حبه: برنامه‌ی روان‌شناختی قدم‌به‌قدم برای ترک قند و شیرینی در دوره‌های ۲۱ روزه.">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="fa_IR">
-<meta property="og:site_name" content="یوژو">
-<meta property="og:title" content="یوژو؛ ترک قند قدم به قدم">
+<meta property="og:site_name" content="حبه">
+<meta property="og:title" content="حبه؛ یار روزهای بی‌قند">
 <meta property="og:description" content="برنامه‌ی روان‌شناختی ۲۱ روزه برای ترک قند و شیرینی: متن روزانه، چک‌لیست شب، رسپی‌های بی‌قند، ورزش و خواب.">
 <meta property="og:image" content="img/icon.svg">
 <meta name="twitter:card" content="summary">
 <meta name="theme-color" content="#2fa877">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="img/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="img/icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lalezar&family=Vazirmatn:wght@400;700;900&display=swap">
@@ -32,16 +33,28 @@
 <link rel="stylesheet" href="css/breakfast.css">
 <link rel="stylesheet" href="css/calorie.css">
 <link rel="stylesheet" href="css/period.css">
+<style>
+.splash{position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;background:radial-gradient(circle at 50% 38%,#f3fbef 0,#e3f3dc 55%,#cfe9c6 100%);transition:opacity .5s ease,visibility .5s}
+.splash img{width:min(42vw,180px);height:auto;filter:drop-shadow(0 10px 24px rgba(79,122,69,.22));animation:splash-pop .7s cubic-bezier(.2,1.4,.4,1) both}
+.splash-name{font-family:Lalezar,Vazirmatn,sans-serif;font-size:clamp(56px,16vw,88px);line-height:1.1;color:#4f7a45;margin-top:10px;animation:splash-up .6s .15s ease both}
+.splash-tag{font-family:Vazirmatn,sans-serif;font-weight:700;font-size:clamp(17px,4.6vw,22px);color:#6b8f61;animation:splash-up .6s .3s ease both}
+.splash.out{opacity:0;visibility:hidden}
+@keyframes splash-pop{from{transform:scale(.6);opacity:0}to{transform:none;opacity:1}}
+@keyframes splash-up{from{transform:translateY(12px);opacity:0}to{transform:none;opacity:1}}
+@media (prefers-reduced-motion:reduce){.splash img,.splash-name,.splash-tag{animation:none}}
+</style>
 </head>
 <body>
+<div class="splash" id="splash" aria-hidden="true"><img src="img/icon.svg" alt="" width="180" height="180"><div class="splash-name">حَبه</div><div class="splash-tag">یار روزهای بی‌قند</div></div>
+<script>(function(){var s=document.getElementById('splash'),t0=Date.now(),done=false;try{if(sessionStorage.getItem('habbeh:splash')){s.remove();return}sessionStorage.setItem('habbeh:splash','1')}catch(e){}function h(){if(done)return;done=true;setTimeout(function(){s.classList.add('out');setTimeout(function(){s.remove()},600)},Math.max(0,1600-(Date.now()-t0)))}if(document.readyState==='complete')h();else addEventListener('load',h);setTimeout(h,3500)})();</script>
 <header class="topbar"><div class="wrap">
-  <a class="brand" href="#home"><span class="logo" id="logo"></span>یوژو</a>
+  <a class="brand" href="#home"><span class="logo" id="logo"></span>حَبه</a>
   <nav class="nav" id="nav" aria-label="منو"></nav>
 </div></header>
 <main id="app"></main>
 <nav class="tabbar" id="tabbar" aria-label="منوی پایین"></nav>
 <button class="sos-fab" id="sos" hidden>🆘 هوس دارم</button>
-<footer class="footer"><div class="wrap">یوژو ابزاری برای تغییر عادت است و جای مشاوره‌ی پزشکی را نمی‌گیرد. اگر دیابت دارید و دارو مصرف می‌کنید، باردار هستید یا سابقه‌ی اختلال خوردن دارید، پیش از تغییر رژیم با پزشک مشورت کنید.</div></footer>
+<footer class="footer"><div class="wrap">حبه ابزاری برای تغییر عادت است و جای مشاوره‌ی پزشکی را نمی‌گیرد. اگر دیابت دارید و دارو مصرف می‌کنید، باردار هستید یا سابقه‌ی اختلال خوردن دارید، پیش از تغییر رژیم با پزشک مشورت کنید.</div></footer>
 <script src="js/config.js" defer></script>
 <script src="js/icons.js" defer></script>
 <script src="js/icons-a.js" defer></script>

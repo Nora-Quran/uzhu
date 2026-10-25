@@ -23,7 +23,7 @@ Deno.serve(async (req) => {
     const fresh = (s.due || []).filter((i) => now - Date.parse(i.at) < 30 * 60e3); // skip ones missed by more than 30 min
     for (const i of fresh.slice(-2)) {
       try {
-        await webpush.sendNotification({ endpoint: s.endpoint, keys: s.keys as never }, JSON.stringify({ title: "یوژو 🌱", body: i.text, url: i.url || "./#today" }), { TTL: 3600 });
+        await webpush.sendNotification({ endpoint: s.endpoint, keys: s.keys as never }, JSON.stringify({ title: "حبه 🌱", body: i.text, url: i.url || "./#today" }), { TTL: 3600 });
         sent++; if (!delivered.includes(s.endpoint)) delivered.push(s.endpoint);
       } catch (e) {
         if (e?.statusCode === 404 || e?.statusCode === 410) { gone.push(s.endpoint); return; }

@@ -73,7 +73,7 @@
   let brandNow = null;
   function applyBrand(b) {
     const n = Number(b.logo) || 0; if (n === brandNow) return; brandNow = n;
-    const logo = $('#logo'); if (logo) logo.innerHTML = n ? `<img src="img/logos/icon-${n}.svg" alt="" width="40" height="40" style="display:block;width:100%;height:auto;border-radius:10px">` : ART.mascot('happy');
+    const logo = $('#logo'); if (logo) logo.innerHTML = n ? `<img src="img/logos/icon-${n}.svg" alt="" width="40" height="40" style="display:block;width:100%;height:auto;border-radius:10px">` : '<img src="img/icon.svg" alt="" width="40" height="40" style="display:block;width:100%;height:auto;border-radius:10px">';
     const fav = document.querySelector('link[rel=icon]'); if (fav) fav.href = n ? `img/logos/icon-${n}.svg` : 'img/icon.svg';
   }
   // Banner, feature toggles and texts that live in app.js markup.
@@ -124,7 +124,7 @@
   A.views.admin = () => {
     if (!isAdmin) return `<section class="wrap auth stack"><div class="card">این بخش فقط برای مدیر سایته.</div></section>`;
     return `<section class="wrap stack admin" style="gap:16px">
-      <div class="section-head" style="margin:0"><span class="eyebrow">پنل مدیریت</span><h2>مدیریت یوژو</h2>${STORE.mode === 'local' ? '<p class="small muted">نسخه‌ی آزمایشی: تغییرها و گزارش‌ها فقط مربوط به همین مرورگره. در نسخه‌ی آنلاین، همه‌ی کاربرها رو می‌بینی.</p>' : ''}</div>
+      <div class="section-head" style="margin:0"><span class="eyebrow">پنل مدیریت</span><h2>مدیریت حبه</h2>${STORE.mode === 'local' ? '<p class="small muted">نسخه‌ی آزمایشی: تغییرها و گزارش‌ها فقط مربوط به همین مرورگره. در نسخه‌ی آنلاین، همه‌ی کاربرها رو می‌بینی.</p>' : ''}</div>
       <div class="filters admin-tabs">${TABS.map(([k, t]) => `<button data-tab="${k}" class="${tab === k ? 'on' : ''}">${t}</button>`).join('')}</div>
       <div id="admin-body">${({ reports: reportsView, users: usersView, content: contentView, settings: settingsView, broadcast: broadcastView })[tab]()}</div>
     </section>`;
@@ -300,13 +300,13 @@
         <div class="row"><input class="input" id="adm-new" type="email" dir="ltr" placeholder="email@example.com" aria-label="ایمیل ادمین تازه" style="flex:1;min-width:200px"><button class="btn ghost" type="button" id="adm-add">افزودن ادمین</button></div></div>`;
   }
   // Logo choice (img/logos) and the site-wide default theme; every visitor sees these unless they picked their own theme.
-  const LOGOS = [[0, 'یوژوی فعلی'], [1, 'بغلِ گرم'], [2, 'استکانِ جوونه'], [3, 'پسته‌ی خندون'], [4, 'حلقه‌ی ۲۱ روزه'], [5, 'انارِ دل'], [6, 'صبحِ تازه']];
+  const LOGOS = [[0, 'حَبه'], [1, 'بغلِ گرم'], [2, 'استکانِ جوونه'], [3, 'پسته‌ی خندون'], [4, 'حلقه‌ی ۲۱ روزه'], [5, 'انارِ دل'], [6, 'صبحِ تازه']];
   function brandCard(b) {
     const S = A.season, cur = Number(b.logo) || 0;
     const themes = S ? [['', 'خودکار (بر اساس فصل و مناسبت)'], ...S.ORDER.map(k => [k, S.T[k].label]), ['plain', 'ساده (بدون تم)']] : [];
     return `<div class="card stack"><b>🎨 ظاهر سایت</b>
       <span class="small muted">لوگو (بالای صفحه و آیکون مرورگر)</span>
-      <div class="brand-logos" role="radiogroup" aria-label="لوگو">${LOGOS.map(([n, t]) => `<label class="brand-logo"><input type="radio" name="s-logo" value="${n}" ${cur === n ? 'checked' : ''}><span class="bl-art">${n ? `<img src="img/logos/icon-${n}.svg" alt="" width="56" height="56">` : ART.mascot('happy')}</span><span class="small">${t}</span></label>`).join('')}</div>
+      <div class="brand-logos" role="radiogroup" aria-label="لوگو">${LOGOS.map(([n, t]) => `<label class="brand-logo"><input type="radio" name="s-logo" value="${n}" ${cur === n ? 'checked' : ''}><span class="bl-art">${n ? `<img src="img/logos/icon-${n}.svg" alt="" width="56" height="56">` : '<img src="img/icon.svg" alt="" width="56" height="56">'}</span><span class="small">${t}</span></label>`).join('')}</div>
       ${themes.length ? `<div class="field"><label for="s-theme">تم پیش‌فرض سایت</label><select class="input" id="s-theme">${themes.map(([k, t]) => `<option value="${k}" ${(b.theme || '') === k ? 'selected' : ''}>${esc(t)}</option>`).join('')}</select><span class="small muted">هر کاربر هنوز می‌تونه از تنظیمات خودش تم دیگه‌ای انتخاب کنه.</span></div>` : ''}</div>`;
   }
   function mountSettings() {

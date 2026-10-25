@@ -183,7 +183,7 @@
     toast(text, spot);
     if (!canNotify() || pushOn) return;
     const opts = { body: text, icon: 'img/icon.svg', badge: 'img/icon.svg', lang: 'fa', dir: 'rtl', tag: 'uzhu-' + Date.now() };
-    try { if (swReg) swReg.showNotification('یوژو 🌱', opts); else new Notification('یوژو 🌱', opts); } catch (e) {}
+    try { if (swReg) swReg.showNotification('حبه 🌱', opts); else new Notification('حبه 🌱', opts); } catch (e) {}
   }
   function todaysReminders(d = dayObj(), dayN = D().day) {
     const s = D(); if (!d || !s.profile) return [];
@@ -270,7 +270,7 @@
     runHooks('mount', r);
     if (POSE && $('[data-pose]')) POSE.animate();
     window.scrollTo(0, 0);
-    document.title = (titles[r] ? titles[r] + ' · ' : '') + 'یوژو';
+    document.title = (titles[r] ? titles[r] + ' · ' : '') + 'حبه';
   }
   const titles = { more: 'ابزارها', move: 'ورزش', today: 'امروز', night: 'چک‌لیست شب', journey: 'مسیر من', recipes: 'خوراکی‌های بی‌قند', learn: 'علم قند', settings: 'تنظیمات', signup: 'ثبت‌نام', login: 'ورود', onboard: 'شروع' };
 
@@ -301,7 +301,7 @@
     <section class="hero wrap">
       <div class="stack" style="gap:20px">
         <span class="eyebrow">برنامه‌ی روان‌شناختی ترک قند، قدم به قدم</span>
-        <h1>با یوژو، <span class="hl">شیرینی</span> رو آروم‌آروم از زندگیت خداحافظی کن</h1>
+        <h1>با حبه، <span class="hl">شیرینی</span> رو آروم‌آروم از زندگیت خداحافظی کن</h1>
         <p class="lead">هر روز یک متن کوتاه برای خوندن، یک مأموریت کوچک، یادآورهای مهربون و یک چک‌لیست شبانه. دوره‌های ۲۱ روزه که پشت هم میان، تا عادت سالم جای ریزه‌خواری و هوس شیرینی رو بگیره.</p>
         <div class="row"><a class="btn primary big" href="#${user ? 'today' : 'signup'}">${user ? 'برو به برنامه‌ی امروز' : 'رایگان شروع کن'}</a><a class="btn ghost" href="#recipes">دیدن رسپی‌های بی‌قند</a>${hook('homeHero')}</div>
         <div class="trust"><div><b>${fa(PROGRAM.cycles.length * 21 || 63)} روز</b>برنامه‌ی روزبه‌روز</div><div><b>${fa(RECIPES.length || 18)}+</b>کیک و دسر بی‌قند</div><div><b>${fa(4)} بار</b>یادآور در روز</div></div>
@@ -309,7 +309,7 @@
       <div class="hero-art"><figure class="sb-polaroid">${ART.hero()}<figcaption class="sb-hand sb-only">قدم به قدم، با هم</figcaption></figure></div>
     </section>
     <section class="section wrap">
-      <div class="section-head"><span class="eyebrow">چی تو یوژو هست</span><h2>هر چیزی که برای ترک یک عادت سخت لازم داری</h2></div>
+      <div class="section-head"><span class="eyebrow">چی تو حبه هست</span><h2>هر چیزی که برای ترک یک عادت سخت لازم داری</h2></div>
       <div class="features">
         ${feature('book', 'متن روزانه', 'هر روز یک متن ۲ دقیقه‌ای بر پایه‌ی تکنیک‌های درمان شناختی‌رفتاری: موج‌سواری روی هوس، برنامه‌ی «اگر… آنگاه…»، طراحی محیط و مهربانی با خود.')}
         ${feature('moon', 'چک‌لیست آخر شب', 'آخر هر شب کارهایی رو که انجام دادی تیک بزن، شدت هوست رو ثبت کن و یک سؤال کوتاه رو جواب بده. همین دو دقیقه، روزت رو کامل می‌کنه.')}
@@ -324,7 +324,7 @@
       <div class="cycles">${cyc}</div>
     </section>
     <section class="section wrap">
-      <div class="section-head"><span class="eyebrow">چطور کار می‌کنه</span><h2>روزت با یوژو</h2></div>
+      <div class="section-head"><span class="eyebrow">چطور کار می‌کنه</span><h2>روزت با حبه</h2></div>
       <div class="steps-line">
         <div class="card"><h3>صبح</h3><p class="muted">متن امروز رو می‌خونی و مأموریت روز رو می‌بینی.</p></div>
         <div class="card"><h3>طول روز</h3><p class="muted">یادآورها سراغت میان: آب، میوه، قدم زدن، یک نفس عمیق.</p></div>
@@ -333,7 +333,7 @@
       </div>
     </section>
     ${arts ? `<section class="section wrap"><div class="section-head"><span class="eyebrow">علم قند</span><h2>قند با بدنت چه می‌کنه؟</h2></div><div class="article-list">${arts}</div></section>` : ''}
-    <section class="section wrap"><div class="band"><div class="spot">${ART.mascot('happy', { arms: 'up' })}</div><div class="stack"><p class="sb-hand sb-only sb-sidenote">تو از پسش برمیای!</p><h2>امروز روز اوله. فقط یک قدم کوچک.</h2><p class="muted">لازم نیست از فردا همه‌چیز رو کنار بذاری. یوژو آروم و قدم به قدم پیش می‌ره و اگر یک روز لغزیدی، از همون‌جا ادامه می‌دی.</p><div><a class="btn berry big" href="#${user ? 'today' : 'signup'}">شروع دوره‌ی اول</a></div></div></div></section>`;
+    <section class="section wrap"><div class="band"><div class="spot">${ART.mascot('happy', { arms: 'up' })}</div><div class="stack"><p class="sb-hand sb-only sb-sidenote">تو از پسش برمیای!</p><h2>امروز روز اوله. فقط یک قدم کوچک.</h2><p class="muted">لازم نیست از فردا همه‌چیز رو کنار بذاری. حبه آروم و قدم به قدم پیش می‌ره و اگر یک روز لغزیدی، از همون‌جا ادامه می‌دی.</p><div><a class="btn berry big" href="#${user ? 'today' : 'signup'}">شروع دوره‌ی اول</a></div></div></div></section>`;
   };
   const feature = (spot, t, d) => `<div class="card feature"><div class="spot">${ART.spots[spot]}</div><h3>${t}</h3><p class="muted">${d}</p></div>`;
   mounts.home = () => bindArticles();
@@ -840,7 +840,7 @@
   /* ---------- boot ---------- */
   async function boot() {
     try { const t = localStorage.getItem('uzhu:theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
-    $('#logo').innerHTML = ART.mascot('happy');
+    $('#logo').innerHTML = '<img src="img/icon.svg" alt="" width="40" height="40" style="display:block;width:100%;height:auto;border-radius:10px">';
     $('#sos').onclick = openSOS;
     try { user = await STORE.init(STORE.config); }
     catch (e) {

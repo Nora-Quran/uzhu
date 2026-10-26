@@ -47,7 +47,7 @@
       <div class="mission stack" style="gap:6px"><b>🎯 مأموریت امروز</b><p>${esc(d.mission)}</p></div>
       ${(d.tasks || []).length ? `<div class="card stack" style="gap:8px"><b>کارهای امروز (امتحانی، ذخیره نمی‌شه)</b>${d.tasks.map((t, i) => `<label class="check" for="tt${i}"><input type="checkbox" id="tt${i}"><span>${esc(typeof t === 'string' ? t : t.text || t.t || '')}</span></label>`).join('')}</div>` : ''}
       <div class="card stack" style="gap:6px;background:var(--lav-soft);border-color:transparent"><b>🔬 نکته‌ی علمی</b><p>${esc(d.tip)}</p></div>
-      <div class="card pop stack cp-cta" style="gap:10px;text-align:center"><h3>آماده‌ای ادامه بدی؟</h3><p class="muted">ثبت‌نام رایگانه و فقط یک ایمیل لازمه.</p><div class="row" style="justify-content:center"><a class="btn primary big" href="#signup">رایگان شروع کن</a><a class="btn ghost" href="#recipes">رسپی‌های بی‌قند</a></div></div>
+      <div class="card pop stack cp-cta" style="gap:10px;text-align:center"><h3>آماده‌ای ادامه بدی؟</h3><p class="muted">فقط یک ایمیل لازمه و ۳ روز اول رایگانه.</p><div class="row" style="justify-content:center"><a class="btn primary big" href="#signup">رایگان شروع کن</a><a class="btn ghost" href="#recipes">رسپی‌های بی‌قند</a></div></div>
     </section>`;
   };
   A.mounts.try = () => {

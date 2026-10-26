@@ -462,7 +462,7 @@
       ${hero('یه دفترچه‌ی مهربون برای غذاهای روزت', 'اگه دوست داری بدونی روزانه چقدر انرژی می‌گیری، اینجا با غذاهای آشنای ایرانی و واحدهای خونگی (کفگیر، کف دست، لیوان) راحت ثبتش می‌کنی. اجباری هم نیست؛ هر وقت خواستی.')}
       <div class="cal-feats">${[['🎯', 'هدف روزانه‌ی منطقی', 'با قد و وزن و سن و میزان تحرکت، با یه کف ایمن'], ['🍲', 'بیش از ۲۰۰ غذای آشنا', 'از قورمه‌سبزی و کته تا نون سنگک و چای با قند'], ['🍰', 'رسپی‌های حبه', 'رسپی‌های بی‌قند سایت هم توی فهرسته'], ['📊', 'حلقه‌ی امروز و نمودار هفته', 'پروتئین، فیبر و قند افزوده هم کنارش']].map(([i, t, d]) => `<div class="card stack" style="gap:4px"><span class="cal-fi">${i}</span><b>${t}</b><span class="small muted">${d}</span></div>`).join('')}</div>
       ${caution}
-      <div class="row" style="justify-content:center;gap:10px"><a class="btn primary big" href="#signup">ثبت‌نام رایگان و شروع</a><a class="btn ghost" href="#login">وارد می‌شم</a></div></section>`;
+      <div class="row" style="justify-content:center;gap:10px"><a class="btn primary big" href="#signup">ثبت‌نام و ۳ روز رایگان</a><a class="btn ghost" href="#login">وارد می‌شم</a></div></section>`;
   }
 
   function goalForm() {

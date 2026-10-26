@@ -64,14 +64,19 @@
       } catch (e) { console.error(e); }
     });
   }
-  A.H.load = (A.H.load || []).concat(async () => {
+  // Day texts come from the server first (subscription.js), then the admin's edits are applied on top.
+  async function loadSite() {
+    try { if (A.loadProgram) await A.loadProgram(); } catch (e) { console.error(e); }
     try {
       const site = await STORE.getSite();
       A.site.settings = site.settings || {}; A.site.content = site.content || [];
       applyContent(A.site.content);
     } catch (e) { /* offline: keep built-in content */ }
     try { isAdmin = await STORE.isAdmin(); adminFor = A.user?.email || null; } catch (e) { isAdmin = false; }
-  });
+  }
+  A.H.load = (A.H.load || []).concat(loadSite);
+  // After login: paid day texts and the admin's day edits are readable only now.
+  A.H.signedIn = (A.H.signedIn || []).concat(loadSite);
 
   let brandNow = null;
   function applyBrand(b) {
@@ -123,20 +128,22 @@
   /* ---------- admin page ---------- */
   let tab = 'reports', report = null, reportErr = '', contentSel = { kind: 'day', id: 'c1d1' }, userQuery = '';
   const TABS = [['reports', 'گزارش‌ها'], ['users', 'کاربران'], ['content', 'محتوا'], ['settings', 'تنظیمات سایت'], ['broadcast', 'پیام همگانی']];
+  // Extra tabs from other plugins: A.adminTabs[key] = { title, view() → html, mount() } (subscription.js adds payments).
+  const extraTabs = () => Object.entries(A.adminTabs || {});
 
   A.views.admin = () => {
     if (!isAdmin) return `<section class="wrap auth stack"><div class="card">این بخش فقط برای مدیر سایته.</div></section>`;
     return `<section class="wrap stack admin" style="gap:16px">
       <div class="section-head" style="margin:0"><span class="eyebrow">پنل مدیریت</span><h2>مدیریت حبه</h2>${STORE.mode === 'local' ? '<p class="small muted">نسخه‌ی آزمایشی: تغییرها و گزارش‌ها فقط مربوط به همین مرورگره. در نسخه‌ی آنلاین، همه‌ی کاربرها رو می‌بینی.</p>' : ''}</div>
-      <div class="filters admin-tabs">${TABS.map(([k, t]) => `<button data-tab="${k}" class="${tab === k ? 'on' : ''}">${t}</button>`).join('')}</div>
-      <div id="admin-body">${({ reports: reportsView, users: usersView, content: contentView, settings: settingsView, broadcast: broadcastView })[tab]()}</div>
+      <div class="filters admin-tabs">${[...TABS, ...extraTabs().map(([k, x]) => [k, x.title])].map(([k, t]) => `<button data-tab="${k}" class="${tab === k ? 'on' : ''}">${t}</button>`).join('')}</div>
+      <div id="admin-body">${(({ reports: reportsView, users: usersView, content: contentView, settings: settingsView, broadcast: broadcastView })[tab] || A.adminTabs[tab].view)()}</div>
     </section>`;
   };
   A.mounts.admin = () => {
     if (!isAdmin) return;
     $$('[data-tab]').forEach(b => b.onclick = () => { tab = b.dataset.tab; if (tab === 'reports' || tab === 'users') report = null; reportErr = ''; A.render(); });
     if ((tab === 'reports' || tab === 'users') && !report && !reportErr) loadReport();
-    ({ reports: () => {}, users: mountUsers, content: mountContent, settings: mountSettings, broadcast: mountBroadcast })[tab]();
+    (({ reports: () => {}, users: mountUsers, content: mountContent, settings: mountSettings, broadcast: mountBroadcast })[tab] || A.adminTabs[tab].mount)();
   };
   async function loadReport() {
     try { report = await STORE.report(); if (!report) throw new Error('دسترسی مدیر تأیید نشد.'); } catch (e) { reportErr = e.message; }

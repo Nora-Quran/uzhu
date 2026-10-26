@@ -30,6 +30,8 @@
   const hook = (name, ...a) => (H[name] || []).map(f => { try { return f(...a) || ''; } catch (e) { console.error(e); return ''; } }).join('');
   const runHooks = (name, ...a) => (H[name] || []).forEach(f => { try { f(...a); } catch (e) { console.error(e); } });
   const tools = [];
+  // Async hooks awaited after sign-up/login, before the first page of the account is shown.
+  const signedIn = () => Promise.all((H.signedIn || []).map(f => Promise.resolve().then(() => f(user)).catch(e => console.error(e))));
   const A_SITE_ON = k => window.UZHU_APP?.site?.settings?.features?.[k] !== false;
 
   /* ---------- state ---------- */
@@ -258,6 +260,8 @@
     if (appRoutes.includes(r) && !['recipes', 'learn'].includes(r) && !user) r = 'signup';
     if (user && !D().profile && appRoutes.includes(r) && !['recipes', 'learn'].includes(r)) r = 'onboard';
     if (user && ['signup', 'login'].includes(r)) r = D().profile ? 'today' : 'onboard';
+    // Plugins may send the visitor elsewhere (subscription.js: no access yet → #subscribe).
+    for (const f of H.route || []) { try { r = f(r) || r; } catch (e) { console.error(e); } }
     return r;
   }
   function render() {
@@ -303,7 +307,7 @@
         <span class="eyebrow">برنامه‌ی روان‌شناختی ترک قند، قدم به قدم</span>
         <h1>با حبه، <span class="hl">شیرینی</span> رو آروم‌آروم از زندگیت خداحافظی کن</h1>
         <p class="lead">هر روز یک متن کوتاه برای خوندن، یک مأموریت کوچک، یادآورهای مهربون و یک چک‌لیست شبانه. دوره‌های ۲۱ روزه که پشت هم میان، تا عادت سالم جای ریزه‌خواری و هوس شیرینی رو بگیره.</p>
-        <div class="row"><a class="btn primary big" href="#${user ? 'today' : 'signup'}">${user ? 'برو به برنامه‌ی امروز' : 'رایگان شروع کن'}</a><a class="btn ghost" href="#recipes">دیدن رسپی‌های بی‌قند</a>${hook('homeHero')}</div>
+        <div class="row"><a class="btn primary big" href="#${user ? 'today' : 'signup'}">${user ? 'برو به برنامه‌ی امروز' : '۳ روز رایگان شروع کن'}</a><a class="btn ghost" href="#recipes">دیدن رسپی‌های بی‌قند</a>${hook('homeHero')}</div>
         <div class="trust"><div><b>${fa(PROGRAM.cycles.length * 21 || 63)} روز</b>برنامه‌ی روزبه‌روز</div><div><b>${fa(RECIPES.length || 18)}+</b>کیک و دسر بی‌قند</div><div><b>${fa(4)} بار</b>یادآور در روز</div></div>
       </div>
       <div class="hero-art"><figure class="sb-polaroid">${ART.hero()}<figcaption class="sb-hand sb-only">قدم به قدم، با هم</figcaption></figure></div>
@@ -341,7 +345,7 @@
   /* auth */
   views.signup = () => `<section class="wrap auth stack" style="gap:20px">
     <div style="width:130px;margin:0 auto">${ART.mascot('happy', { arms: 'wave' })}</div>
-    <div class="stack" style="gap:4px;text-align:center"><h2>بیا با هم شروع کنیم</h2><p class="muted">یک حساب بساز تا برنامه‌ات، چک‌لیست‌ها و یادآورهات ذخیره بشن.</p></div>
+    <div class="stack" style="gap:4px;text-align:center"><h2>بیا با هم شروع کنیم</h2><p class="muted">یک حساب بساز تا برنامه‌ات، چک‌لیست‌ها و یادآورهات ذخیره بشن. ۳ روز اول کاملاً رایگانه.</p></div>
     <form id="f" class="card pop stack" novalidate>
       <div class="field"><label for="name">اسمت</label><input class="input" id="name" required autocomplete="given-name" placeholder="مثلاً سارا"></div>
       <div class="field"><label for="email">ایمیل</label><input class="input" id="email" type="email" required autocomplete="email" dir="ltr" placeholder="you@example.com"></div>
@@ -356,7 +360,7 @@
     if (!name) return ($('#err').textContent = 'اسمت رو بنویس.');
     if (!/^\S+@\S+\.\S+$/.test(email)) return ($('#err').textContent = 'ایمیل درست به نظر نمی‌رسه. مثل you@example.com بنویسش.');
     if (pass.length < 6) return ($('#err').textContent = 'رمز باید دست‌کم ۶ نویسه باشه.');
-    try { user = await STORE.signup(name, email, pass); user.data = defaults(); await save(); go('onboard'); }
+    try { user = await STORE.signup(name, email, pass); user.data = defaults(); await save(); await signedIn(); go('onboard'); }
     catch (er) { $('#err').textContent = er.message; }
   };
   views.login = () => `<section class="wrap auth stack" style="gap:20px">
@@ -371,7 +375,7 @@
     </form></section>`;
   mounts.login = () => $('#f').onsubmit = async e => {
     e.preventDefault();
-    try { user = await STORE.login($('#email').value, $('#pass').value); user.data = normalize(user.data); go(user.data.profile ? 'today' : 'onboard'); }
+    try { user = await STORE.login($('#email').value, $('#pass').value); user.data = normalize(user.data); await signedIn(); go(user.data.profile ? 'today' : 'onboard'); }
     catch (er) { $('#err').textContent = er.message; }
   };
 

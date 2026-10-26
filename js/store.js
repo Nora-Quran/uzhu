@@ -184,6 +184,24 @@
       async cheer(code, from_nick, text) { const { error } = await remote.sb.from('uzhu_cheers').insert({ to_code: code, from_nick, text }); if (error) throw new Error(error.message); },
       async myCheers(code) { if (!code) return []; const { data } = await remote.sb.from('uzhu_cheers').select('from_nick,text,created_at').eq('to_code', code).order('created_at', { ascending: false }).limit(20); return data || []; },
     },
+    // Subscription (supabase/subscription.sql). The server decides access; these only read and send requests.
+    pay: {
+      async status() { const { data, error } = await remote.sb.rpc('uzhu_my_sub'); if (error) throw new Error(error.message); return data; },
+      // Paid day texts: rows come back only while the account has access (an empty list means no access).
+      async program() { const { data, error } = await remote.sb.from('uzhu_program').select('id,data'); if (error) throw new Error(error.message); return data || []; },
+      async upload(blob, ext) {
+        const path = `${remote.user.id}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+        const { error } = await remote.sb.storage.from('uzhu-receipts').upload(path, blob, { contentType: blob.type, upsert: false });
+        if (error) throw new Error(error.message);
+        return path;
+      },
+      async submit(plan, receipt) { const { data, error } = await remote.sb.rpc('uzhu_pay_submit', { p_plan: plan, p_receipt: receipt }); if (error) throw new Error(error.message); return data; },
+      async list() { const { data, error } = await remote.sb.rpc('uzhu_admin_payments'); if (error) throw new Error(error.message); return data; },
+      async review(id, approve, note) { const { data, error } = await remote.sb.rpc('uzhu_admin_review', { p_id: id, p_approve: approve, p_note: note || null }); if (error) throw new Error(error.message); return data; },
+      async grant(email, days) { const { data, error } = await remote.sb.rpc('uzhu_admin_grant', { p_email: email, p_days: days }); if (error) throw new Error(error.message); return data; },
+      // The receipt image as a blob: URL (the bucket is private, and the page's CSP allows blob: images only).
+      async receipt(path) { const { data, error } = await remote.sb.storage.from('uzhu-receipts').download(path); if (error) throw new Error(error.message); return URL.createObjectURL(data); },
+    },
     // Save this device's push subscription and its upcoming reminders, for the server to send.
     async syncPush(sub, schedule) {
       const j = sub.toJSON();

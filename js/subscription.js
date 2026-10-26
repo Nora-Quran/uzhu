@@ -1,0 +1,300 @@
+/* Subscription: 3-day free trial from sign-up, then a paid plan by card-to-card transfer.
+   The user uploads the transfer receipt (private storage), an admin approves it in the admin panel (#admin → پرداخت‌ها).
+   Access is decided by the server (supabase/subscription.sql); this file only shows the status, routes accounts
+   without access to #subscribe, and fills in the paid day texts that the server returns. */
+(window.UZHU_PLUGINS = window.UZHU_PLUGINS || []).push(function (A) {
+  const { esc, STORE, PROGRAM } = A;
+  const fa = v => esc(A.fa(v));
+  const $ = (s, el = document) => el.querySelector(s);
+  const $$ = (s, el = document) => [...el.querySelectorAll(s)];
+  const online = STORE.mode === 'supabase' && !!STORE.pay;
+
+  // Same prices as uzhu_plan_price on the server (the server's numbers are the ones charged).
+  const MONTH = 100000;
+  const PLANS = [
+    { id: '1m', months: 1, price: 100000, title: 'یک ماهه' },
+    { id: '3m', months: 3, price: 270000, title: 'سه ماهه' },
+    { id: '6m', months: 6, price: 510000, title: 'شش ماهه', badge: 'محبوب‌ترین' },
+    { id: '12m', months: 12, price: 960000, title: 'یک ساله', badge: 'بیشترین صرفه' },
+  ].map(p => ({ ...p, off: Math.round((1 - p.price / (p.months * MONTH)) * 100), gift: Math.round((p.months * MONTH - p.price) / MONTH * 30), daily: Math.round(p.price / (p.months * 30.4) / 100) * 100 }));
+  const plan = id => PLANS.find(p => p.id === id) || PLANS[0];
+  const money = n => A.money(n);
+  const DAY = 864e5;
+
+  /* ---------- status ---------- */
+  let sub = null, subAt = 0, skew = 0, subFor = null;
+  async function loadSub() {
+    if (!online || !A.user) { sub = null; subFor = null; return; }
+    try {
+      const s = await STORE.pay.status();
+      sub = s; subAt = Date.now(); subFor = A.user.id;
+      if (s && s.now) skew = Date.parse(s.now) - Date.now();
+    } catch (e) { /* offline: the server still enforces access */ }
+  }
+  const now = () => Date.now() + skew;
+  const ts = v => v ? Date.parse(v) : 0;
+  const trialEnd = () => ts(sub?.trial_ends), paidEnd = () => ts(sub?.paid_until);
+  const pending = () => (sub?.payments || []).find(p => p.status === 'pending');
+  const daysLeft = t => Math.max(0, Math.ceil((t - now()) / DAY));
+  const date = v => { try { return new Intl.DateTimeFormat('fa-IR-u-ca-persian', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(v)); } catch (e) { return ''; } };
+  const leftText = t => { const ms = t - now(); if (ms <= 0) return 'تموم شده'; const h = Math.ceil(ms / 36e5); return h < 24 ? `${fa(h)} ساعت` : `${fa(Math.ceil(ms / DAY))} روز`; };
+  const isFree = () => !sub || sub.admin || paidEnd() > now() ? false : trialEnd() > now();
+
+  /* ---------- paid day texts ---------- */
+  // Days whose text is not loaded yet carry locked: true (js/program.js keeps titles only).
+  const CACHE = 'uzhu:prog';
+  const progReady = () => !PROGRAM.cycles.some(c => c.days.some(d => d.locked));
+  function merge(rows) {
+    rows.forEach(r => {
+      const m = /^c(\d)d(\d+)$/.exec(r.id || ''); if (!m || !r.data) return;
+      const d = PROGRAM.cycles.find(c => c.id === +m[1])?.days[+m[2] - 1];
+      if (d) { Object.assign(d, r.data); delete d.locked; }
+    });
+  }
+  let inflight = null;
+  A.loadProgram = () => {
+    if (!online || !A.user || progReady()) return Promise.resolve();
+    return inflight || (inflight = (async () => {
+      let rows;
+      try { rows = await STORE.pay.program(); }
+      catch (e) { try { rows = JSON.parse(localStorage.getItem(CACHE) || '[]'); } catch (er) { rows = []; } merge(rows); return; }
+      if (!rows.length) return; // no access: the server returned nothing
+      merge(rows);
+      try { localStorage.setItem(CACHE, JSON.stringify(rows)); } catch (e) {}
+    })().finally(() => { inflight = null; }));
+  };
+
+  A.H.load = (A.H.load || []).concat(loadSub);
+  A.H.signedIn = (A.H.signedIn || []).concat(loadSub);
+
+  /* ---------- routing ---------- */
+  const OPEN = ['settings', 'subscribe', 'recipes', 'learn', 'admin'];
+  A.H.route = (A.H.route || []).concat(r => {
+    if (!online || !A.user || subFor !== A.user.id) return;
+    const app = A.appRoutes.includes(r) || r === 'onboard';
+    if (!app || OPEN.includes(r)) return;
+    if (sub && !sub.access) return 'subscribe';
+    if (['today', 'night', 'onboard'].includes(r) && !progReady()) return 'subscribe';
+  });
+  // Check again when the app comes back after a while (the trial may have ended, or a receipt been approved).
+  A.H.mount = (A.H.mount || []).concat(() => {
+    if (!online || !A.user) return;
+    const had = subFor === A.user.id;
+    if (Date.now() - subAt > (had ? 10 * 60e3 : 30e3)) {
+      subAt = Date.now();
+      const before = had && sub ? sub.access : null;
+      loadSub().then(async () => {
+        if (subFor !== A.user?.id || sub.access === before) return;
+        if (sub.access) await A.loadProgram();
+        A.render();
+      });
+    }
+  });
+
+  /* ---------- reminders of the trial / period end ---------- */
+  A.H.todayTop = (A.H.todayTop || []).concat(() => {
+    if (!online || !sub || sub.admin || !sub.access) return '';
+    const p = pending();
+    if (p) return `<a class="card sub-strip" href="#subscribe"><span>🧾</span><span>رسید پرداختت رسید و منتظر تأییده. تا تأیید، برنامه برات بازه.</span></a>`;
+    if (isFree()) return `<a class="card sub-strip" href="#subscribe"><span>🎁</span><span>${leftText(trialEnd())} از دوره‌ی رایگانت مونده. <b>دیدن اشتراک‌ها</b></span></a>`;
+    if (paidEnd() > now() && paidEnd() - now() < 5 * DAY) return `<a class="card sub-strip warn" href="#subscribe"><span>⏳</span><span>اشتراکت ${leftText(paidEnd())} دیگه تموم می‌شه. <b>تمدید</b></span></a>`;
+    return '';
+  });
+  A.H.settings = (A.H.settings || []).concat(() => online && A.user ? `<a class="btn ghost" href="#subscribe">💳 اشتراک من</a>` : '');
+  if (online) A.tools.push({ route: 'subscribe', icon: '💳', title: 'اشتراک', desc: 'وضعیت اشتراک، تمدید و ارسال رسید پرداخت' });
+
+  /* ---------- #subscribe ---------- */
+  A.titles.subscribe = 'اشتراک';
+  let chosen = '6m', file = null, preview = '', busy = false, err = '';
+  const card = () => Object.assign({ card: 'xxxx-xxxx-xxxx-xxxx', holder: 'xxxx', bank: 'xxxx' }, A.site.settings.payment || {});
+
+  function statusCard() {
+    const p = pending();
+    if (!A.user) return `<div class="card pop sub-hero"><div class="sub-mascot">${A.ART.mascot('happy', { arms: 'wave' })}</div><div class="stack" style="gap:6px"><span class="eyebrow">۳ روز اول رایگان</span><h2>اول ثبت‌نام کن، ۳ روز کامل رایگان امتحان کن</h2><p class="muted">بعد از اون، هر وقت خواستی یکی از اشتراک‌های پایین رو انتخاب کن.</p><div class="row"><a class="btn primary" href="#signup">ثبت‌نام</a><a class="btn ghost" href="#login">ورود</a></div></div></div>`;
+    if (!sub) return `<div class="card pop sub-hero"><div class="sub-mascot">${A.ART.mascot('calm')}</div><div class="stack" style="gap:6px"><h2>وضعیت اشتراک بارگذاری نشد</h2><p class="muted">اتصال اینترنتت رو بررسی کن و دوباره امتحان کن.</p><div class="row"><button class="btn primary" id="sub-retry">دوباره امتحان کن</button></div></div></div>`;
+    let mood = 'happy', eyebrow, title, text;
+    if (sub.admin) { eyebrow = 'مدیر سایت'; title = 'دسترسی تو همیشه بازه'; text = 'رسیدهای کاربرها رو از پنل مدیریت، بخش «پرداخت‌ها» تأیید کن.'; }
+    else if (paidEnd() > now()) { eyebrow = 'اشتراک فعال'; title = `اشتراکت تا ${esc(date(paidEnd()))} فعاله`; text = `${leftText(paidEnd())} مونده. هر وقت بخوای می‌تونی از همین حالا تمدید کنی؛ روزهای باقی‌مونده‌ات سوخت نمی‌شه.`; }
+    else if (trialEnd() > now()) { eyebrow = 'دوره‌ی رایگان'; title = `${leftText(trialEnd())} از دوره‌ی رایگانت مونده`; text = 'اگه همین الان اشتراک بگیری، اشتراکت از بعد از پایان روزهای رایگان شروع می‌شه؛ یعنی هیچ روزی از دستت نمی‌ره.'; }
+    else if (p && sub.access) { mood = 'calm'; eyebrow = 'در انتظار تأیید'; title = 'رسیدت رسید، ممنون!'; text = 'به‌محض تأیید، اشتراکت فعال می‌شه. تا اون موقع برنامه برات بازه.'; }
+    else if (p) { mood = 'calm'; eyebrow = 'در انتظار تأیید'; title = 'رسیدت رسید، ممنون!'; text = 'به‌محض تأیید پرداخت، برنامه دوباره برات باز می‌شه.'; }
+    else { mood = 'calm'; eyebrow = 'دوره‌ی رایگان تموم شد'; title = 'برای ادامه‌ی مسیر، یک اشتراک انتخاب کن'; text = 'همه‌ی پیشرفتت، چک‌لیست‌ها و روزهایی که گذروندی سر جاشه. با فعال شدن اشتراک از همون‌جا ادامه می‌دی.'; }
+    return `<div class="card pop sub-hero"><div class="sub-mascot">${A.ART.mascot(mood, mood === 'happy' ? { arms: 'up' } : undefined)}</div><div class="stack" style="gap:6px"><span class="eyebrow">${eyebrow}</span><h2>${title}</h2><p class="muted">${text}</p></div></div>`;
+  }
+  function savedLine() {
+    try { const t = A.user && A.D()?.profile ? A.stats().toman : 0; return t > 0 ? `<p class="small sub-saved">🍬 تا امروز با نخریدن شیرینی حدود <b>${fa(money(t))} تومن</b> کمتر خرج کردی.</p>` : ''; } catch (e) { return ''; }
+  }
+  function plansView() {
+    return `<div class="sub-plans" role="radiogroup" aria-label="انتخاب اشتراک">${PLANS.map(p => `
+      <button type="button" class="card sub-plan${chosen === p.id ? ' on' : ''}${p.badge ? ' hot' : ''}" role="radio" aria-checked="${chosen === p.id}" data-plan="${p.id}">
+        ${p.badge ? `<span class="sub-badge">${p.badge}</span>` : ''}
+        <b class="sub-title">${p.title}</b>
+        <span class="sub-price"><b class="num">${fa(money(p.price / 1000))}</b> هزار تومن</span>
+        ${p.off ? `<span class="sub-was num">${fa(money(p.months * MONTH / 1000))} هزار</span>` : '<span class="sub-was none">&nbsp;</span>'}
+        ${p.gift ? `<span class="chip mint">🎁 ${fa(p.gift)} روز هدیه</span>` : '<span class="chip">شروع سبک</span>'}
+        <span class="small muted">${p.off ? `${fa(p.off)}٪ کمتر · ` : ''}روزی حدود ${fa(money(p.daily))} تومن</span>
+        <span class="sub-check">✓ انتخاب شد</span>
+      </button>`).join('')}</div>
+      <p class="small muted sub-note">🍫 اشتراک یک ساله روزی حدود ${fa(money(plan('12m').daily))} تومنه؛ کمتر از قیمت یه شکلات.</p>`;
+  }
+  function payView() {
+    const p = plan(chosen), c = card();
+    if (!A.user) return '';
+    if (pending()) return `<div class="card stack sub-wait"><b>🧾 یک رسید در انتظار تأیید داری</b><p class="small muted">بعد از بررسی (معمولاً چند ساعت) نتیجه همین‌جا نشون داده می‌شه. اگه رسید رو اشتباه فرستادی، صبر کن تا بررسی بشه و بعد دوباره بفرست.</p></div>`;
+    return `<div class="card stack sub-pay" style="gap:14px">
+      <div class="row" style="justify-content:space-between"><b>پرداخت اشتراک ${p.title}</b><span class="chip sun num">${fa(money(p.price))} تومن</span></div>
+      <ol class="sub-steps">
+        <li><b>مبلغ <span class="num">${fa(money(p.price))}</span> تومن رو به این کارت، کارت به کارت کن:</b>
+          <div class="sub-bank">
+            <div class="sub-cardno" dir="ltr">${esc(c.card)}</div>
+            <div class="row" style="justify-content:space-between"><span class="small">به نام <b>${esc(c.holder)}</b> · بانک ${esc(c.bank)}</span><button type="button" class="btn ghost" id="sub-copy">کپی شماره کارت</button></div>
+          </div></li>
+        <li><b>از صفحه‌ی رسید پرداخت اسکرین‌شات بگیر و اینجا بفرست:</b>
+          <form id="sub-form" class="stack" style="gap:10px;margin-top:8px">
+            <label class="sub-drop" for="sub-file">${preview ? `<img src="${esc(preview)}" alt="پیش‌نمایش رسید">` : '<span>📷 انتخاب عکس رسید</span><span class="small muted">JPG یا PNG</span>'}</label>
+            <input type="file" id="sub-file" accept="image/png,image/jpeg,image/webp" hidden>
+            <div class="err" id="sub-err">${esc(err)}</div>
+            <button class="btn primary big" type="submit" ${!file || busy ? 'disabled' : ''}>${busy ? 'در حال ارسال…' : 'ارسال رسید'}</button>
+          </form></li>
+        <li><b>منتظر تأیید باش.</b> <span class="muted">معمولاً چند ساعت بیشتر طول نمی‌کشه و تا اون موقع (تا ۲۴ ساعت) برنامه برات بازه.</span></li>
+      </ol></div>`;
+  }
+  const ST = { pending: ['sun', 'در انتظار تأیید'], approved: ['mint', 'تأیید شد'], rejected: ['berry', 'رد شد'] };
+  function historyView() {
+    const list = sub?.payments || [];
+    if (!list.length) return '';
+    return `<div class="card stack" style="gap:8px"><b>پرداخت‌های من</b>${list.map(p => `<div class="sub-row"><span>${plan(p.plan).title} · <span class="num">${fa(money(p.amount))}</span> تومن<br><span class="small muted">${esc(date(p.created_at))}</span>${p.note ? `<br><span class="small">📝 ${esc(p.note)}</span>` : ''}</span><span class="chip ${(ST[p.status] || ST.pending)[0]}">${(ST[p.status] || ST.pending)[1]}</span></div>`).join('')}</div>`;
+  }
+  A.views.subscribe = () => {
+    if (!online) return `<section class="wrap auth stack"><div class="card">اشتراک فقط در نسخه‌ی آنلاین سایت فعاله.</div></section>`;
+    const loading = A.user && sub?.access && !progReady();
+    return `<section class="wrap stack sub" style="gap:16px;max-width:880px">
+      ${loading ? `<div class="card stack" style="gap:8px"><b>متن برنامه هنوز بارگذاری نشده</b><p class="small muted">برای بار اول به اینترنت نیاز داریم. اتصالت رو بررسی کن.</p><div class="row"><button class="btn primary" id="sub-reload">دوباره امتحان کن</button></div></div>` : ''}
+      ${statusCard()}
+      ${sub?.admin ? '' : `<div class="section-head" style="margin:0"><span class="eyebrow">اشتراک‌ها</span><h2>هر چی طولانی‌تر، به‌صرفه‌تر</h2><p class="muted">ماهانه ${fa(money(MONTH))} تومن. با اشتراک‌های بلندتر، چند روز تا چند ماه مهمون حبه‌ای.</p></div>
+      ${plansView()}${savedLine()}${payView()}`}
+      ${historyView()}
+      <details class="card sub-faq"><summary><b>سؤال‌های رایج</b></summary>
+        <p><b>اشتراکم از کِی حساب می‌شه؟</b><br>از روز تأیید، یا اگه هنوز روز رایگان یا اشتراک فعال داری، از روز بعد از تموم شدنش. هیچ روزی سوخت نمی‌شه.</p>
+        <p><b>پیشرفتم چی می‌شه؟</b><br>همه‌ی روزها، چک‌لیست‌ها و نشان‌هات ذخیره‌ست و بعد از فعال شدن اشتراک از همون‌جا ادامه می‌دی.</p>
+        <p><b>رسیدم رد شد، چی کار کنم؟</b><br>دلیلش کنار پرداخت نوشته شده. مشکل رو برطرف کن و رسید درست رو دوباره بفرست.</p>
+      </details>
+    </section>`;
+  };
+  // Re-encode the photo as a JPEG of at most 1600px (smaller upload, and drops the photo's metadata).
+  async function shrink(f) {
+    if (!/^image\//.test(f.type)) throw new Error('فقط عکس رسید رو انتخاب کن.');
+    if (f.size > 20 * 1024 * 1024) throw new Error('حجم عکس خیلی زیاده.');
+    try {
+      const bmp = await createImageBitmap(f), k = Math.min(1, 1600 / Math.max(bmp.width, bmp.height));
+      const cv = document.createElement('canvas'); cv.width = Math.round(bmp.width * k); cv.height = Math.round(bmp.height * k);
+      const g = cv.getContext('2d'); g.fillStyle = '#fff'; g.fillRect(0, 0, cv.width, cv.height); g.drawImage(bmp, 0, 0, cv.width, cv.height);
+      const b = await new Promise(ok => cv.toBlob(ok, 'image/jpeg', 0.85));
+      if (b) return b;
+    } catch (e) { /* fall back to the original file */ }
+    if (!/^image\/(jpeg|png|webp)$/.test(f.type) || f.size > 5 * 1024 * 1024) throw new Error('این عکس قابل خوندن نیست. یک اسکرین‌شات JPG یا PNG انتخاب کن.');
+    return f;
+  }
+  const payError = m => /already pending/.test(m) ? 'یک رسید در انتظار تأیید داری. لطفاً صبر کن تا بررسی بشه.'
+    : /too many/.test(m) ? 'امروز چند بار رسید فرستادی. فردا دوباره امتحان کن.'
+    : /size|large|mime|type/i.test(m) ? 'این فایل قابل قبول نیست. یک عکس JPG یا PNG کمتر از ۵ مگابایت بفرست.'
+    : /fetch|network|Failed|timeout/i.test(m) ? 'اتصال به سرور برقرار نشد. اینترنتت رو بررسی کن و دوباره امتحان کن.'
+    : 'ارسال انجام نشد. دوباره امتحان کن.';
+  A.mounts.subscribe = () => {
+    if (!online) return;
+    const retry = $('#sub-retry'); if (retry) retry.onclick = async () => { await loadSub(); A.render(); };
+    const reload = $('#sub-reload'); if (reload) reload.onclick = async () => { await A.loadProgram(); await loadSub(); progReady() ? A.go('today') : A.render(); };
+    $$('[data-plan]').forEach(b => b.onclick = () => { chosen = b.dataset.plan; A.render(); });
+    const copy = $('#sub-copy'); if (copy) copy.onclick = () => {
+      const n = card().card.replace(/[^\dx]/gi, '');
+      (navigator.clipboard ? navigator.clipboard.writeText(n) : Promise.reject()).then(() => A.toast('شماره کارت کپی شد.', 'bell'), () => A.toast('کپی نشد؛ شماره رو از روی صفحه بردار.', 'bell'));
+    };
+    const inp = $('#sub-file'); if (inp) inp.onchange = async () => {
+      const f = inp.files && inp.files[0]; if (!f) return;
+      err = '';
+      try { file = await shrink(f); if (preview) URL.revokeObjectURL(preview); preview = URL.createObjectURL(file); }
+      catch (e) { file = null; err = e.message; }
+      A.render();
+    };
+    const form = $('#sub-form'); if (form) form.onsubmit = async e => {
+      e.preventDefault(); if (!file || busy) return;
+      busy = true; err = ''; A.render();
+      try {
+        const path = await STORE.pay.upload(file, file.type === 'image/png' ? 'png' : file.type === 'image/webp' ? 'webp' : 'jpg');
+        await STORE.pay.submit(chosen, path);
+        file = null; if (preview) URL.revokeObjectURL(preview); preview = '';
+        await loadSub();
+        if (sub?.access) await A.loadProgram();
+        A.confetti(); A.toast('رسیدت رسید! به‌محض تأیید، اشتراکت فعال می‌شه.', null, 'happy');
+      } catch (er) { err = payError(String(er.message || er)); }
+      busy = false; A.render();
+    };
+  };
+
+  /* ---------- admin panel tab: payments ---------- */
+  let pays = null, paysErr = '', paysAll = false;
+  const receipts = {};
+  async function loadPays() {
+    try { pays = await STORE.pay.list(); if (!pays) throw new Error('دسترسی مدیر تأیید نشد.'); paysErr = ''; } catch (e) { paysErr = e.message; pays = []; }
+    if (location.hash === '#admin') A.render();
+  }
+  const npending = () => (pays || []).filter(p => p.status === 'pending').length;
+  A.adminTabs = A.adminTabs || {};
+  if (online) A.adminTabs.payments = {
+    get title() { return 'پرداخت‌ها' + (npending() ? ` (${A.fa(npending())})` : ''); },
+    view() {
+      const c = card();
+      const list = (pays || []).filter(p => paysAll || p.status === 'pending');
+      const rows = !pays ? '<div class="card">در حال بارگذاری…</div>' : paysErr ? `<div class="card">${esc(paysErr)}</div>` : !list.length ? `<div class="card muted">${paysAll ? 'هنوز پرداختی ثبت نشده.' : 'رسید تازه‌ای در انتظار تأیید نیست. ✨'}</div>` :
+        list.map(p => { const st = ST[p.status] || ST.pending, pl = plan(p.plan), until = ts(p.paid_until) > now() ? `اشتراک تا ${esc(date(p.paid_until))}` : ts(p.trial_ends) > now() ? `رایگان تا ${esc(date(p.trial_ends))}` : 'بدون اشتراک فعال'; return `
+        <div class="card stack sub-adm" style="gap:8px">
+          <div class="row" style="justify-content:space-between"><b>${esc(p.name || '-')} <span class="small muted" dir="ltr">${esc(p.email)}</span></b><span class="chip ${st[0]}">${st[1]}</span></div>
+          <div class="small">${pl.title} · <b class="num">${fa(money(p.amount))}</b> تومن · ${esc(date(p.created_at))} · <span class="muted">${until}</span></div>
+          ${p.note ? `<div class="small">📝 ${esc(p.note)}</div>` : ''}${p.reviewed_by ? `<div class="small muted">بررسی: ${esc(p.reviewed_by)}، ${esc(date(p.reviewed_at))}</div>` : ''}
+          <div class="sub-receipt">${receipts[p.id] ? `<img src="${esc(receipts[p.id])}" alt="رسید">` : `<button class="btn ghost" type="button" data-rc="${esc(String(p.id))}">🧾 دیدن رسید</button>`}</div>
+          ${p.status === 'pending' ? `<div class="row"><button class="btn primary" type="button" data-ok="${esc(String(p.id))}">تأیید و فعال کردن ${fa(pl.months)} ماه</button><input class="input" id="nt-${esc(String(p.id))}" placeholder="دلیل رد (به کاربر نشون داده می‌شه)" style="flex:1;min-width:180px"><button class="btn ghost" type="button" data-no="${esc(String(p.id))}">رد</button></div>` : ''}
+        </div>`; }).join('');
+      return `<div class="stack" style="gap:16px">
+        <div class="row" style="justify-content:space-between"><div class="filters"><button data-pf="0" class="${paysAll ? '' : 'on'}">در انتظار تأیید</button><button data-pf="1" class="${paysAll ? 'on' : ''}">همه</button></div><button class="btn ghost" id="pay-reload">به‌روزرسانی</button></div>
+        <p class="small muted">قبل از تأیید، مبلغ و تاریخ رسید رو با واریزی حساب مقایسه کن. با تأیید، مدت اشتراک بعد از پایان روزهای رایگان یا اشتراک فعلی کاربر اضافه می‌شه.</p>
+        ${rows}
+        <form id="pay-card" class="card stack"><b>💳 اطلاعات کارت مقصد</b><p class="small muted">همین‌ها در صفحه‌ی پرداخت به کاربر نشون داده می‌شه.</p>
+          <div class="field"><label for="pc-card">شماره کارت</label><input class="input" id="pc-card" dir="ltr" value="${esc(c.card)}"></div>
+          <div class="field"><label for="pc-holder">به نام</label><input class="input" id="pc-holder" value="${esc(c.holder)}"></div>
+          <div class="field"><label for="pc-bank">بانک</label><input class="input" id="pc-bank" value="${esc(c.bank)}"></div>
+          <div class="row"><button class="btn primary" type="submit">ذخیره</button></div></form>
+        <form id="pay-grant" class="card stack"><b>🎁 هدیه یا اصلاح روزهای اشتراک</b><p class="small muted">به اشتراک یک کاربر روز اضافه کن (برای کم کردن، عدد منفی بنویس).</p>
+          <div class="row"><input class="input" id="pg-email" type="email" dir="ltr" placeholder="email@example.com" aria-label="ایمیل کاربر" style="flex:2;min-width:200px"><input class="input" id="pg-days" type="number" value="7" aria-label="تعداد روز" style="flex:1;min-width:90px"><button class="btn ghost" type="submit">اعمال</button></div></form>
+      </div>`;
+    },
+    mount() {
+      if (!pays && !paysErr) loadPays();
+      $$('[data-pf]').forEach(b => b.onclick = () => { paysAll = b.dataset.pf === '1'; A.render(); });
+      $('#pay-reload').onclick = () => { pays = null; paysErr = ''; A.render(); };
+      $$('[data-rc]').forEach(b => b.onclick = async () => {
+        const p = pays.find(x => String(x.id) === b.dataset.rc); if (!p) return;
+        b.disabled = true; b.textContent = 'در حال بارگذاری…';
+        try { receipts[p.id] = await STORE.pay.receipt(p.receipt); A.render(); } catch (e) { b.disabled = false; b.textContent = 'رسید باز نشد، دوباره امتحان کن'; }
+      });
+      const review = async (id, ok) => {
+        const note = ($('#nt-' + id)?.value || '').trim();
+        try { const r = await STORE.pay.review(+id, ok, note); A.toast(ok ? `تأیید شد. اشتراک تا ${date(r.paid_until)} فعاله.` : 'رد شد.', 'bell'); pays = null; A.render(); }
+        catch (e) { A.toast('انجام نشد: ' + e.message, 'bell'); }
+      };
+      $$('[data-ok]').forEach(b => b.onclick = () => { b.disabled = true; review(b.dataset.ok, true); });
+      $$('[data-no]').forEach(b => b.onclick = () => { b.disabled = true; review(b.dataset.no, false); });
+      $('#pay-card').onsubmit = async e => {
+        e.preventDefault();
+        const v = { card: $('#pc-card').value.trim(), holder: $('#pc-holder').value.trim(), bank: $('#pc-bank').value.trim() };
+        try { await STORE.setSetting('payment', v); A.site.settings.payment = v; A.toast('اطلاعات کارت ذخیره شد.', 'bell'); } catch (er) { A.toast('ذخیره نشد: ' + er.message, 'bell'); }
+      };
+      $('#pay-grant').onsubmit = async e => {
+        e.preventDefault();
+        const email = $('#pg-email').value.trim(), days = parseInt($('#pg-days').value, 10);
+        if (!email || !days) return A.toast('ایمیل و تعداد روز رو بنویس.', 'bell');
+        try { const r = await STORE.pay.grant(email, days); A.toast(`انجام شد. اشتراک تا ${date(r.paid_until)} فعاله.`, 'bell'); pays = null; A.render(); }
+        catch (er) { A.toast(/no such user/.test(er.message) ? 'کاربری با این ایمیل پیدا نشد.' : 'انجام نشد: ' + er.message, 'bell'); }
+      };
+    },
+  };
+});

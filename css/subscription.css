@@ -1,0 +1,38 @@
+/* Subscription page (#subscribe), trial strip on #today, payments tab in the admin panel. */
+.sub-hero { display: flex; gap: 18px; align-items: center; }
+.sub-mascot { width: 110px; flex: none; }
+@media (max-width: 560px) { .sub-hero { flex-direction: column; text-align: center; } .sub-hero .row { justify-content: center; } .sub-mascot { width: 90px; } }
+
+.sub-plans { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+@media (max-width: 820px) { .sub-plans { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.sub-plan { position: relative; display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center; padding: 22px 10px 16px; cursor: pointer; font: inherit; color: var(--ink); border: 2px solid var(--line); transition: transform .15s ease, border-color .15s ease, box-shadow .15s ease; }
+.sub-plan:hover { transform: translateY(-2px); }
+.sub-plan.on { border-color: var(--mint); box-shadow: 0 0 0 4px var(--mint-soft); background: var(--mint-soft); }
+.sub-check { display: none; font-size: .8rem; font-weight: 700; color: var(--mint); }
+.sub-plan.on .sub-check { display: inline; }
+.sub-plan:focus-visible { outline: 3px solid var(--mint); outline-offset: 2px; }
+.sub-badge { position: absolute; top: -12px; inset-inline: 0; margin: 0 auto; width: max-content; padding: 2px 12px; border-radius: 999px; background: var(--berry); color: #fff; font-size: .78rem; font-weight: 700; }
+.sub-plan.hot:not(.on) { border-color: var(--berry-soft); }
+.sub-title { font-family: Lalezar, Vazirmatn, sans-serif; font-size: 1.25rem; font-weight: 400; }
+.sub-price { font-size: .9rem; }
+.sub-price b { font-size: 1.7rem; font-weight: 900; color: var(--mint); }
+.sub-was { font-size: .82rem; color: var(--ink-soft); text-decoration: line-through; }
+.sub-was.none { text-decoration: none; }
+.sub-note, .sub-saved { text-align: center; margin: 0; }
+
+.sub-steps { margin: 0; padding-inline-start: 22px; display: grid; gap: 16px; }
+.sub-steps li::marker { color: var(--mint); font-weight: 900; }
+.sub-bank { margin-top: 8px; padding: 14px; border-radius: var(--r); background: var(--surface-2); display: grid; gap: 10px; }
+.sub-cardno { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: clamp(1.05rem, 5vw, 1.45rem); font-weight: 700; letter-spacing: .08em; text-align: center; word-break: break-all; }
+.sub-drop { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; min-height: 120px; padding: 12px; border: 2px dashed var(--line); border-radius: var(--r); cursor: pointer; text-align: center; }
+.sub-drop:hover { border-color: var(--mint); }
+.sub-drop img { max-width: 100%; max-height: 320px; border-radius: 10px; }
+
+.sub-strip { display: flex; gap: 10px; align-items: center; padding: 12px 16px; color: var(--ink); text-decoration: none; background: var(--sun-soft); border-color: transparent; }
+.sub-strip.warn { background: var(--berry-soft); }
+.sub-row { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 8px 0; border-top: 1px solid var(--line); }
+.sub-row:first-of-type { border-top: 0; }
+.sub-faq summary { cursor: pointer; }
+.sub-faq p { margin: 10px 0 0; }
+
+.sub-receipt img { display: block; max-width: min(100%, 420px); max-height: 560px; border-radius: 10px; border: 1px solid var(--line); }

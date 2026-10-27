@@ -18,6 +18,7 @@ cd uzhu-site && python3 -m http.server 8080
 - `js/illustrations.js`: کاراکتر حبه و تصویرهای سایت
 - `js/store.js` و `js/config.js`: ذخیره‌ی حساب و پیشرفت
 - `js/plus3.js` و `js/plus4.js` (+ `css/plus3.css`): دور چهارم بهبودها (۵۰ مورد؛ فهرست کامل در `research/improvements-100.md`)
+- `js/pregnancy.js` و `js/pregnancy-data.js` (+ `css/pregnancy.css`): بخش «بارداری و پس از زایمان» (هفته‌شمار، مراقبت‌ها، وزن طبق IOM، شمارش حرکات، زمان‌سنج انقباض، دفترچه‌ی قند دیابت بارداری، ورزش طبق ACOG، کگل، حال روحی پس از زایمان، علائم خطر و مقاله‌ها با منبع)
 - `sw.js`: کار آفلاین و نمایش اعلان
 - `research/`: بررسی رقبا و خلاصه‌ی پژوهش‌های پزشکی با منبع
 - `supabase/schema.sql`: جدول‌های لازم برای ثبت‌نام آنلاین

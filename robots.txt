@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /supabase/
+Disallow: /research/
+
+Sitemap: https://habbeapp.github.io/sitemap.xml

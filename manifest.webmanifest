@@ -1,11 +1,21 @@
 {
+  "id": "./",
   "name": "حبه، یار روزهای بی‌قند",
   "short_name": "حبه",
+  "description": "برنامه‌ی روان‌شناختی قدم‌به‌قدم برای ترک قند و شیرینی در دوره‌های ۲۱ روزه.",
   "lang": "fa",
   "dir": "rtl",
   "start_url": "./#today",
+  "scope": "./",
   "display": "standalone",
   "background_color": "#e3f3dc",
   "theme_color": "#2fa877",
-  "icons": [{ "src": "img/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }, { "src": "img/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" }, { "src": "img/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }]
+  "categories": ["health", "lifestyle", "food"],
+  "icons": [{ "src": "img/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }, { "src": "img/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" }, { "src": "img/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }],
+  "shortcuts": [
+    { "name": "هوس دارم", "short_name": "هوس دارم", "description": "کمک فوری وقتی هوس شیرینی کردی", "url": "./#sos", "icons": [{ "src": "img/icon-192.png", "sizes": "192x192" }] },
+    { "name": "چک‌لیست شب", "short_name": "چک‌لیست", "url": "./#night", "icons": [{ "src": "img/icon-192.png", "sizes": "192x192" }] },
+    { "name": "دفترچه‌ی قند", "short_name": "قند امروز", "url": "./#sugar", "icons": [{ "src": "img/icon-192.png", "sizes": "192x192" }] },
+    { "name": "ثبت یادداشت", "short_name": "یادداشت", "url": "./#journal", "icons": [{ "src": "img/icon-192.png", "sizes": "192x192" }] }
+  ]
 }

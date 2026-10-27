@@ -17,6 +17,7 @@ cd uzhu-site && python3 -m http.server 8080
 - `js/articles.js`: مقاله‌های علمی و راهنمای قندهای پنهان
 - `js/illustrations.js`: کاراکتر حبه و تصویرهای سایت
 - `js/store.js` و `js/config.js`: ذخیره‌ی حساب و پیشرفت
+- `js/plus3.js` و `js/plus4.js` (+ `css/plus3.css`): دور چهارم بهبودها (۵۰ مورد؛ فهرست کامل در `research/improvements-100.md`)
 - `sw.js`: کار آفلاین و نمایش اعلان
 - `research/`: بررسی رقبا و خلاصه‌ی پژوهش‌های پزشکی با منبع
 - `supabase/schema.sql`: جدول‌های لازم برای ثبت‌نام آنلاین

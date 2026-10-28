@@ -58,7 +58,7 @@
     async getSite() { return { settings: LS.get('uzhu:site:settings', {}), content: LS.get('uzhu:site:content', []) }; },
     async isAdmin() { const u = this.current(); if (!u) return false; const users = LS.get('uzhu:users', {}); const first = Object.entries(users).sort((a, b) => (a[1].createdAt || 0) - (b[1].createdAt || 0))[0]; return !!first && first[0] === u.email; },
     // Admin list lives on the server only; in local mode the first account on this browser is the admin.
-    async resetPassword() { throw new Error('بازیابی رمز فقط در نسخه‌ی آنلاین کار می‌کنه.'); }, async setPassword() { throw new Error('فقط در نسخه‌ی آنلاین'); },
+    async resetPassword() { throw new Error('بازیابی رمز فقط در نسخه‌ی آنلاین کار می‌کنه.'); }, async setPassword() { throw new Error('فقط در نسخه‌ی آنلاین'); }, async verifyCode() { throw new Error('فقط در نسخه‌ی آنلاین'); }, async resendCode() { throw new Error('فقط در نسخه‌ی آنلاین'); },
     async admins() { return null; }, async addAdmin() { throw new Error('فقط در نسخه‌ی آنلاین'); }, async removeAdmin() { throw new Error('فقط در نسخه‌ی آنلاین'); },
     async setSetting(key, value) { const st = LS.get('uzhu:site:settings', {}); st[key] = value; LS.set('uzhu:site:settings', st); },
     async saveContent(kind, id, data, hidden = false) { const c = LS.get('uzhu:site:content', []).filter(x => !(x.kind === kind && x.id === id)); c.push({ kind, id, data, hidden }); LS.set('uzhu:site:content', c); },
@@ -142,13 +142,27 @@
       const { data, error } = r;
       if (error) throw new Error(/registered/i.test(error.message) ? 'با این ایمیل قبلاً ثبت‌نام شده. از «ورود» استفاده کن.' : /rate|seconds/i.test(error.message) ? 'درخواست‌ها زیاد شده. چند دقیقه بعد دوباره امتحان کن.' : /password/i.test(error.message) ? 'رمز عبور باید دست‌کم ۶ نویسه باشه.' : offline(error) ? NET_ERR : 'ثبت‌نام انجام نشد: ' + error.message);
       if (data.user && Array.isArray(data.user.identities) && !data.user.identities.length) throw new Error('با این ایمیل قبلاً ثبت‌نام شده. وارد شو یا رمز رو بازیابی کن.');
-      if (!data.session) throw new Error('ایمیل تأیید برات فرستادیم. روی لینک داخلش بزن و بعد وارد شو. اگه توی صندوق ورودی نبود، پوشه‌ی اسپم (Spam) رو هم نگاه کن.');
+      // Email confirmation is on: Supabase mailed a code; the site asks for it at #verify.
+      if (!data.session) { const e = new Error('یه کد تأیید به ایمیلت فرستادیم.'); e.verify = 'signup'; throw e; }
       this.user = { id: data.user.id, email, name, data: null };
       return this.user;
     },
     async resetPassword(email) {
       let r; try { r = await this.sb.auth.resetPasswordForEmail(email, { redirectTo: location.origin + location.pathname }); } catch (e) { throw new Error(NET_ERR); }
       if (r.error) throw new Error(/rate|seconds/i.test(r.error.message) ? 'درخواست‌ها زیاد شده. چند دقیقه بعد دوباره امتحان کن.' : offline(r.error) ? NET_ERR : 'ایمیل فرستاده نشد: ' + r.error.message);
+    },
+    // The 6-digit code from the sign-up or password-reset email (type 'signup' | 'recovery'). Signs the user in.
+    async verifyCode(email, token, type) {
+      let r; try { r = await this.sb.auth.verifyOtp({ email, token, type }); } catch (e) { throw new Error(NET_ERR); }
+      if (r.error) throw new Error(/expired|invalid/i.test(r.error.message) ? 'کد درست نیست یا وقتش تموم شده. دوباره نگاه کن یا یه کد تازه بگیر.' : /rate|seconds/i.test(r.error.message) ? 'درخواست‌ها زیاد شده. چند دقیقه بعد دوباره امتحان کن.' : offline(r.error) ? NET_ERR : 'تأیید انجام نشد: ' + r.error.message);
+      if (type === 'recovery') this.recovery = true;
+      this.user = await this.fetch(r.data.user);
+      return this.user;
+    },
+    async resendCode(email, type) {
+      if (type === 'recovery') return this.resetPassword(email);
+      let r; try { r = await this.sb.auth.resend({ type: 'signup', email }); } catch (e) { throw new Error(NET_ERR); }
+      if (r.error) throw new Error(/rate|seconds/i.test(r.error.message) ? 'یه کم صبر کن، بعد دوباره کد بخواه.' : offline(r.error) ? NET_ERR : 'کد فرستاده نشد: ' + r.error.message);
     },
     async setPassword(pass) {
       let r; try { r = await this.sb.auth.updateUser({ password: pass }); } catch (e) { throw new Error(NET_ERR); }
@@ -158,7 +172,8 @@
     async login(email, pass) {
       let r; try { r = await this.sb.auth.signInWithPassword({ email, password: pass }); } catch (e) { throw new Error(NET_ERR); }
       const { data, error } = r;
-      if (error) throw new Error(/confirm/i.test(error.message) ? 'اول روی لینک تأیید داخل ایمیلت بزن، بعد وارد شو. اگه ایمیلش رو پیدا نمی‌کنی، پوشه‌ی اسپم (Spam) رو هم نگاه کن.' : offline(error) ? NET_ERR : 'ایمیل یا رمز درست نیست.');
+      if (error && /confirm/i.test(error.message)) { await this.resendCode(email, 'signup').catch(() => {}); const e = new Error('ایمیلت هنوز تأیید نشده. یه کد تازه برات فرستادیم.'); e.verify = 'signup'; throw e; }
+      if (error) throw new Error(offline(error) ? NET_ERR : 'ایمیل یا رمز درست نیست.');
       this.user = await this.fetch(data.user);
       return this.user;
     },

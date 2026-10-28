@@ -276,7 +276,7 @@
     window.scrollTo(0, 0);
     document.title = (titles[r] ? titles[r] + ' · ' : '') + 'حبه';
   }
-  const titles = { more: 'ابزارها', move: 'ورزش', today: 'امروز', night: 'چک‌لیست شب', journey: 'مسیر من', recipes: 'خوراکی‌های بی‌قند', learn: 'علم قند', settings: 'تنظیمات', signup: 'ثبت‌نام', login: 'ورود', newpass: 'رمز تازه', onboard: 'شروع' };
+  const titles = { more: 'ابزارها', move: 'ورزش', today: 'امروز', night: 'چک‌لیست شب', journey: 'مسیر من', recipes: 'خوراکی‌های بی‌قند', learn: 'علم قند', settings: 'تنظیمات', signup: 'ثبت‌نام', login: 'ورود', newpass: 'رمز تازه', verify: 'کد تأیید', onboard: 'شروع' };
 
   function chrome(r) {
     const inApp = user && D().profile;
@@ -361,7 +361,7 @@
     if (!/^\S+@\S+\.\S+$/.test(email)) return ($('#err').textContent = 'ایمیل درست به نظر نمی‌رسه. مثل you@example.com بنویسش.');
     if (pass.length < 6) return ($('#err').textContent = 'رمز باید دست‌کم ۶ نویسه باشه.');
     try { user = await STORE.signup(name, email, pass); user.data = defaults(); await save(); await signedIn(); go('onboard'); }
-    catch (er) { $('#err').textContent = er.message; }
+    catch (er) { if (er.verify) return askCode(email, er.verify, er.message); $('#err').textContent = er.message; }
   };
   views.login = () => `<section class="wrap auth stack" style="gap:20px">
     <div style="width:120px;margin:0 auto">${ART.mascot('calm')}</div>
@@ -378,14 +378,69 @@
     $('#f').onsubmit = async e => {
       e.preventDefault();
       try { user = await STORE.login($('#email').value, $('#pass').value); user.data = normalize(user.data); await signedIn(); go(user.data.profile ? 'today' : 'onboard'); }
-      catch (er) { $('#err').textContent = er.message; }
+      catch (er) { if (er.verify) return askCode($('#email').value.trim(), er.verify, er.message); $('#err').textContent = er.message; }
     };
     $('#forgot').onclick = async () => {
       const email = $('#email').value.trim(), err = $('#err');
       if (!/^\S+@\S+\.\S+$/.test(email)) { err.textContent = 'اول ایمیلت رو توی کادر بالا بنویس، بعد این دکمه رو بزن.'; $('#email').focus(); return; }
       const b = $('#forgot'); b.disabled = true;
-      try { await STORE.resetPassword(email); err.textContent = 'اگه با این ایمیل حساب داشته باشی، لینک تغییر رمز برات فرستادیم. ایمیلت رو ببین و اگه توی صندوق ورودی نبود، پوشه‌ی اسپم (Spam) رو هم نگاه کن.'; }
+      try { await STORE.resetPassword(email); askCode(email, 'recovery', 'اگه با این ایمیل حساب داشته باشی، یه کد برای تغییر رمز برات فرستادیم.'); }
       catch (er) { err.textContent = er.message; b.disabled = false; }
+    };
+  };
+  // Emails carry a 6-digit code instead of a link (people rightly hesitate to click links in emails).
+  // Turn on together with the Supabase email templates that carry {{ .Token }}; until then the emails still hold a link.
+  const CODE_MAIL = false;
+  const LINK_NOTE = { signup: 'ایمیل تأیید برات فرستادیم. روی لینک داخلش بزن و بعد وارد شو. اگه توی صندوق ورودی نبود، پوشه‌ی اسپم (Spam) رو هم نگاه کن.', recovery: 'اگه با این ایمیل حساب داشته باشی، لینک تغییر رمز برات فرستادیم. ایمیلت رو ببین و اگه توی صندوق ورودی نبود، پوشه‌ی اسپم (Spam) رو هم نگاه کن.' };
+  const VKEY = 'uzhu:verify';
+  const pendingCode = () => { try { return JSON.parse(sessionStorage.getItem(VKEY) || 'null'); } catch (e) { return null; } };
+  function askCode(email, type, note) {
+    if (!CODE_MAIL) { const err = $('#err'); if (err) err.textContent = LINK_NOTE[type]; return; }
+    try { sessionStorage.setItem(VKEY, JSON.stringify({ email, type, note, at: Date.now() })); } catch (e) {}
+    go('verify');
+  }
+  views.verify = () => {
+    const v = pendingCode();
+    if (!v) return `<section class="wrap auth stack" style="gap:16px;text-align:center"><h2>کدی در انتظار نیست</h2><p class="muted">از صفحه‌ی ثبت‌نام یا ورود شروع کن.</p><a class="btn primary big" href="#login">رفتن به ورود</a></section>`;
+    return `<section class="wrap auth stack" style="gap:20px">
+    <div style="width:120px;margin:0 auto">${ART.mascot('happy')}</div>
+    <div class="stack" style="gap:6px;text-align:center"><h2>${v.type === 'recovery' ? 'کد تغییر رمز' : 'کد تأیید ایمیل'}</h2>
+      <p class="muted">${esc(v.note || '')} کد رو از ایمیلی که به <b dir="ltr">${esc(v.email)}</b> فرستادیم بردار و اینجا بنویس.</p>
+      <p class="small muted">اگه توی صندوق ورودی نبود، پوشه‌ی اسپم (Spam) رو هم نگاه کن. لازم نیست روی هیچ لینکی بزنی.</p></div>
+    <form id="f" class="card pop stack" novalidate>
+      <div class="field"><label for="code">کد</label><input class="input" id="code" inputmode="numeric" autocomplete="one-time-code" maxlength="10" dir="ltr" placeholder="123456" style="text-align:center;font-size:1.5rem;letter-spacing:.3em"></div>
+      <div class="err" id="err"></div>
+      <button class="btn primary big" type="submit">تأیید</button>
+      <button class="btn ghost small" type="button" id="resend" style="align-self:center">کد نیومد؟ دوباره بفرست</button>
+      <p class="small muted" style="text-align:center">ایمیل رو اشتباه نوشتی؟ <a href="#${v.type === 'recovery' ? 'login' : 'signup'}">برگرد و درستش کن</a></p>
+    </form></section>`;
+  };
+  mounts.verify = () => {
+    const v = pendingCode(), f = $('#f'); if (!v || !f) return;
+    const box = $('#code'); box.focus();
+    // Accept Persian/Arabic digits and pasted text with spaces.
+    const digits = s => s.replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d)).replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/\D/g, '');
+    box.oninput = () => { const d = digits(box.value); if (d !== box.value) box.value = d; };
+    f.onsubmit = async e => {
+      e.preventDefault();
+      const code = digits(box.value);
+      if (code.length < 6) return ($('#err').textContent = 'کد ۶ رقمیه. کامل بنویسش.');
+      const b = f.querySelector('[type=submit]'); b.disabled = true;
+      try {
+        user = await STORE.verifyCode(v.email, code, v.type);
+        try { sessionStorage.removeItem(VKEY); } catch (er) {}
+        if (v.type === 'recovery') { user.data = user.data ? normalize(user.data) : defaults(); return go('newpass'); }
+        if (user.data) user.data = normalize(user.data); else { user.data = defaults(); await save(); }
+        await signedIn(); toast('ایمیلت تأیید شد. خوش اومدی!'); go(D().profile ? 'today' : 'onboard');
+      } catch (er) { $('#err').textContent = er.message; b.disabled = false; }
+    };
+    let wait = 0, t = 0;
+    const rb = $('#resend');
+    const tick = () => { if (!rb.isConnected) return clearInterval(t); if (wait > 0) { rb.disabled = true; rb.textContent = `دوباره بفرست (${(wait--).toLocaleString('fa-IR')})`; } else { clearInterval(t); rb.disabled = false; rb.textContent = 'کد نیومد؟ دوباره بفرست'; } };
+    rb.onclick = async () => {
+      rb.disabled = true;
+      try { await STORE.resendCode(v.email, v.type); $('#err').textContent = 'یه کد تازه فرستادیم. کد قبلی دیگه کار نمی‌کنه.'; wait = 60; t = setInterval(tick, 1000); tick(); }
+      catch (er) { $('#err').textContent = er.message; rb.disabled = false; }
     };
   };
   // Reached from the password-reset email: the link signs the user in, then they choose a new password.

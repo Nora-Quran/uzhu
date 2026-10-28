@@ -119,7 +119,7 @@
       subAt = Date.now();
       const before = had && sub ? sub.access : null;
       loadSub().then(async () => {
-        if (subFor !== A.user?.id || sub.access === before) return;
+        if (subFor !== A.user?.id || !sub || sub.access === before) return;
         if (sub.access) await A.loadProgram();
         A.render();
       });

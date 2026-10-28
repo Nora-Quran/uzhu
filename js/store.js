@@ -58,6 +58,7 @@
     async getSite() { return { settings: LS.get('uzhu:site:settings', {}), content: LS.get('uzhu:site:content', []) }; },
     async isAdmin() { const u = this.current(); if (!u) return false; const users = LS.get('uzhu:users', {}); const first = Object.entries(users).sort((a, b) => (a[1].createdAt || 0) - (b[1].createdAt || 0))[0]; return !!first && first[0] === u.email; },
     // Admin list lives on the server only; in local mode the first account on this browser is the admin.
+    async resetPassword() { throw new Error('بازیابی رمز فقط در نسخه‌ی آنلاین کار می‌کنه.'); }, async setPassword() { throw new Error('فقط در نسخه‌ی آنلاین'); },
     async admins() { return null; }, async addAdmin() { throw new Error('فقط در نسخه‌ی آنلاین'); }, async removeAdmin() { throw new Error('فقط در نسخه‌ی آنلاین'); },
     async setSetting(key, value) { const st = LS.get('uzhu:site:settings', {}); st[key] = value; LS.set('uzhu:site:settings', st); },
     async saveContent(kind, id, data, hidden = false) { const c = LS.get('uzhu:site:content', []).filter(x => !(x.kind === kind && x.id === id)); c.push({ kind, id, data, hidden }); LS.set('uzhu:site:content', c); },
@@ -89,10 +90,15 @@
     async init(cfg) {
       await loadScript('js/vendor/supabase.js');
       this.sb = window.supabase.createClient(cfg.url, cfg.key);
+      // A password-reset link lands here with type=recovery; the user then picks a new password at #newpass.
+      this.recovery = /type=recovery/.test(location.hash);
       const { data } = await this.sb.auth.getSession();
       if (data.session) this.user = await this.fetch(data.session.user);
-      if (/access_token|error_description/.test(location.hash)) history.replaceState(null, '', location.pathname + (this.user ? '#today' : '#login'));
-      this.sb.auth.onAuthStateChange(ev => { if (ev === 'SIGNED_OUT' && this.user) { this.user = null; if (window.UZHU_APP) window.UZHU_APP.signedOut(); } });
+      if (/access_token|error_description/.test(location.hash)) history.replaceState(null, '', location.pathname + (this.user ? (this.recovery ? '#newpass' : '#today') : '#login'));
+      this.sb.auth.onAuthStateChange(ev => {
+        if (ev === 'SIGNED_OUT' && this.user) { this.user = null; if (window.UZHU_APP) window.UZHU_APP.signedOut(); }
+        if (ev === 'PASSWORD_RECOVERY') { this.recovery = true; if (location.hash !== '#newpass') location.hash = '#newpass'; }
+      });
       addEventListener('online', () => { if (this.pending && this.user) this.save(this.user).catch(() => {}); });
       return this.user;
     },
@@ -135,9 +141,19 @@
       let r; try { r = await this.sb.auth.signUp({ email, password: pass, options: { data: { name }, emailRedirectTo: location.origin + location.pathname } }); } catch (e) { throw new Error(NET_ERR); }
       const { data, error } = r;
       if (error) throw new Error(/registered/i.test(error.message) ? 'با این ایمیل قبلاً ثبت‌نام شده. از «ورود» استفاده کن.' : /rate|seconds/i.test(error.message) ? 'درخواست‌ها زیاد شده. چند دقیقه بعد دوباره امتحان کن.' : /password/i.test(error.message) ? 'رمز عبور باید دست‌کم ۶ نویسه باشه.' : offline(error) ? NET_ERR : 'ثبت‌نام انجام نشد: ' + error.message);
+      if (data.user && Array.isArray(data.user.identities) && !data.user.identities.length) throw new Error('با این ایمیل قبلاً ثبت‌نام شده. وارد شو یا رمز رو بازیابی کن.');
       if (!data.session) throw new Error('ایمیل تأیید برایت فرستادیم. روی لینک داخلش بزن و بعد وارد شو.');
       this.user = { id: data.user.id, email, name, data: null };
       return this.user;
+    },
+    async resetPassword(email) {
+      let r; try { r = await this.sb.auth.resetPasswordForEmail(email, { redirectTo: location.origin + location.pathname }); } catch (e) { throw new Error(NET_ERR); }
+      if (r.error) throw new Error(/rate|seconds/i.test(r.error.message) ? 'درخواست‌ها زیاد شده. چند دقیقه بعد دوباره امتحان کن.' : offline(r.error) ? NET_ERR : 'ایمیل فرستاده نشد: ' + r.error.message);
+    },
+    async setPassword(pass) {
+      let r; try { r = await this.sb.auth.updateUser({ password: pass }); } catch (e) { throw new Error(NET_ERR); }
+      if (r.error) throw new Error(/different|same/i.test(r.error.message) ? 'رمز جدید باید با رمز قبلی فرق داشته باشه.' : /password/i.test(r.error.message) ? 'رمز عبور باید دست‌کم ۶ نویسه باشه.' : offline(r.error) ? NET_ERR : 'رمز عوض نشد: ' + r.error.message);
+      this.recovery = false;
     },
     async login(email, pass) {
       let r; try { r = await this.sb.auth.signInWithPassword({ email, password: pass }); } catch (e) { throw new Error(NET_ERR); }

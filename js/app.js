@@ -276,7 +276,7 @@
     window.scrollTo(0, 0);
     document.title = (titles[r] ? titles[r] + ' · ' : '') + 'حبه';
   }
-  const titles = { more: 'ابزارها', move: 'ورزش', today: 'امروز', night: 'چک‌لیست شب', journey: 'مسیر من', recipes: 'خوراکی‌های بی‌قند', learn: 'علم قند', settings: 'تنظیمات', signup: 'ثبت‌نام', login: 'ورود', onboard: 'شروع' };
+  const titles = { more: 'ابزارها', move: 'ورزش', today: 'امروز', night: 'چک‌لیست شب', journey: 'مسیر من', recipes: 'خوراکی‌های بی‌قند', learn: 'علم قند', settings: 'تنظیمات', signup: 'ثبت‌نام', login: 'ورود', newpass: 'رمز تازه', onboard: 'شروع' };
 
   function chrome(r) {
     const inApp = user && D().profile;
@@ -371,13 +371,41 @@
       <div class="field"><label for="pass">رمز عبور</label><input class="input" id="pass" type="password" required autocomplete="current-password" dir="ltr"></div>
       <div class="err" id="err"></div>
       <button class="btn primary big" type="submit">ورود</button>
+      <button class="btn ghost small" type="button" id="forgot" style="align-self:center">رمز رو فراموش کردم؟</button>
       <p class="small muted" style="text-align:center">هنوز حساب نداری؟ <a href="#signup">ثبت‌نام کن</a></p>
     </form></section>`;
-  mounts.login = () => $('#f').onsubmit = async e => {
-    e.preventDefault();
-    try { user = await STORE.login($('#email').value, $('#pass').value); user.data = normalize(user.data); await signedIn(); go(user.data.profile ? 'today' : 'onboard'); }
-    catch (er) { $('#err').textContent = er.message; }
+  mounts.login = () => {
+    $('#f').onsubmit = async e => {
+      e.preventDefault();
+      try { user = await STORE.login($('#email').value, $('#pass').value); user.data = normalize(user.data); await signedIn(); go(user.data.profile ? 'today' : 'onboard'); }
+      catch (er) { $('#err').textContent = er.message; }
+    };
+    $('#forgot').onclick = async () => {
+      const email = $('#email').value.trim(), err = $('#err');
+      if (!/^\S+@\S+\.\S+$/.test(email)) { err.textContent = 'اول ایمیلت رو توی کادر بالا بنویس، بعد این دکمه رو بزن.'; $('#email').focus(); return; }
+      const b = $('#forgot'); b.disabled = true;
+      try { await STORE.resetPassword(email); err.textContent = 'اگه با این ایمیل حساب داشته باشی، لینک تغییر رمز برات فرستادیم. ایمیلت رو ببین (پوشه‌ی اسپم رو هم نگاه کن).'; }
+      catch (er) { err.textContent = er.message; b.disabled = false; }
+    };
   };
+  // Reached from the password-reset email: the link signs the user in, then they choose a new password.
+  views.newpass = () => !user ? `<section class="wrap auth stack" style="gap:16px;text-align:center"><h2>لینک تغییر رمز منقضی شده</h2><p class="muted">دوباره از صفحه‌ی ورود «رمز رو فراموش کردم؟» رو بزن تا یه لینک تازه برات بفرستیم.</p><a class="btn primary big" href="#login">رفتن به ورود</a></section>` : `<section class="wrap auth stack" style="gap:20px">
+    <div style="width:120px;margin:0 auto">${ART.mascot('calm')}</div>
+    <div class="stack" style="gap:4px;text-align:center"><h2>یه رمز تازه انتخاب کن</h2><p class="muted" dir="ltr">${esc(user.email || '')}</p></div>
+    <form id="f" class="card pop stack" novalidate>
+      <div class="field"><label for="pass">رمز جدید</label><input class="input" id="pass" type="password" required minlength="6" autocomplete="new-password" dir="ltr"><span class="small muted">دست‌کم ۶ نویسه</span></div>
+      <div class="field"><label for="pass2">تکرار رمز جدید</label><input class="input" id="pass2" type="password" required minlength="6" autocomplete="new-password" dir="ltr"></div>
+      <div class="err" id="err"></div>
+      <button class="btn primary big" type="submit">ذخیره‌ی رمز جدید</button>
+    </form></section>`;
+  mounts.newpass = () => { const f = $('#f'); if (f) f.onsubmit = async e => {
+    e.preventDefault();
+    const p1 = $('#pass').value, p2 = $('#pass2').value;
+    if (p1.length < 6) return ($('#err').textContent = 'رمز باید دست‌کم ۶ نویسه باشه.');
+    if (p1 !== p2) return ($('#err').textContent = 'دو رمز با هم یکی نیستن.');
+    try { await STORE.setPassword(p1); toast('رمزت عوض شد.'); go(D().profile ? 'today' : 'onboard'); }
+    catch (er) { $('#err').textContent = er.message; }
+  }; };
 
   /* onboarding quiz */
   const QUIZ = [

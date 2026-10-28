@@ -1,2 +1,4 @@
-/* Splash screen: shown once per browser session, hidden after the page loads. Kept in a file so the CSP needs no inline scripts. */
+/* Light/dark mode before first paint: light unless the visitor picked dark or 'system' in Settings.
+   Splash screen: shown once per browser session, hidden after the page loads. Kept in a file so the CSP needs no inline scripts. */
+(function(){var t='light';try{t=localStorage.getItem('uzhu:theme')||'light'}catch(e){}if(t!=='system')document.documentElement.dataset.theme=t})();
 (function(){var s=document.getElementById('splash'),t0=Date.now(),done=false;try{if(sessionStorage.getItem('habbeh:splash')){s.remove();return}sessionStorage.setItem('habbeh:splash','1')}catch(e){}function h(){if(done)return;done=true;setTimeout(function(){s.classList.add('out');setTimeout(function(){s.remove()},600)},Math.max(0,1600-(Date.now()-t0)))}if(document.readyState==='complete')h();else addEventListener('load',h);setTimeout(h,3500)})();

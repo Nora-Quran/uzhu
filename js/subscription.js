@@ -76,6 +76,41 @@
     if (sub && !sub.access) return 'subscribe';
     if (['today', 'night', 'onboard'].includes(r) && !progReady()) return 'subscribe';
   });
+  // Opening the app signed out shows #welcome first (once per visit): a free 3-day start, or sign-up and payment.
+  // Choosing payment remembers the intent, so right after sign-up the account goes to #subscribe instead of onboarding.
+  const ss = { get: k => { try { return sessionStorage.getItem(k); } catch (e) { return null; } }, set: (k, v) => { try { v == null ? sessionStorage.removeItem(k) : sessionStorage.setItem(k, v); } catch (e) {} } };
+  A.H.route = (A.H.route || []).concat(r => {
+    if (!online) return;
+    const h = location.hash.slice(1);
+    if (!A.user) {
+      if (ss.get('uzhu:welcomed')) return;
+      if ((r === 'home' && !h) || (r === 'signup' && h !== 'signup')) return 'welcome';
+      return;
+    }
+    if (r === 'onboard' && ss.get('uzhu:intent') === 'pay') { ss.set('uzhu:intent', null); history.replaceState(null, '', '#subscribe'); return 'subscribe'; }
+  });
+
+  A.titles.welcome = 'خوش اومدی';
+  A.views.welcome = () => {
+    const y = plan('12m'), from = Math.round(y.price / y.months / 1000);
+    return `<section class="wrap stack sub-welcome" style="gap:18px;max-width:880px">
+      <div class="stack" style="gap:6px;text-align:center;align-items:center"><div class="sub-mascot">${A.ART.mascot('happy', { arms: 'wave' })}</div><span class="eyebrow">به حبه خوش اومدی</span><h2>یار روزهای بی‌قند، قدم به قدم</h2><p class="muted">برنامه‌ی روزانه، چک‌لیست شب، یادآورهای مهربون و دکمه‌ی «هوس دارم».</p></div>
+      <div class="sub-ways">
+        <div class="card pop stack sub-way free"><span class="sub-badge">پیشنهاد ما</span><b class="sub-title">🎁 ۳ روز رایگان</b>
+          <p>همه‌ی برنامه رو ۳ روز کامل امتحان کن. <b>هیچ پرداختی لازم نیست</b>؛ فقط با یک ایمیل ثبت‌نام کن.</p>
+          <p class="small muted">بعد از ۳ روز، اگه دوست داشتی، اشتراک می‌گیری و از همون‌جا ادامه می‌دی.</p>
+          <a class="btn primary big" href="#signup" data-way="free">شروع ۳ روز رایگان</a></div>
+        <div class="card stack sub-way"><b class="sub-title">💳 ثبت‌نام و خرید اشتراک</b>
+          <p>ماهانه ${fa(money(MONTH))} تومن، و با اشتراک بلندتر ارزون‌تر: از ماهی ${fa(from)} هزار تومن.</p>
+          <div class="sub-mini">${PLANS.map(p => `<span><b>${p.title}</b><span class="num">${fa(money(p.price / 1000))} هزار</span>${p.gift ? `<small>🎁 ${fa(p.gift)} روز هدیه</small>` : '<small>&nbsp;</small>'}</span>`).join('')}</div>
+          <p class="small muted">پرداخت کارت به کارت؛ رسید رو می‌فرستی و بعد از تأیید فعال می‌شه.</p>
+          <a class="btn ghost big" href="#signup" data-way="pay">ثبت‌نام و پرداخت</a></div>
+      </div>
+      <p class="small muted" style="text-align:center">حساب داری؟ <a href="#login" data-way="login">وارد شو</a> · <a href="#home" data-way="look">اول یه نگاهی به سایت بندازم</a></p>
+    </section>`;
+  };
+  A.mounts.welcome = () => $$('[data-way]').forEach(a => a.onclick = () => { ss.set('uzhu:welcomed', '1'); ss.set('uzhu:intent', a.dataset.way === 'pay' ? 'pay' : null); });
+
   // Check again when the app comes back after a while (the trial may have ended, or a receipt been approved).
   A.H.mount = (A.H.mount || []).concat(() => {
     if (!online || !A.user) return;

@@ -11,7 +11,7 @@
 .sub-check { display: none; font-size: .8rem; font-weight: 700; color: var(--mint); }
 .sub-plan.on .sub-check { display: inline; }
 .sub-plan:focus-visible { outline: 3px solid var(--mint); outline-offset: 2px; }
-.sub-badge { position: absolute; top: -12px; inset-inline: 0; margin: 0 auto; width: max-content; padding: 2px 12px; border-radius: 999px; background: var(--berry); color: #fff; font-size: .78rem; font-weight: 700; }
+.sub-badge { position: absolute; z-index: 3; top: -12px; inset-inline: 0; margin: 0 auto; width: max-content; padding: 2px 12px; border-radius: 999px; background: var(--berry); color: #fff; font-size: .78rem; font-weight: 700; }
 .sub-plan.hot:not(.on) { border-color: var(--berry-soft); }
 .sub-title { font-family: Lalezar, Vazirmatn, sans-serif; font-size: 1.25rem; font-weight: 400; }
 .sub-price { font-size: .9rem; }
@@ -36,3 +36,14 @@
 .sub-faq p { margin: 10px 0 0; }
 
 .sub-receipt img { display: block; max-width: min(100%, 420px); max-height: 560px; border-radius: 10px; border: 1px solid var(--line); }
+
+.sub-ways { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; align-items: stretch; }
+@media (max-width: 680px) { .sub-ways { grid-template-columns: 1fr; } }
+.sub-way { position: relative; gap: 10px; padding-top: 24px; }
+.sub-way p { margin: 0; }
+.sub-way .btn { margin-top: auto; text-align: center; }
+.sub-way.free { border: 2px solid var(--mint); }
+.sub-welcome .sub-mascot { margin: 0 auto; }
+.sub-mini { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
+.sub-mini > span { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 8px 4px; border-radius: 12px; background: var(--surface-2); font-size: .82rem; text-align: center; }
+.sub-mini small { color: var(--mint); font-weight: 700; font-size: .72rem; }

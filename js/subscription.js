@@ -127,13 +127,65 @@
   });
 
   /* ---------- reminders of the trial / period end ---------- */
-  A.H.todayTop = (A.H.todayTop || []).concat(() => {
-    if (!online || !sub || sub.admin || !sub.access) return '';
-    const p = pending();
-    if (p) return `<a class="card sub-strip" href="#subscribe"><span>🧾</span><span>رسید پرداختت رسید و منتظر تأییده. تا تأیید، برنامه برات بازه.</span></a>`;
-    if (isFree()) return `<a class="card sub-strip" href="#subscribe"><span>🎁</span><span>${leftText(trialEnd())} از دوره‌ی رایگانت مونده. <b>دیدن اشتراک‌ها</b></span></a>`;
-    if (paidEnd() > now() && paidEnd() - now() < 5 * DAY) return `<a class="card sub-strip warn" href="#subscribe"><span>⏳</span><span>اشتراکت ${leftText(paidEnd())} دیگه تموم می‌شه. <b>تمدید</b></span></a>`;
-    return '';
+  // Trial day n of 3 (the trial is the 3 days before trial_ends).
+  const TRIAL = 3;
+  const trialDay = () => Math.min(TRIAL, Math.max(1, Math.ceil((now() - (trialEnd() - TRIAL * DAY)) / DAY)));
+  const lastDay = () => trialEnd() - now() <= DAY;
+  const fromMonthly = () => { const y = plan('12m'); return Math.round(y.price / y.months / 1000); };
+  const meter = () => `<div class="sub-meter" role="img" aria-label="روز ${fa(trialDay())} از ${fa(TRIAL)} دوره‌ی رایگان">${Array.from({ length: TRIAL }, (_, i) => `<span class="${i < trialDay() - 1 ? 'done' : i === trialDay() - 1 ? 'now' : ''}"><i></i><small>روز ${fa(i + 1)}</small></span>`).join('')}</div>`;
+  // One short line for the header chip and a fuller card for #today, both from the same state.
+  function state() {
+    if (!online || !A.user || !sub || sub.admin || subFor !== A.user.id) return null;
+    if (pending()) return { kind: 'pending', chip: '🧾 در انتظار تأیید', label: 'رسیدت در انتظار تأییده' };
+    if (isFree()) return { kind: 'trial', warn: lastDay(), chip: lastDay() ? `⏳ ${leftText(trialEnd())} تا پایان رایگان` : `🎁 ${leftText(trialEnd())} رایگان`, label: `${leftText(trialEnd())} از دوره‌ی رایگانت مونده` };
+    if (paidEnd() > now() && paidEnd() - now() < 5 * DAY) return { kind: 'renew', warn: true, chip: `⏳ ${leftText(paidEnd())} تا تمدید`, label: `اشتراکت ${leftText(paidEnd())} دیگه تموم می‌شه` };
+    return null;
+  }
+  // Header chip: visible on every page of the app (phones too), one tap to the plans.
+  A.H.mount = (A.H.mount || []).concat(r => {
+    const w = $('.topbar .wrap'); if (!w) return;
+    let c = $('.sub-chip', w);
+    const st = A.user && A.D()?.profile && r !== 'subscribe' ? state() : null;
+    if (!st) { if (c) c.remove(); return; }
+    if (!c) { c = document.createElement('a'); c.className = 'sub-chip'; c.href = '#subscribe'; $('.brand', w).after(c); }
+    c.className = 'sub-chip' + (st.warn ? ' warn' : '') + (st.kind === 'pending' ? ' wait' : '');
+    c.textContent = st.chip; c.setAttribute('aria-label', st.label + '؛ دیدن اشتراک‌ها');
+  });
+  // First on #today, above the other plugins' widgets.
+  A.H.todayTop = [() => {
+    const st = state(); if (!st || !sub.access) return '';
+    if (st.kind === 'pending') return `<a class="card sub-strip" href="#subscribe"><span>🧾</span><span>رسید پرداختت رسید و منتظر تأییده. تا تأیید، برنامه برات بازه.</span></a>`;
+    if (st.kind === 'renew') return `<a class="card sub-strip warn" href="#subscribe"><span>⏳</span><span>${st.label}. <b>تمدید</b></span></a>`;
+    const d = trialDay(), end = new Date(trialEnd());
+    const time = (() => { try { return new Intl.DateTimeFormat('fa-IR', { weekday: 'long', hour: '2-digit', minute: '2-digit' }).format(end); } catch (e) { return ''; } })();
+    const line = st.warn ? 'امروز روز آخر دوره‌ی رایگانته. برای اینکه مسیرت قطع نشه، همین حالا یه اشتراک انتخاب کن؛ از همون‌جا ادامه می‌دی.'
+      : d === 1 ? 'همه‌ی برنامه برات بازه. با خیال راحت امتحانش کن؛ هیچ پرداختی لازم نیست.'
+      : 'اگه تا اینجا دوستش داشتی، الان اشتراک بگیری هم روزهای رایگانت سر جاشه؛ اشتراک از بعد از اون‌ها شروع می‌شه.';
+    return `<div class="card sub-trial${st.warn ? ' warn' : ''}">
+      <div class="row" style="justify-content:space-between;gap:8px"><span class="eyebrow">دوره‌ی رایگان · روز ${fa(d)} از ${fa(TRIAL)}</span><span class="chip ${st.warn ? 'berry' : 'mint'}">${st.label}</span></div>
+      ${meter()}
+      <p class="small">${line}</p>
+      ${time ? `<p class="small muted">پایان دوره‌ی رایگان: ${esc(time)}</p>` : ''}
+      <div class="row"><a class="btn ${st.warn || d > 1 ? 'primary' : 'ghost'}" href="#subscribe">انتخاب اشتراک</a><span class="small muted">از ماهی ${fa(fromMonthly())} هزار تومن</span></div>
+    </div>`;
+ }].concat(A.H.todayTop || []);
+  // From day 2 of the trial, a friendly reminder sheet once a day on #today.
+  A.H.mount = (A.H.mount || []).concat(r => {
+    if (r !== 'today' || !A.modal) return;
+    const st = state(); if (!st || st.kind !== 'trial' || trialDay() < 2) return;
+    const key = 'uzhu:trialNudge:' + A.user.id, today = new Date().toDateString();
+    try { if (localStorage.getItem(key) === today) return; localStorage.setItem(key, today); } catch (e) { return; }
+    const pick = ['1m', '6m', '12m'].map(plan);
+    setTimeout(() => A.modal(`<div class="stack sub-nudge" style="gap:12px;text-align:center">
+      <div class="sub-mascot" style="margin:0 auto">${A.ART.mascot(st.warn ? 'calm' : 'happy', st.warn ? undefined : { arms: 'wave' })}</div>
+      <span class="eyebrow">دوره‌ی رایگان · روز ${fa(trialDay())} از ${fa(TRIAL)}</span>
+      <h2>${st.warn ? 'امروز روز آخر رایگانه' : st.label}</h2>
+      ${meter()}
+      <p class="muted">${st.warn ? 'بعد از پایان روزهای رایگان، برنامه‌ی روزانه قفل می‌شه تا اشتراک بگیری. پیشرفتت، چک‌لیست‌ها و یادداشت‌هات همه سر جاشون می‌مونن.' : 'خوشحالیم که اینجایی! برای اینکه بعد از ۳ روز مسیرت قطع نشه، می‌تونی از همین حالا اشتراکت رو انتخاب کنی. اشتراک از بعد از روزهای رایگان شروع می‌شه.'}</p>
+      <div class="sub-mini">${pick.map(p => `<span><b>${p.title}</b><span class="num">${fa(money(p.price / 1000))} هزار</span>${p.gift ? `<small>🎁 ${fa(p.gift)} روز هدیه</small>` : '<small>&nbsp;</small>'}</span>`).join('')}</div>
+      <a class="btn primary big" href="#subscribe" data-close>انتخاب اشتراک</a>
+      <button type="button" class="btn ghost" data-close>فعلاً ادامه می‌دم</button>
+    </div>`, (m, close) => $$('[data-close]', m).forEach(b => b.addEventListener('click', close))), 600);
   });
   A.H.settings = (A.H.settings || []).concat(() => online && A.user ? `<a class="btn ghost" href="#subscribe">💳 اشتراک من</a>` : '');
   if (online) A.tools.push({ route: 'subscribe', icon: '💳', title: 'اشتراک', desc: 'وضعیت اشتراک، تمدید و ارسال رسید پرداخت' });

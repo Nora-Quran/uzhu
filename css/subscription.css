@@ -47,3 +47,26 @@
 .sub-mini { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
 .sub-mini > span { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 8px 4px; border-radius: 12px; background: var(--surface-2); font-size: .82rem; text-align: center; }
 .sub-mini small { color: var(--mint); font-weight: 700; font-size: .72rem; }
+
+/* Trial indicators: header chip (every app page), the card on #today and the daily reminder sheet. */
+.sub-chip { position: relative; z-index: 3; flex: none; text-decoration: none; white-space: nowrap; padding: 5px 12px; border-radius: 999px; font-size: .85rem; font-weight: 700; color: var(--ink); background: var(--mint-soft); border: 1px solid color-mix(in srgb, var(--mint) 45%, transparent); }
+.sub-chip:hover { border-color: var(--mint); }
+.sub-chip.warn { background: var(--berry-soft); border-color: color-mix(in srgb, var(--berry) 50%, transparent); animation: sub-pulse 2.4s ease-in-out 3; }
+.sub-chip.wait { background: var(--sun-soft); border-color: transparent; }
+@keyframes sub-pulse { 50% { box-shadow: 0 0 0 5px color-mix(in srgb, var(--berry) 18%, transparent); } }
+@media (prefers-reduced-motion: reduce) { .sub-chip.warn { animation: none; } }
+@media (max-width: 430px) { .sub-chip { font-size: .76rem; padding: 4px 9px; } .topbar .brand { font-size: 1.3rem; } .topbar .brand .logo { width: 32px; } }
+
+.sub-trial { display: grid; gap: 10px; border: 2px solid color-mix(in srgb, var(--mint) 40%, transparent); background: linear-gradient(135deg, var(--mint-soft), var(--surface) 70%); }
+.sub-trial.warn { border-color: color-mix(in srgb, var(--berry) 45%, transparent); background: linear-gradient(135deg, var(--berry-soft), var(--surface) 70%); }
+.sub-trial p { margin: 0; }
+.sub-meter { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.sub-meter span { display: grid; gap: 4px; text-align: center; }
+.sub-meter i { display: block; height: 8px; border-radius: 999px; background: var(--line); }
+.sub-meter .done i { background: var(--mint); }
+.sub-meter .now i { background: linear-gradient(90deg, var(--mint), var(--sun)); }
+.sub-trial.warn .sub-meter .now i, .sub-nudge .sub-meter .now:last-child i { background: var(--berry); }
+.sub-meter small { font-size: .72rem; color: var(--ink-soft); }
+.sub-meter .now small { color: var(--ink); font-weight: 700; }
+.sub-nudge .sub-mascot { width: 96px; }
+.sub-nudge h2 { margin: 0; }

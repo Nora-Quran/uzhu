@@ -385,6 +385,8 @@
     { route: 'faq', icon: '❓', title: 'پرسش‌های پرتکرار', desc: 'میوه، شیرین‌کننده، لغزش، PCOS و…', show: () => on('faq') },
     { route: 'glossary', icon: '🔤', title: 'واژه‌نامه', desc: 'اصطلاح‌های علمی به زبان ساده', show: () => on('glossary') },
   );
+  // Contact card in Settings.
+  add('settings', () => `<div class="card stack" style="gap:8px"><b>💌 تماس با ما</b><p class="small muted">سؤال، پیشنهاد یا مشکلی داری؟ خوشحال می‌شیم برامون بنویسی.</p><a class="btn ghost small" href="mailto:habbeapp.info@gmail.com" dir="ltr">habbeapp.info@gmail.com</a></div>`);
   // Public pages (no login) get a row of links in the footer.
   add('boot', () => {
     const f = $('.footer .wrap'); if (!f || $('.cp-foot', f)) return;

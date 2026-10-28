@@ -259,3 +259,6 @@ ul.ing { padding-inline-start: 1.2em; margin: 0; }
 .rem-list .row + .row { margin-top: 6px; }
 
 @media (max-width: 620px) { .tabbar.on { padding-inline: max(4px, env(safe-area-inset-right, 0px)); gap: 2px; } .tabbar a { font-size: .66rem; white-space: nowrap; letter-spacing: -.01em; } .tabbar a .i { font-size: 1.2rem; } }
+
+.foot-contact { margin: 10px 0 0; }
+.foot-contact a { color: inherit; text-decoration: underline; word-break: break-all; }

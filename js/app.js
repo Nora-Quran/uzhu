@@ -390,7 +390,7 @@
   };
   // Emails carry a 6-digit code instead of a link (people rightly hesitate to click links in emails).
   // Turn on together with the Supabase email templates that carry {{ .Token }}; until then the emails still hold a link.
-  const CODE_MAIL = false;
+  const CODE_MAIL = true;
   const LINK_NOTE = { signup: 'ایمیل تأیید برات فرستادیم. روی لینک داخلش بزن و بعد وارد شو. اگه توی صندوق ورودی نبود، پوشه‌ی اسپم (Spam) رو هم نگاه کن.', recovery: 'اگه با این ایمیل حساب داشته باشی، لینک تغییر رمز برات فرستادیم. ایمیلت رو ببین و اگه توی صندوق ورودی نبود، پوشه‌ی اسپم (Spam) رو هم نگاه کن.' };
   const VKEY = 'uzhu:verify';
   const pendingCode = () => { try { return JSON.parse(sessionStorage.getItem(VKEY) || 'null'); } catch (e) { return null; } };

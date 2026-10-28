@@ -781,7 +781,7 @@
         <div class="row"><button class="btn" id="perm" type="button">اجازه‌ی اعلان</button><button class="btn ghost" id="test" type="button">ارسال یک یادآور آزمایشی</button></div></div>
       ${demoOn() ? `<div class="card stack"><b>حالت آزمایشی</b><p class="small muted">برای دیدن روزهای بعدی برنامه بدون صبر کردن تا فردا.</p><div class="row"><button class="btn" id="skip" type="button">برو به روز بعد</button></div></div>` : ''}
       <a class="card row" href="#learn" style="text-decoration:none;color:inherit;flex-wrap:nowrap"><div style="width:48px;flex:none">${ART.spots.book}</div><b>علم قند: مقاله‌ها و راهنمای قندهای پنهان</b></a>
-      <div class="card stack"><b>ظاهر</b><div class="row"><button class="btn ghost" data-th="light">روشن</button><button class="btn ghost" data-th="dark">تیره</button><button class="btn ghost" data-th="">مثل سیستم</button></div></div>
+      <div class="card stack"><b>ظاهر</b><div class="row"><button class="btn ghost" data-th="light">روشن</button><button class="btn ghost" data-th="dark">تیره</button><button class="btn ghost" data-th="system">مثل سیستم</button></div></div>
       ${hook('settings')}
       <div class="row"><button class="btn primary" id="sv">ذخیره</button><button class="btn ghost" id="out">خروج از حساب</button></div>
       <div class="card stack" style="border-color:var(--berry-soft)"><b>شروع دوباره</b><p class="small muted">همه‌ی پیشرفت و جواب‌های پرسش‌نامه پاک می‌شه.</p><div class="row"><button class="btn ghost" id="reset">پاک کردن پیشرفت</button><button class="btn berry" id="resetok" hidden>بله، پاک کن</button></div></div>
@@ -791,7 +791,7 @@
     $('#perm').onclick = async () => { await askNotify(); render(); };
     $('#test').onclick = () => notify(pick(PROGRAM.quotes.length ? PROGRAM.quotes : ['آفرین که ادامه می‌دی! پاشو یه لیوان آب بخور 💧']), 'water');
     if ($('#skip')) $('#skip').onclick = () => { forceNextDay(); save(); go('today'); toast('رفتی به روز بعد (حالت آزمایشی).', 'bell'); };
-    $$('[data-th]').forEach(b => b.onclick = () => { const t = b.dataset.th; if (t) document.documentElement.dataset.theme = t; else delete document.documentElement.dataset.theme; try { localStorage.setItem('uzhu:theme', t); } catch (e) {} });
+    $$('[data-th]').forEach(b => b.onclick = () => { const t = b.dataset.th; if (t !== 'system') document.documentElement.dataset.theme = t; else delete document.documentElement.dataset.theme; try { localStorage.setItem('uzhu:theme', t); } catch (e) {} });
     $('#sv').onclick = async () => {
       const s = D(); s.settings.reminders = $('#rem').checked; s.settings.times = [0, 1, 2, 3].map(i => $('#t' + i).value || s.settings.times[i]); s.profile.level = $('#lvl').value; s.settings.moveRem = $('#mrem').checked; s.settings.moveTime = $('#mt').value || '18:00';
       runHooks('settingsSave'); await save(); toast('ذخیره شد.', 'bell');
@@ -843,7 +843,8 @@
 
   /* ---------- boot ---------- */
   async function boot() {
-    try { const t = localStorage.getItem('uzhu:theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+    // light by default; 'system' follows the phone's dark mode (js/splash.js sets this before first paint too)
+    try { const t = localStorage.getItem('uzhu:theme') || 'light'; if (t !== 'system') document.documentElement.dataset.theme = t; } catch (e) { document.documentElement.dataset.theme = 'light'; }
     $('#logo').innerHTML = '<img src="img/icon.svg" alt="" width="40" height="40" style="display:block;width:100%;height:auto;border-radius:10px">';
     $('#sos').onclick = openSOS;
     try { user = await STORE.init(STORE.config); }

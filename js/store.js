@@ -142,7 +142,7 @@
       const { data, error } = r;
       if (error) throw new Error(/registered/i.test(error.message) ? 'با این ایمیل قبلاً ثبت‌نام شده. از «ورود» استفاده کن.' : /rate|seconds/i.test(error.message) ? 'درخواست‌ها زیاد شده. چند دقیقه بعد دوباره امتحان کن.' : /password/i.test(error.message) ? 'رمز عبور باید دست‌کم ۶ نویسه باشه.' : offline(error) ? NET_ERR : 'ثبت‌نام انجام نشد: ' + error.message);
       if (data.user && Array.isArray(data.user.identities) && !data.user.identities.length) throw new Error('با این ایمیل قبلاً ثبت‌نام شده. وارد شو یا رمز رو بازیابی کن.');
-      if (!data.session) throw new Error('ایمیل تأیید برایت فرستادیم. روی لینک داخلش بزن و بعد وارد شو.');
+      if (!data.session) throw new Error('ایمیل تأیید برات فرستادیم. روی لینک داخلش بزن و بعد وارد شو. اگه توی صندوق ورودی نبود، پوشه‌ی اسپم (Spam) رو هم نگاه کن.');
       this.user = { id: data.user.id, email, name, data: null };
       return this.user;
     },
@@ -158,7 +158,7 @@
     async login(email, pass) {
       let r; try { r = await this.sb.auth.signInWithPassword({ email, password: pass }); } catch (e) { throw new Error(NET_ERR); }
       const { data, error } = r;
-      if (error) throw new Error(/confirm/i.test(error.message) ? 'اول روی لینک تأیید داخل ایمیلت بزن، بعد وارد شو.' : offline(error) ? NET_ERR : 'ایمیل یا رمز درست نیست.');
+      if (error) throw new Error(/confirm/i.test(error.message) ? 'اول روی لینک تأیید داخل ایمیلت بزن، بعد وارد شو. اگه ایمیلش رو پیدا نمی‌کنی، پوشه‌ی اسپم (Spam) رو هم نگاه کن.' : offline(error) ? NET_ERR : 'ایمیل یا رمز درست نیست.');
       this.user = await this.fetch(data.user);
       return this.user;
     },

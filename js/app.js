@@ -384,7 +384,7 @@
       const email = $('#email').value.trim(), err = $('#err');
       if (!/^\S+@\S+\.\S+$/.test(email)) { err.textContent = 'اول ایمیلت رو توی کادر بالا بنویس، بعد این دکمه رو بزن.'; $('#email').focus(); return; }
       const b = $('#forgot'); b.disabled = true;
-      try { await STORE.resetPassword(email); err.textContent = 'اگه با این ایمیل حساب داشته باشی، لینک تغییر رمز برات فرستادیم. ایمیلت رو ببین (پوشه‌ی اسپم رو هم نگاه کن).'; }
+      try { await STORE.resetPassword(email); err.textContent = 'اگه با این ایمیل حساب داشته باشی، لینک تغییر رمز برات فرستادیم. ایمیلت رو ببین و اگه توی صندوق ورودی نبود، پوشه‌ی اسپم (Spam) رو هم نگاه کن.'; }
       catch (er) { err.textContent = er.message; b.disabled = false; }
     };
   };

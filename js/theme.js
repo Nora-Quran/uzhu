@@ -263,7 +263,7 @@
       if (now.getDay() === 2 && plus(1).month === 12 && plus(8).month === 1) return 'suri'; // Tuesday night before the year's last Wednesday
       if (m === 1 && d === 13) return 'sizdah';
       if (m === 1 && d <= 12) return 'nowruz';
-      if ((m === 9 && d >= 27) || (m === 10 && d === 1)) return 'yalda';
+      if (m === 9 && d >= 24) return 'yalda'; // the last week of Azar, up to Yalda night (30 Azar)
       if (hijriMonth(now) === 9) return 'ramadan';
       if (m === 12 && d >= 25) return 'nowruz';
       return ['spring', 'summer', 'autumn', 'winter'][Math.floor((m - 1) / 3)] || 'autumn';

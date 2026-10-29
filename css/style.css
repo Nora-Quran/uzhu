@@ -262,3 +262,9 @@ ul.ing { padding-inline-start: 1.2em; margin: 0; }
 
 .foot-contact { margin: 10px 0 0; }
 .foot-contact a { color: inherit; text-decoration: underline; word-break: break-all; }
+
+/* new version available (installed app) */
+.upd-bar { position: fixed; z-index: 95; inset-inline: 12px; bottom: calc(84px + env(safe-area-inset-bottom, 0px)); margin-inline: auto; max-width: 420px; display: flex; align-items: center; gap: 10px; background: var(--mint-soft); color: var(--ink); border: 3px solid var(--ink); border-radius: 18px; padding: 10px 12px; box-shadow: 0 5px 0 var(--ink); animation: slideIn .35s cubic-bezier(.2, 1.4, .4, 1) both; }
+.upd-bar span { flex: 1; font-weight: 700; }
+.upd-bar .btn { padding: 6px 14px; }
+.upd-bar .x { border: 0; background: none; cursor: pointer; font-size: 1.1rem; color: var(--ink-soft); }

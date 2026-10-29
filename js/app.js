@@ -173,7 +173,23 @@
   let swReg = null;
   async function setupSW() {
     if (!('serviceWorker' in navigator) || location.protocol === 'file:') return;
-    try { swReg = await navigator.serviceWorker.register('sw.js'); await navigator.serviceWorker.ready; pushSync(); } catch (e) { swReg = null; }
+    const hadCtl = !!navigator.serviceWorker.controller;
+    try { swReg = await navigator.serviceWorker.register('sw.js', { updateViaCache: 'none' }); await navigator.serviceWorker.ready; pushSync(); } catch (e) { swReg = null; return; }
+    // Installed app: a new version takes over → refresh quietly if the app is in the background, otherwise offer a button.
+    let newVer = false;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (!hadCtl || newVer) return; newVer = true;
+      if (document.hidden) return location.reload();
+      const b = document.createElement('div'); b.className = 'upd-bar'; b.setAttribute('role', 'status');
+      b.innerHTML = '<span>نسخه‌ی جدید حبه اومد 🌱</span><button class="btn primary">تازه‌اش کن</button><button class="x" aria-label="بعداً">✕</button>';
+      b.querySelector('.btn').onclick = () => location.reload(); b.querySelector('.x').onclick = () => b.remove();
+      document.body.appendChild(b);
+    });
+    // The home-screen app is usually resumed, not reopened, so look for updates every time it comes back.
+    let lastCheck = Date.now();
+    const check = () => { if (Date.now() - lastCheck < 60000) return; lastCheck = Date.now(); swReg.update().catch(() => {}); };
+    document.addEventListener('visibilitychange', () => { if (document.hidden) { if (newVer) location.reload(); } else check(); });
+    setInterval(check, 30 * 60000);
   }
   const canNotify = () => 'Notification' in window && Notification.permission === 'granted';
   async function askNotify() {

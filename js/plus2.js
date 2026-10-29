@@ -59,22 +59,29 @@
   window.addEventListener('appinstalled', () => { deferred = null; ls.set('uzhu:install', { done: true }); });
   const standalone = () => matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
   const ios = () => /iphone|ipad|ipod/i.test(navigator.userAgent) && !window.MSStream;
+  // Samsung Internet (and in-app browsers) wrap the site in their own old APK, which Play Protect blocks as "built for an older Android". Send these users to Chrome.
+  const android = () => /android/i.test(navigator.userAgent);
+  const samsung = () => /SamsungBrowser/i.test(navigator.userAgent);
+  const canPrompt = () => deferred && !samsung();
+  const chromeUrl = () => `intent://${location.host}${location.pathname}#Intent;scheme=https;package=com.android.chrome;end`;
+  const chromeModal = () => A.modal(`<div class="stack"><h2>نصب حبه روی اندروید</h2><p>این مرورگر حبه رو به شکل یک اپ قدیمی می‌سازه و Google Play Protect جلوی نصبش رو می‌گیره. با <b>Chrome</b> بی‌دردسر نصب می‌شه:</p><a class="btn primary" href="${chromeUrl()}">باز کردن حبه در Chrome</a><ol class="p2-steps"><li>اگه دکمه کار نکرد، آدرس <b>${location.host}</b> رو در Chrome باز کن.</li><li>منوی سه‌نقطه‌ی بالا رو بزن و <b>Install app</b> یا <b>Add to Home screen</b> رو انتخاب کن.</li><li>اگه قبلاً از مرورگر دیگه‌ای نصبش کردی، اون آیکون رو پاک کن.</li></ol></div>`);
   function installCard() {
     if (!on('install') || standalone()) return '';
     const st = ls.get('uzhu:install', {}); if (st.done || (st.later && Date.now() - st.later < 14 * 864e5)) return '';
-    if (!deferred && !ios()) return '';
+    if (!deferred && !ios() && !android()) return '';
     return `<div class="card p2-install"><span class="p2-ni">📲</span><div class="stack" style="gap:2px;min-width:0"><b>حبه رو مثل یک اپ روی گوشیت نصب کن</b><span class="small muted">باز شدن با یک لمس، کار بدون اینترنت${ios() ? ' و روی آیفون، تنها راه گرفتن اعلان‌ها' : ' و اعلان‌های مطمئن‌تر'}.</span></div><div class="row" style="flex-wrap:nowrap"><button class="btn primary" id="p2inst">نصب</button><button class="btn ghost" id="p2later" aria-label="بعداً">بعداً</button></div></div>`;
   }
   function bindInstall() {
     const b = $('#p2inst'); if (!b) return;
     b.onclick = async () => {
-      if (deferred) { deferred.prompt(); const r = await deferred.userChoice.catch(() => ({})); deferred = null; if (r.outcome === 'accepted') ls.set('uzhu:install', { done: true }); A.render(); return; }
+      if (canPrompt()) { deferred.prompt(); const r = await deferred.userChoice.catch(() => ({})); deferred = null; if (r.outcome === 'accepted') ls.set('uzhu:install', { done: true }); A.render(); return; }
+      if (android()) return chromeModal();
       A.modal(`<div class="stack"><h2>نصب حبه روی آیفون</h2><ol class="p2-steps"><li>این صفحه رو در <b>Safari</b> باز کن.</li><li>دکمه‌ی <b>اشتراک‌گذاری</b> (مربع با فلش رو به بالا) پایین صفحه رو بزن.</li><li>گزینه‌ی <b>Add to Home Screen</b> رو انتخاب کن و <b>Add</b> رو بزن.</li><li>از این به بعد حبه رو از آیکونش روی صفحه‌ی اصلی باز کن و توی تنظیمات اجازه‌ی اعلان بده.</li></ol></div>`);
     };
     $('#p2later').onclick = () => { ls.set('uzhu:install', { later: Date.now() }); $('.p2-install')?.remove(); };
   }
-  add('homeHero', () => (on('install') && !standalone() && (deferred || ios())) ? `<button class="btn ghost" id="p2inst-h">📲 نصب اپ</button>` : '');
-  add('mount', r => { if (r !== 'home') return; const b = $('#p2inst-h'); if (b) b.onclick = () => { if (deferred) deferred.prompt(); else A.modal('<div class="stack"><h2>نصب حبه روی آیفون</h2><p>در Safari دکمه‌ی اشتراک‌گذاری رو بزن و «Add to Home Screen» رو انتخاب کن.</p></div>'); }; });
+  add('homeHero', () => (on('install') && !standalone() && (deferred || ios() || android())) ? `<button class="btn ghost" id="p2inst-h">📲 نصب اپ</button>` : '');
+  add('mount', r => { if (r !== 'home') return; const b = $('#p2inst-h'); if (b) b.onclick = () => { if (canPrompt()) deferred.prompt(); else if (android()) chromeModal(); else A.modal('<div class="stack"><h2>نصب حبه روی آیفون</h2><p>در Safari دکمه‌ی اشتراک‌گذاری رو بزن و «Add to Home Screen» رو انتخاب کن.</p></div>'); }; });
 
   /* ================= 3. sugar diary with a daily budget ================= */
   // Free sugar per usual serving, in grams (estimates from typical Iranian products and USDA/label values).
